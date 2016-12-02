@@ -15,7 +15,7 @@ limitations under the License.
 -->
 
 # Contributing Guide for f5-application-services-integration-iApp
-If you have found this that means you you want to help us out. Thanks in advance for lending a hand! This guide should get you up and running quickly and make it easy for you to contribute.  If we don't answer your questions here and you need help or just want to say hi, shoot us an email at TBD(email).
+If you have found this that means you you want to help us out. Thanks in advance for lending a hand! This guide should get you up and running quickly and make it easy for you to contribute.  If we don't answer your questions here and you need help or just want to say hi, shoot us an email at App_Services_Integration_Engineering@f5.com.
 
 ## Issues
 Creating issues is good, creating good issues is even better. Filing meaningful bug reports with lots of information in them helps us figure out what to fix when and how it impacts our users. We like bugs because it means people are using our code, and we like fixing them even more.
@@ -68,5 +68,5 @@ See the License for the specific language governing permissions and
 limitations under the License.
  
 ### Contributor License Agreement
-Individuals or business entities who contribute to this project must have completed and submitted the [F5® Contributor License Agreement](TBD(readthedocs)) to TBD(email) prior to their code submission being included in this project.
+Individuals or business entities who contribute to this project must have completed and submitted the [F5® Contributor License Agreement](http://appsvcs-integration-iapp.readthedocs.io/en/latest/cla_landing.html) to App_Services_Integration_Engineering@f5.com prior to their code submission being included in this project.
 
