@@ -31,7 +31,7 @@ The purpose of this project is to provide an iApp template that can be used to a
 Documentation
 -------------
 
-Please refer to the F5 App Services Integration iApp `project documentation TBD(readTheDocs)`_ for detailed information.
+Please refer to the F5 App Services Integration iApp `project documentation <http://appsvcs-integration-iapp.readthedocs.io/en/latest/index.html>`_ for detailed information.
 
 Release
 ---------
@@ -41,12 +41,12 @@ To download the latest release click `here <https://github.com/F5Networks/f5-app
 Filing Issues
 -------------
 
-If you find an issue, we would love to hear about it. Please let us know by filing an `issue <https://github.com/F5Networks/f5-application-services-integration-iApp/blob/release/v2.0_001/CONTRIBUTING.md>`_ in this repository. Use the issue template to tell us as much as you can about what you found, how you found it, your environment, etc.. We also welcome you to file feature requests as issues.
+If you find an issue, we would love to hear about it. Please let us know by filing an `issue <https://github.com/F5Networks/f5-application-services-integration-iApp/issues>`_ in this repository. Use the issue template to tell us as much as you can about what you found, how you found it, your environment, etc.. We also welcome you to file feature requests as issues.
 
 Contributing
 ------------
 
-See `Contributing TBD(email)`_.
+See `Contributing <https://github.com/F5Networks/f5-application-services-integration-iApp/blob/release/v2.0_001/CONTRIBUTING.md>`_.
 
 Copyright
 ---------
@@ -80,8 +80,8 @@ Contributor License Agreement
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 Individuals or business entities who contribute to this project must
 have completed and submitted the `F5 Contributor License
-Agreement TBD(readthedocs link)`_
-to TBD(email) prior to their code submission being included
+Agreement <http://appsvcs-integration-iapp.readthedocs.io/en/latest/cla_landing.html>`_
+to App_Services_Integration_Engineering@f5.com prior to their code submission being included
 in this project.
 
 .. |docs| image:: https://readthedocs.org/projects/appsvcs-integration-iapp/badge/?version=latest
