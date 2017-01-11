@@ -1,8 +1,8 @@
-:github_url: https://github.com/0xHiteshPatel/appsvcs_integration_iapp/docs
+:github_url: https://github.com/F5Networks/f5-application-services-integration-iApp/docs
 
 .. _iApp: https://devcentral.f5.com/wiki/iApp.HomePage.ashx
 .. _F5 Networks: https://www.f5.com
-.. _GitHub Issues: https://github.com/0xHiteshPatel/appsvcs_integration_iapp/issues
+.. _GitHub Issues: https://github.com/F5Networks/f5-application-services-integration-iApp/issues
 
 .. toctree::
 	:hidden:

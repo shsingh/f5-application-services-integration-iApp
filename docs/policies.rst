@@ -1,5 +1,5 @@
 .. _iRules: https://devcentral.f5.com/wiki/iRules.HomePage.ashx
-.. _bundled/: https://github.com/0xHiteshPatel/appsvcs_integration_iapp/blob/develop/src/bundled/
+.. _bundled/: https://github.com/F5Networks/f5-application-services-integration-iApp/blob/develop/src/bundled/
 .. _vs__BundledItems: presoref/presoref.html#field-vs-bundleditems
 
 Resource Bundling & L4-7 Policies

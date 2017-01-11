@@ -1,9 +1,9 @@
-.. _Implementation Layer: https://github.com/0xHiteshPatel/appsvcs_integration_iapp/blob/develop/src/implementation_layer.tcl
-.. _postdeploy_bundler: https://github.com/0xHiteshPatel/appsvcs_integration_iapp/blob/develop/src/include/postdeploy_bundler.icall
-.. _postdeploy_final: https://github.com/0xHiteshPatel/appsvcs_integration_iapp/blob/develop/src/include/postdeploy_final.icall
+.. _Implementation Layer: https://github.com/F5Networks/f5-application-services-integration-iApp/blob/develop/src/implementation_layer.tcl
+.. _postdeploy_bundler: https://github.com/F5Networks/f5-application-services-integration-iApp/blob/develop/src/include/postdeploy_bundler.icall
+.. _postdeploy_final: https://github.com/F5Networks/f5-application-services-integration-iApp/blob/develop/src/include/postdeploy_final.icall
 .. _iCall: https://devcentral.f5.com/wiki/iCall.Homepage.ashx
 .. _iStat: https://devcentral.f5.com/articles/introduction-to-istats-part-1-overview
-.. _deploy_iapp_bigip.py: https://github.com/0xHiteshPatel/appsvcs_integration_iapp/blob/develop/scripts/deploy_iapp_bigip.py#L105-L134
+.. _deploy_iapp_bigip.py: https://github.com/F5Networks/f5-application-services-integration-iApp/blob/develop/scripts/deploy_iapp_bigip.py#L105-L134
 
 Execution Flow
 ==============

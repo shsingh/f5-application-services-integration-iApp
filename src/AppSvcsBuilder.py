@@ -28,7 +28,7 @@ class AppSvcsBuilder:
 		'append': "",
 		'roottmpl': os.path.join('src','master.template'),
 		'debug':False,
-		'github_root':'https://www.github.com/0xHiteshPatel/appsvcs_integration_iapp/',
+		'github_root':'https://www.github.com/F5Networks/f5-application-services-integration-iApp/',
 		'github_tag':'',
 		'github_url':'',
 		'debug':False

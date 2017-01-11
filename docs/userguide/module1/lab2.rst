@@ -1,4 +1,4 @@
-.. _Releases: https://github.com/0xHiteshPatel/appsvcs_integration_iapp/releases
+.. _Releases: https://github.com/F5Networks/f5-application-services-integration-iApp/releases
 
 Obtain and Import the Pre-built Template
 ----------------------------------------

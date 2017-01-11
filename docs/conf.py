@@ -63,7 +63,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'App Services Integration iApp'
-copyright = u'2016, Hitesh Patel'
+copyright = u'2016, F5 Networks'
 author = u'Hitesh Patel'
 
 # The version info for the project you're documenting, acts as replacement for
@@ -87,7 +87,7 @@ options = {
     'append': "", 
     'roottmpl': os.path.join('src','master.template'),
     'debug':False,
-    'github_root':'https://www.github.com/0xHiteshPatel/appsvcs_integration_iapp/',
+    'github_root':'https://www.github.com/F5Networks/f5-application-services-integration-iApp/',
     'github_tag':'',
     'github_url':'',
     'debug':False
