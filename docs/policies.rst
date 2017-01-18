@@ -1,5 +1,4 @@
 .. _iRules: https://devcentral.f5.com/wiki/iRules.HomePage.ashx
-.. _bundled/: https://github.com/F5Networks/f5-application-services-integration-iApp/blob/develop/src/bundled/
 .. _vs__BundledItems: presoref/presoref.html#field-vs-bundleditems
 
 Resource Bundling & L4-7 Policies
@@ -45,7 +44,7 @@ For a step-by-step walk through on this process please refer to
 
 #. Download the source tree for the iApp
 #. Install required packages on the build system
-#. Place resources in the appropriate location under the `bundled/`_ directory
+#. Place resources in the appropriate location under the :github_file:`bundled <bundled>` directory
 #. Build the template using the command ``python build.py -nd -a <optional name>``
 #. Upload the resulting template to the BIG-IP system
 

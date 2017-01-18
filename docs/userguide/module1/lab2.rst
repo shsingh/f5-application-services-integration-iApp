@@ -1,12 +1,10 @@
-.. _Releases: https://github.com/F5Networks/f5-application-services-integration-iApp/releases
-
 Obtain and Import the Pre-built Template
 ----------------------------------------
 
 Obtain the Pre-built Template
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-#. Right-click :tmpl_file:`here <../../_static>` and save version |release| of 
+#. Download from :github_release:`releases<2.0-002_001>` and save version |release| of 
    the template to your system.
 
 .. _ug_module1_lab2:

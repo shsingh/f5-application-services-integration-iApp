@@ -1,9 +1,5 @@
-.. _Implementation Layer: https://github.com/F5Networks/f5-application-services-integration-iApp/blob/develop/src/implementation_layer.tcl
-.. _postdeploy_bundler: https://github.com/F5Networks/f5-application-services-integration-iApp/blob/develop/src/include/postdeploy_bundler.icall
-.. _postdeploy_final: https://github.com/F5Networks/f5-application-services-integration-iApp/blob/develop/src/include/postdeploy_final.icall
 .. _iCall: https://devcentral.f5.com/wiki/iCall.Homepage.ashx
 .. _iStat: https://devcentral.f5.com/articles/introduction-to-istats-part-1-overview
-.. _deploy_iapp_bigip.py: https://github.com/F5Networks/f5-application-services-integration-iApp/blob/develop/scripts/deploy_iapp_bigip.py#L105-L134
 
 Execution Flow
 ==============
@@ -18,9 +14,9 @@ vary based on the specific features utilized during a particular deployment.
 Each stage executes sequentially after the previous stage completes in the
 following order:
 
-1. `Implementation Layer`_ TCL code
-2. `postdeploy_bundler`_ iCall_ script to handle L4-7 policy deployment
-3. `postdeploy_final`_ iCall_ script to handle deferred TMSH commands
+1. :github_file:`Implementation layer<src/implementation_layer.tcl>` TCL code
+2. :github_file:`Post depoly bundler<src/include/postdeploy_bundler.icall>` iCall_ script to handle L4-7 policy deployment
+3. :github_file:`Post depoly final<src/include/postdeploy_final.icall>` iCall_ script to handle deferred TMSH commands
 
 Step 2 above is only executed if deployment of a L4-7 service policy is 
 required.  For more details on L4-7 policies see :doc:`policies`
@@ -52,15 +48,15 @@ overall flow is as follows:
    #. Route Advertisement
    #. Advanced Options
 
-#. `postdeploy_bundler`_ handler creation (only required for WAF/IAM policies)
-#. `postdeploy_final`_ handler creation
+#. :github_file:`Post depoly bundler<src/include/postdeploy_bundler.icall>` handler creation (only required for WAF/IAM policies)
+#. :github_file:`Post depoly final<src/include/postdeploy_final.icall>` handler creation
 
 .. _execflow_bundler:
 
 postdeploy_bundler
 ------------------
 
-The `postdeploy_bundler`_ iCall_ script is scheduled for execution by the 
+The :github_file:`Post depoly bundler<src/include/postdeploy_bundler.icall>` iCall_ script is scheduled for execution by the 
 Implementation Layer as required.  The primary purpose of this script is
 to create L4-7 policy elements (:doc:`policies`) and associate those policies
 with any required Virtual Servers.  Execution can be tracked via the mechanisms
@@ -93,13 +89,14 @@ deployment.  The iStat keys created are:
       - - DEPLOY_IN_PROGRESS
         - DEPLOY_COMPLETE
 
-The final action of the postdeploy_bundler_ script is to create an iCall_ 
-handler that executes the postdeploy_final_ script.
+The final action of the 
+:github_file:`Post depoly bundler<src/include/postdeploy_bundler.icall>` script 
+is to create an iCall_ handler that executes the :github_file:`Post depoly final<src/include/postdeploy_final.icall>` script.
 
 postdeploy_final
 ----------------
 
-The `postdeploy_final`_ iCall_ script is scheduled for execution by *either*
+The :github_file:`Post depoly final<src/include/postdeploy_final.icall>` iCall_ script is scheduled for execution by *either*
 the Implementation Layer or the postdeploy_bundler script.  The purpose of this
 script is to execute any final commands that have been deferred to this stage.
 Additionally this script populates iStat_ keys that should be used to determine
@@ -124,8 +121,9 @@ To determine overall success of a deployment the upstream system should **NOT**
 rely on the state returned via the GUI or API on the initial creation of the 
 deployment.  Rather, the ``deploy.postdeploy_final`` iStat_ key should be
 queried for the ``FINISHED_<epoch timestamp>`` state.  A reference 
-implementation of this mechanism can be found in the `deploy_iapp_bigip.py`_ 
-helper script.  The mechanism implemented performs the following:
+implementation of this mechanism can be found in the 
+:github_file:`depoly iapp script<scripts/deploy_iapp_bigip.py>` helper script.  
+The mechanism implemented performs the following:
 
 .. NOTICE:
     When using this mechanism it is required that time is synchronized
