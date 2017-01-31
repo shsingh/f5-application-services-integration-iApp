@@ -45,7 +45,6 @@ class AppSvcsBuilder:
 		self._debug("options=%s" % self.options)
 
 		self.buildinfo = {
-			"pres_rev":"",
 			"impl_major": "",
 			"impl_minor": "",
 			"allvars": [],
@@ -55,11 +54,10 @@ class AppSvcsBuilder:
 		}
 		self._load_info()
 		if not self.options["outfile"]:
-			self.options["outfile_fn"] = "%s/appsvcs_integration_v%s-%s_%s%s.tmpl" \
+			self.options["outfile_fn"] = "%s/appsvcs_integration_v%s.%s%s.tmpl" \
 				% (self.options["workingdir"],
 				   self.buildinfo["impl_major"],
 				   self.buildinfo["impl_minor"],
-				   self.buildinfo["pres_rev"],
 				   self.options["append"])
 		else:
 			self.options["outfile_fn"] = os.path.join(self.options["workingdir"], self.options["outfile"])
@@ -111,8 +109,6 @@ class AppSvcsBuilder:
 			       	  self.pres_data["tmpl_majorversion"],
 			       	  self.options["preso_fn"])
 			sys.exit(1)
-
-		self.buildinfo["pres_rev"] = str(self.pres_data["pres_revision"])
 
 		for section in self.pres_data["sections"]:
 			if section["name"] == "intro":
@@ -258,10 +254,9 @@ class AppSvcsBuilder:
 		for line in fin:
 			line = re.sub(r'%IMPLVERSION_MAJOR%', self.buildinfo["impl_major"], line)
 			line = re.sub(r'%IMPLVERSION_MINOR%', self.buildinfo["impl_minor"], line)
-			line = re.sub(r'%PRESENTATION_REV%', self.buildinfo["pres_rev"], line)
 			line = re.sub(r'%PRESENTATION_TCL_ALLVARS%', self.buildinfo["allvarsTCL"], line)
 			line = re.sub(r'%NAME_APPEND%', self.options["append"], line)
-			line = re.sub(r'%TMPL_NAME%', "appsvcs_integration_v%s_%s%s" % (self.buildinfo["impl_major"], self.buildinfo["pres_rev"], self.options["append"]), line)
+			line = re.sub(r'%TMPL_NAME%', "appsvcs_integration_v%s.%s" % (self.buildinfo["impl_major"], self.options["append"]), line)
 			line = re.sub(r'%TEMP_DIR%', self.options["tempdir"], line)
 				
 			match = re.match( r'(.*)\%insertfile:(.*)\%(.*)', line)

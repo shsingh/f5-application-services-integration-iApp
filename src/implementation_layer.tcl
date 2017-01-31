@@ -17,10 +17,9 @@ set bundler_timestamp [clock format $startTime -format {%Y%m%d%H%M%S}]
 
 set NAME "F5 Application Services Integration iApp (Community Edition)"
 set TMPLNAME "%TMPL_NAME%"
-set IMPLMAJORVERSION "2.1dev"
-set IMPLMINORVERSION "001"
-set IMPLVERSION [format "%s(%s)" $IMPLMAJORVERSION $IMPLMINORVERSION]
-set PRESVERSION "%PRESENTATION_REV%"
+set IMPLMAJORVERSION "2.0"
+set IMPLMINORVERSION "002"
+set IMPLVERSION [format "%s.%s" $IMPLMAJORVERSION $IMPLMINORVERSION]
 set POSTDEPLOY_DELAY 0
 
 if { [tmsh::get_field_value [lindex [tmsh::get_config sys scriptd log-level] 0] log-level] eq "debug" } {
@@ -40,7 +39,7 @@ set bundler_deferred_cmds []
 %insertfile:%TEMP_DIR%/bundler.build%
 
 set app $tmsh::app_name
-debug [list start] [format "Starting %s version IMPL=%s PRES=%s TMPLNAME=%s app_name=%s" $NAME $IMPLVERSION $PRESVERSION $TMPLNAME $app] 0
+debug [list start] [format "Starting %s version IMPL=%s TMPLNAME=%s app_name=%s" $NAME $IMPLVERSION $TMPLNAME $app] 0
 debug [list version_info] [array get version_info] 3
 
 array set modenames {
@@ -63,7 +62,7 @@ set partition [lindex $modeinfo 2]
 set rd [lindex $modeinfo 3]
 set newdeploy [lindex $modeinfo 4]
 set app_path [format "/%s/%s.app" $partition $app]
-set template_name [format "appsvcs_integration_v%s_%s" $IMPLMAJORVERSION $PRESVERSION]
+set template_name [format "appsvcs_integration_v%s" $IMPLMAJORVERSION]
 set aso [format "%s/%s" $app_path $app]
 set redeploy 0
 if { ! $newdeploy } { set redeploy 1 }
@@ -98,7 +97,7 @@ foreach var [array names aso_config] {
   debug [list aso_config $var] $aso_config($var) 9
 }
 
-set asodescr [format "Deployed by appsvcs_integration_v%s_%s in %s mode on %s" $IMPLVERSION $PRESVERSION $modenames($mode) [clock format $startTime -format "%D %H:%M:%S"]]
+set asodescr [format "Deployed by appsvcs_integration_v%s in %s mode on %s" $IMPLVERSION $modenames($mode) [clock format $startTime -format "%D %H:%M:%S"]]
 debug [list set_aso_decription tmsh_modify] [format "sys application service %s description \"%s\"" $aso $asodescr] 1
 tmsh::modify [format "sys application service %s description \"%s\"" $aso $asodescr]
 

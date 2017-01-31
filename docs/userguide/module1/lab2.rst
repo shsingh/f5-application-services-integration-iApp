@@ -4,7 +4,7 @@ Obtain and Import the Pre-built Template
 Obtain the Pre-built Template
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-#. Download from :github_release:`releases<2.0-002_001>` and save version |release| of 
+#. Download from :github_release:`releases<2.0.002>` and save version |release| of 
    the template to your system.
 
 .. _ug_module1_lab2:

@@ -46,7 +46,7 @@ If you find an issue, we would love to hear about it. Please let us know by fili
 Contributing
 ------------
 
-See `Contributing <https://github.com/F5Networks/f5-application-services-integration-iApp/blob/release/v2.0_001/CONTRIBUTING.md>`_.
+See `Contributing <https://github.com/F5Networks/f5-application-services-integration-iApp/blob/release/v2.0.002/CONTRIBUTING.md>`_.
 
 Copyright
 ---------
@@ -56,7 +56,7 @@ Copyright 2015-2016 F5 Networks Inc.
 Support
 -------
 
-See `Support <https://github.com/F5Networks/f5-application-services-integration-iApp/blob/release/v2.0_001/SUPPORT.rst>`_.
+See `Support <https://github.com/F5Networks/f5-application-services-integration-iApp/blob/release/v2.0.002/SUPPORT.rst>`_.
 
 License
 -------

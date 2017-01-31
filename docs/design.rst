@@ -118,17 +118,16 @@ Assuming the following:
 
  + impl_major = **0.1**
  + impl_minor = **002**
- + pres_rev     = **003**
 
 We substitute into this format:  
 
-- Template Version: ``v<impl_major>(<impl_minor>)_<pres_rev>``
-- BIG-IP/IQ Template Name: ``appsvcs_integration_v<impl_major>_<pres_rev>``
+- Template Version: ``v<impl_major>.<impl_minor>``
+- BIG-IP/IQ Template Name: ``appsvcs_integration_v<impl_major>.<impl_minor>``
 
 Resulting in:  
 
-- Template Version: **v0.1(002)_003** 
-- BIG-IP/IQ Template Name: **appsvcs_integration_v0.1_003**
+- Template Version: **v0.1.002** 
+- BIG-IP/IQ Template Name: **appsvcs_integration_v0.1.002**
 
 While this scheme is somewhat complex, we have little choice in the matter, 
 because most northbound integrations require that we maintain a consistent copy 
