@@ -47,7 +47,7 @@ To build the template complete these tasks:
    	   show you other options available during the build process.
 
 #. You should now have a file named
-   appsvcs_integration_v\ |ver_major|\ -\ |ver_minor|\ _\ |ver_pres|\ _custom.tmpl
+   appsvcs_integration_v\ |ver_major|\ .\ |ver_minor|\ _custom.tmpl
    in the source directory
 
 Bundling Resources with a Custom Template
@@ -101,7 +101,7 @@ covered in subsequent labs.
 		  Found BIG-IP Version: 12.1
 
 #. You should now have a file named
-   appsvcs_integration_v\ |ver_major|\ -\ |ver_minor|\ _\ |ver_pres|\ _custom.tmpl
+   appsvcs_integration_v\ |ver_major|\ .\ |ver_minor|\ _custom.tmpl
    in the source directory
 #. Import this template into your BIG-IP system using the procedure described in
    :ref:`ug_module1_lab2`
