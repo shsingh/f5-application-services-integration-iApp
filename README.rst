@@ -1,7 +1,7 @@
 .. raw:: html
 
    <!--
-   Copyright 2016 F5 Networks Inc.
+   Copyright 2016-2017 F5 Networks Inc.
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -19,9 +19,7 @@
 Application Services Integration iApp 
 =========================================================
 
-|travis build| |docs|
-
-.. _Documentation: http://appsvcs-integration-iapp.readthedocs.io/en/latest/index.html
+.. _Documentation: https://devcentral.f5.com/wiki/iApp.AppSvcsiApp_index.ashx
 
 Introduction
 ------------
@@ -31,7 +29,7 @@ The purpose of this project is to provide an iApp template that can be used to a
 Documentation
 -------------
 
-Please refer to the F5 App Services Integration iApp `project documentation <http://appsvcs-integration-iapp.readthedocs.io/en/latest/index.html>`_ for detailed information.
+Please refer to the F5 App Services Integration iApp `project documentation <https://devcentral.f5.com/wiki/iApp.AppSvcsiApp_index.ashx>`_ for detailed information.
 
 Release
 ---------
@@ -51,7 +49,7 @@ See `Contributing <https://github.com/F5Networks/f5-application-services-integra
 Copyright
 ---------
 
-Copyright 2015-2016 F5 Networks Inc.
+Copyright 2015-2017 F5 Networks Inc.
 
 Support
 -------
@@ -80,13 +78,6 @@ Contributor License Agreement
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 Individuals or business entities who contribute to this project must
 have completed and submitted the `F5 Contributor License
-Agreement <http://appsvcs-integration-iapp.readthedocs.io/en/latest/cla_landing.html>`_
+Agreement <https://github.com/F5Networks/f5-application-services-integration-iApp/raw/release/v2.0.002/docs/_static/F5-contributor-license-agreement.pdf>`_
 to App_Services_Integration_Engineering@f5.com prior to their code submission being included
 in this project.
-
-.. |docs| image:: https://readthedocs.org/projects/appsvcs-integration-iapp/badge/?version=latest
-    :alt: Documentation Status
-    :scale: 100%
-    :target: http://appsvcs-integration-iapp.readthedocs.io/en/latest/?badge=latest
-.. |travis build| image:: https://travis-ci.org/RafalKorepta/appsvcs_integration_iapp.svg?branch=develop
-    :target: https://travis-ci.org/RafalKorepta/appsvcs_integration_iapp 
