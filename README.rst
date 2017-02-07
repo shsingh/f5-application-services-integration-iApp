@@ -79,5 +79,5 @@ Contributor License Agreement
 Individuals or business entities who contribute to this project must
 have completed and submitted the `F5 Contributor License
 Agreement <https://github.com/F5Networks/f5-application-services-integration-iApp/raw/release/v2.0.002/docs/_static/F5-contributor-license-agreement.pdf>`_
-to App_Services_Integration_Engineering@f5.com prior to their code submission being included
+to cla@f5.com prior to their code submission being included
 in this project.

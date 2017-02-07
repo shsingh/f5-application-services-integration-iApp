@@ -2,7 +2,9 @@
 
 .. _iApp: https://devcentral.f5.com/wiki/iApp.HomePage.ashx
 .. _F5 Networks: https://www.f5.com
-.. _GitHub Issues: https://github.com/F5Networks/f5-application-services-integration-iApp/issues
+.. _SOL80012344: https://support.f5.com/kb/en-us/solutions/public/k/80/sol80012344.html
+.. _ASK F5: http://askf5.com
+.. _Guideline Policies: http://www.f5.com/about/guidelines-policies/
 
 .. toctree::
 	:hidden:
@@ -29,8 +31,7 @@ products.
 Support
 -------
 
-Please use `GitHub Issues`_ to report any bugs or feature requests.  This 
-project is **Community Supported**.
+Maintenance and F5 Technical Support of the F5 code is provided only if the software (i) is unmodified; and (ii) has been marked as F5 Supported in `SOL80012344`_. Support will only be provided to customers who have an existing support contract, purchased separately, subject to F5’s support policies available at `Guideline Policies`_ and `ASK F5`_.
 
 .. _testedversions:
 
