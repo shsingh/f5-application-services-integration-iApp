@@ -26,7 +26,7 @@ the contents of the sample files:
 To deploy the sample_myhttps.json template a command like this can be used:
  
  cd deploy_iapp_samples
- python ../deploy_iapp_bigip.py -i <BIG-IP mgmt IP> -u <username> -p <password> sample_myhttps.json
+ python ../deploy_iapp_bigip.py <BIG-IP mgmt IP> -u <username> -p <password> sample_myhttps.json
 
 By default the script will automatically save the system config.  This 
 behaviour can be disabled by using the '-d' option.
