@@ -144,7 +144,7 @@ def check_final_deploy(istat_key):
 
 # Setup and process arguments
 parser = argparse.ArgumentParser(description='Script to deploy an iApp to a BIG-IP device')
-parser.add_argument("host",             help="The IP/Hostname of the BIG-IP device")
+parser.add_argument("host",             help="The IP/Hostname in <host>[:<port>] format of the BIG-IP device")
 parser.add_argument("json_template",    help="The JSON iApp definition file")
 parser.add_argument("-u", "--username", help="The BIG-IP username")
 parser.add_argument("-p", "--password", help="The BIG-IP password")
@@ -234,7 +234,7 @@ debug("[check_time] delta=%s" % delta)
 if delta > 10:
     print "[error] Time delta between local system and BIG-IP is %s.  Limit is 10 seconds.  Please ensure time is synced" % delta
     sys.exit(1)
-	
+
 resp = s.get(template_url)
 templates = resp.json();
 

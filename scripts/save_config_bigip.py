@@ -28,7 +28,7 @@ import argparse
 
 # Setup and process arguments
 parser = argparse.ArgumentParser(description='Script to deploy an iApp to a BIG-IP device')
-parser.add_argument("host",             help="The IP/Hostname of the BIG-IP device")
+parser.add_argument("host",             help="The IP/Hostname in <host>[:<port>] format of the BIG-IP device")
 parser.add_argument("-u", "--username", help="The BIG-IP username", default="admin")
 parser.add_argument("-p", "--password", help="The BIG-IP password", default="admin")
 

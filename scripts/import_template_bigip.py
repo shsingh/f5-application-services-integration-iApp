@@ -28,7 +28,7 @@ import sys
 
 # Setup and process arguments
 parser = argparse.ArgumentParser(description='Script to import an iApp template to a BIG-IP device')
-parser.add_argument("host",             help="The IP/Hostname of the BIG-IP device")
+parser.add_argument("host",             help="The IP/Hostname in <host>[:<port>] format of the BIG-IP device")
 parser.add_argument("name",             help="The name iApp template")
 parser.add_argument("-a", "--apl",      help="The path to the iApp apl layer file to import",            default="iapp.apl")
 parser.add_argument("-c", "--checkonly",help="Only check to see if a template existings on the device",  action="store_true")
