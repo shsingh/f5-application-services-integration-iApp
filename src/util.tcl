@@ -725,7 +725,7 @@ proc load_crypto_object { type url } {
   debug [list load_crypto_object url_subst] $url 10
 
   set url_file_name [lindex [split $url /] end]
-  set obj_name [format "/Common/%s_%s" $::app $url_file_name]
+  set obj_name [format "/%s/%s_%s" $::partition $::app $url_file_name]
   set file_name [format "/var/tmp/appsvcs_%s_%s_%s" $::app $::bundler_timestamp $url_file_name]
   debug [list load_crypto_object] [format "obj_name=%s file_name=%s" $obj_name $file_name] 10
 
