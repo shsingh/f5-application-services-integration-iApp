@@ -52,6 +52,9 @@ b.buildAPL()
 print "Assembling main template..."
 b.buildTemplate()
 
+print "Generating iWf JSON template..."
+b.buildiWfTemplate()
+
 if not args.extended:
 	null = open(os.devnull, 'w')
 	sys.stdout = null

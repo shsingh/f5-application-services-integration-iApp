@@ -1,6 +1,7 @@
 appsvcs_integration_v*.*.tmpl
 appsvcs_integration_v*.*.apl
 appsvcs_integration_v*.*.tcl
+iWorkflow_appsvcs_integration_v*.*.json
 parts/*
 docs/_build/*
 docs/presoref.rst
