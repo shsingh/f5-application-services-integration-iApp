@@ -629,7 +629,7 @@ class AppSvcsBuilder:
 
 		iwfTemplate = {
 			'name':self.buildinfo['template_name'],
-			'templateContent':json.dumps(self._template_final),
+			'templateContent':self._template_final,
 			'template': {
 				'sections': [],
 				'tables': [],
