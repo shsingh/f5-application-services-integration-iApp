@@ -86,7 +86,7 @@ def delete_file(path):
 
 # Setup and process arguments
 parser = argparse.ArgumentParser(description='Script to import and SSL/TLS Certificate and/or Key to a BIG-IP device')
-parser.add_argument("host",             help="The IP/Hostname of the BIG-IP device")
+parser.add_argument("host",             help="The IP/Hostname in <host>[:<port>] format of the BIG-IP device")
 parser.add_argument("name",             help="The name of the object on BIG-IP (partitions are supported)")
 parser.add_argument("-c", "--cert",     help="The path to the PEM formatted certificate file to import")
 parser.add_argument("-k", "--key",      help="The path to the PEM formatted key file to import")

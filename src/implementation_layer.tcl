@@ -20,7 +20,7 @@ set bundler_timestamp [clock format $startTime -format {%Y%m%d%H%M%S}]
 set NAME "F5 Application Services Integration iApp (Community Edition)"
 set TMPLNAME "%TMPL_NAME%"
 set IMPLMAJORVERSION "2.0"
-set IMPLMINORVERSION "002"
+set IMPLMINORVERSION "003"
 set IMPLVERSION [format "%s.%s" $IMPLMAJORVERSION $IMPLMINORVERSION]
 set POSTDEPLOY_DELAY 0
 
@@ -290,7 +290,8 @@ if { [string length $vs__ProfileClientSSLKey] > 0 && [string length $vs__Profile
 }
 
 # Create Monitors
-debug [list monitors] [format "monCount=%s" [llength $monitor__Monitors]] 7
+set monCount [llength $monitor__Monitors]
+debug [list monitors] [format "monCount=%s" $monCount] 7
 
 set monIdx 0
 array set monNames {}
@@ -356,7 +357,57 @@ custom_extensions_before_pools
 
 # Create pool
 set poolCount [llength $pool__Pools]
+set poolMemberCount [llength $pool__Members]
 debug [list pools] [format "poolCount=%s" $poolCount] 7
+
+# Fixup empty pool__Pools table if pool__Members is populated
+# The behaviour implemented here will create a pool with a round-robin lb-method
+#
+# Additionally, if a monitor with Index 0 is present in the monitor__Monitors table
+# the pool monitor will be set to that.
+#
+# If the monitor__Monitors is empty no pool monitor will be configured
+set poolTmpl {{{
+    AdvOptions none
+    Description
+    Index %INDEX%
+    LbMethod round-robin
+    Monitor %MONITOR%
+    Name
+}} }
+
+if { $poolCount == 0 && $poolMemberCount > 0 } {
+  debug [list pools_fixup] [format "poolMemberCount=%s" $poolMemberCount] 7
+  set poolFixupIndexes []
+  array set poolFixupFound {}
+  foreach memberRow $pool__Members {
+    array unset memberColumn
+    array set memberColumn {}
+    table_row_to_array $memberRow memberColumn ::table_defaults(Members) [list AdvOptions]
+    if { ![info exists poolFixupFound($memberColumn(Index))] } {
+      debug [list pools_fixup found_pool] [format "index=%s" $memberColumn(Index)] 7
+      lappend poolFixupIndexes $memberColumn(Index)
+      set poolFixupFound($memberColumn(Index)) 1
+    }
+  }
+  debug [list pools_fixup create_indexes] $poolFixupIndexes 7
+
+  set poolFixupMonitor ""
+  if { $monCount > 0 } {
+    set poolFixupMonitor "0"
+  }
+
+  set poolTemp ""
+  foreach foundIndex $poolFixupIndexes {
+    set poolTmpl_map [list %INDEX% $foundIndex \
+                           %MONITOR% $poolFixupMonitor ]
+
+  append poolTemp [string map $poolTmpl_map $poolTmpl]
+
+  }
+  set pool__Pools $poolTemp
+  debug [list pools_fixup pool_Pools] $pool__Pools 7
+}
 
 set poolIdx 0
 set default_pool_name ""

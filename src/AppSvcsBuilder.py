@@ -481,10 +481,17 @@ class AppSvcsBuilder:
 					print "  Found BIG-IP Version: %s" % apm_bip_version[0]
 			infile = self._safe_open(filename, "rb")
 			key = "%s:%s" % (filetype, just_name)
+
+			data = infile.read()
+
+			if filetype == "irule" and data.endswith('\n') == False:
+				print "  Adding newline to end of file..."
+				data += '\n';
+
 			resources.append({
 				"key":key,
 				"ver":apm_bip_version[0],
-				"data":base64.b64encode(infile.read())
+				"data":base64.b64encode(data)
 				})
 
 		#self._debug("resources=%s" % resources)
