@@ -1363,7 +1363,7 @@ if { [llength $bundled_irules] > 0 } {
 
     debug [list virtual_server bundled_irule $bundled_irule do_add] [format "%s" $bundled_irule_do_add] 7
     if { $bundled_irule_do_add } {
-      set bundled_irule_cmd [format "ltm rule %s/%s \{%s\}" $app_path $bundled_irule $bundled_irule_src]
+      set bundled_irule_cmd [format "ltm rule %s/%s \{\n%s\n\}" $app_path $bundled_irule $bundled_irule_src]
       debug [list virtual_server bundled_irule $bundled_irule tmsh_create] $bundled_irule_cmd 1
       tmsh::create $bundled_irule_cmd
       if { [string length $vs__Irules] > 0 } {
