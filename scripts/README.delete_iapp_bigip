@@ -6,7 +6,7 @@ instance of an iApp deployment.
 
 The script supports:
  - Specification of the BIG-IP partition (-P option; default is "Common")
- - Script-firendly operation to supress delete confirmation (-n option)
+ - Script-friendly operation to supress delete confirmation (-n option)
 
 To delete the an iApp deployment name 'my_http' a command like this can be used:
  

@@ -19,6 +19,8 @@
 Application Services Integration iApp 
 =========================================================
 
+|travis build|
+
 .. _Documentation: https://devcentral.f5.com/wiki/iApp.AppSvcsiApp_index.ashx
 
 Introduction
@@ -81,3 +83,6 @@ have completed and submitted the `F5 Contributor License
 Agreement <https://github.com/F5Networks/f5-application-services-integration-iApp/raw/release/v2.0.002/docs/_static/F5-contributor-license-agreement.pdf>`_
 to cla@f5.com prior to their code submission being included
 in this project.
+
+.. |travis build| image:: https://travis-ci.org/F5Networks/f5-application-services-integration-iApp.svg?branch=master
+    :target: https://travis-ci.org/F5Networks/f5-application-services-integration-iApp
