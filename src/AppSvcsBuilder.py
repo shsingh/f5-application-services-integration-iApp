@@ -48,6 +48,9 @@ class AppSvcsBuilder:
 		'debug':False
 	}
 
+	_template_final = None
+	_template_built = False
+
 	def __init__(self, **kwargs):
 		self._debug("in __init__")
 		self.options.update(**kwargs)
@@ -67,12 +70,15 @@ class AppSvcsBuilder:
 			"github_url":""
 		}
 		self._load_info()
-		if not self.options["outfile"]:
-			self.options["outfile_fn"] = "%s/appsvcs_integration_v%s.%s%s.tmpl" \
-				% (self.options["workingdir"],
-				   self.buildinfo["impl_major"],
+		self.buildinfo['template_name'] = "appsvcs_integration_v%s.%s%s" \
+				% (self.buildinfo["impl_major"],
 				   self.buildinfo["impl_minor"],
 				   self.options["append"])
+
+		if not self.options["outfile"]:
+			self.options["outfile_fn"] = "%s/%s.tmpl" \
+				% (self.options["workingdir"],
+				   self.buildinfo["template_name"])
 		else:
 			self.options["outfile_fn"] = os.path.join(self.options["workingdir"], self.options["outfile"])
 
@@ -434,6 +440,33 @@ class AppSvcsBuilder:
 		else:
 			return "optional (\"dont\" == \"show\") {\n %s \n}\n" % apl_field
 
+	def _iwfjson_generate_field(self, field, section=None):
+		ret = {
+			'name': field["name"],
+			'isRequired': field["required"],
+			'description': field["description"],
+			'displayName': field["name"],
+			'section': section					
+		}
+		
+		if section:
+			ret["name"] = "%s__%s" % (section, field["name"])
+
+		if 'default' in field.keys() and field["default"] != '':
+			ret["defaultValue"] = field["default"]
+
+		if field["type"] in self._apl_validators.keys():
+			ret['validator'] = self._apl_validators[field["type"]]
+
+		if 'choices' in field.keys() and \
+		 (field["type"] == "choice" or field["type"] == "editchoice"):
+		 	# Fixup the list since the source JSON included HTML escaped characters
+		 	tempChoices = map(lambda x: x.replace('&lt;','<'), field["choices"])
+		 	tempChoices = map(lambda x: x.replace('&gt;','>'), tempChoices)
+			ret['choices'] = map(lambda x: {'value':x,'description':x}, tempChoices)
+
+		return ret
+
 	def createBundledResources(self):
 		resources = []
 
@@ -583,6 +616,76 @@ class AppSvcsBuilder:
 			fh.write("\n")
 		fh.write("}\n")
 
+	def buildiWfTemplate(self, **kwargs):
+		self._debug("in buildiWfTemplate")
+
+		if bool(kwargs):
+			self.__init__(**kwargs)
+
+		self._debug("buildiWfTemplate options=%s" % self.options)
+
+		if not self._template_built:
+			self.buildTemplate(kwargs)
+
+		iwfTemplate = {
+			'name':self.buildinfo['template_name'],
+			'templateContent':self._template_final,
+			'template': {
+				'sections': [],
+				'tables': [],
+				'vars': []
+			}
+		}
+
+		for section in self.pres_data["sections"]:
+			iwfTemplate['template']['sections'].append({
+					"description": section["description"],
+					"displayName": section["name"]
+				})
+
+			for field in section["fields"]:
+				if 'required' not in field.keys():
+					field["required"] = False
+
+				self._debug("field=%s" % field)
+
+				if field["type"] == "text": continue
+
+				if field["type"] != "table":
+					iwfTemplate['template']['vars'].append(self._iwfjson_generate_field(field, section["name"]))
+				else:
+					tableObj = {
+							'name': "%s__%s" % (section["name"], field["name"]),
+							'isRequired': field["required"],
+							'description': field["description"],
+							'displayName': field["name"],
+							'section': section["name"],
+							'columns': []							
+					}
+					
+					for table_field in field["fields"]:
+						tableObj['columns'].append(self._iwfjson_generate_field(table_field))
+
+					iwfTemplate['template']['tables'].append(tableObj)
+
+		iwfTemplate['template']['vars'].append({
+			"name": "app_stats",
+			"isRequired": False,
+			"defaultValue": "enabled",
+			"description": "Enable health and performance monitoring.",
+			"displayName": "app_stats"
+		})
+		
+		self._debug("json=%s" % json.dumps(iwfTemplate));
+		if not self.options["outfile"]:
+			self.options["outfile_fn"] = "%s/%s.tmpl" \
+				% (self.options["workingdir"],
+				   self.buildinfo["template_name"])
+
+		fh = self._safe_open(os.path.join(self.options["workingdir"], "iWorkflow_%s.json" % self.buildinfo['template_name']), "wt")
+		fh.write(json.dumps(iwfTemplate, indent=4, sort_keys=False))
+		fh.close()
+
 	def buildTemplate(self, **kwargs):
 		self._debug("in buildTmpl")
 
@@ -598,7 +701,9 @@ class AppSvcsBuilder:
 		main = self._safe_open(os.path.join(self.options["workingdir"],self.options["roottmpl"]))
 
 		final = self._tmpl_process_file(main, out)
-		out.write(''.join(final))
+		self._template_built = True
+		self._template_final = ''.join(final)
+		out.write(self._template_final)
 
 		out.close()
 		main.close()
