@@ -31,15 +31,20 @@ parser = argparse.ArgumentParser(description='Script to deploy an iApp to a BIG-
 parser.add_argument("host",             help="The IP/Hostname in <host>[:<port>] format of the BIG-IP device")
 parser.add_argument("-u", "--username", help="The BIG-IP username", default="admin")
 parser.add_argument("-p", "--password", help="The BIG-IP password", default="admin")
+parser.add_argument("--password-file",   help="The BIG-IP password stored in a file", dest='password_file')
 
 args = parser.parse_args()
 
 # Set our REST urls
 save_url       = "https://%s/mgmt/tm/sys/config" % (args.host)
 
+password = args.password
+if args.password_file:
+        password = open(args.password_file).readline().strip()
+
 # Create request session, set credentials, allow self-signed SSL cert
 s = requests.session()
-s.auth = (args.username, args.password)
+s.auth = (args.username, password)
 s.verify = False
 
 

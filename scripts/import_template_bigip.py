@@ -42,11 +42,15 @@ parser.add_argument("-r", "--modules",  help="The BIG-IP TMOS modules required (
 parser.add_argument("-u", "--username", help="The BIG-IP username",                                      default="admin")
 parser.add_argument("-v", "--minver",   help="The minimum version of BIG-IP TMOS required",              default="11.0.0")
 parser.add_argument("-x", "--maxver",   help="The maximum version of BIG-IP TMOS required",              default="")
+parser.add_argument("--password-file",   help="The BIG-IP password stored in a file", dest='password_file')
 args = parser.parse_args()
 
+password = args.password
+if args.password_file:
+        password = open(args.password_file).readline().strip()
 # Create request session, set credentials, allow self-signed SSL cert
 s = requests.session()
-s.auth = (args.username, args.password)
+s.auth = (args.username, password)
 s.verify = False
 
 # Set our REST urls
