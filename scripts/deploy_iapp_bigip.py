@@ -154,6 +154,10 @@ parser.add_argument("-D", "--debug",    help="Enable debug output", action="stor
 parser.add_argument("-n", "--nocheck",  help="Don't check for deployment completion", action="store_true")
 parser.add_argument("-c", "--checknum", help="Number of times to check for deployment completion", default=10, type=int)
 parser.add_argument("-w", "--checkwait",help="Delay in seconds between each deployment completion check", default=6, type=int)
+parser.add_argument("--password-file",   help="The BIG-IP password stored in a file", dest='password_file')
+parser.add_argument("--iapp_name",   help="iapp_name (optional)")
+parser.add_argument("--strings",   help="override variables, i.e. --strings=pool_addr,172.16.0.231")
+parser.add_argument("--pool_members",   help="common separated list of ip:[port] will replace \"0.0.0.0\" members")
 
 args = parser.parse_args()
 
@@ -173,6 +177,36 @@ except (ValueError, NameError) as error:
 
 iapp_file.close()
 
+if args.strings:
+        list_of_strings = args.strings.split(",")
+        for str_item in list_of_strings:
+                (k,v) = str_item.split('=')
+                iapp["strings"].append({k:v})
+
+if args.pool_members:
+
+        # replace anything existing
+        members = args.pool_members.split(",")
+        row_template =  [ "0", "0.0.0.0", "80", "0", "1", "0", "enabled", "none"]
+        rows = []
+        for member in members:
+                port = "80"
+                if ":" in member:
+                        (ip,port) = member.split(":")
+                new_row = row_template[:]
+                new_row[1] = ip
+                new_row[2] = port
+                rows.append({'row':new_row})
+
+        new_pools = {u'columnNames': [u'Index', u'IPAddress', u'Port', u'ConnectionLimit', u'Ratio', u'PriorityGroup', u'State', u'AdvOptions'], 
+                     u'rows': rows,
+                     u'name': u'pool__Members'}
+
+        if 'tables' in iapp:
+                iapp['tables'].append(new_pools)
+        else:
+                iapp['tables'] = [new_pools]
+
 if 'parent' in iapp:
 	final = process_file(iapp["parent"], iapp, " ")
 else:
@@ -187,9 +221,16 @@ if args.password:
 	if 'password' in final:
 		print "[info] Password found in JSON but specified on CLI, using CLI value"
 	final["password"] = args.password
+if args.password_file:
+        if 'password' in final:
+                print "[info] Password found in JSON but specified in CLI, using CLI value"
+        final["password"] = open(args.password_file).readline().strip()
 
 # Required fields
 required = ['name','template_name','partition','username','password','inheritedDevicegroup','inheritedTrafficGroup','deviceGroup','trafficGroup']
+
+if args.iapp_name:
+        final["name"] = args.iapp_name
 
 for item in required:
 	if not item in final:
@@ -267,6 +308,8 @@ deploy_payload = {
     "lists":[]
 }
 
+        
+                
 for string in final["strings"]:
 	k, v = string.popitem()
 	deploy_payload["variables"].append({"name":k, "value":v})
@@ -307,7 +350,7 @@ else:
 	del deploy_payload["trafficGroup"]
 	deploy_payload["execute-action"] = "definition"
 
-	debug("redeploy_payload=%s" % json.dumps(deploy_payload))
+	debug("redeploy_payload=%s" % pp.pformat(deploy_payload))
 	resp = s.put(iapp_exist_url, data=json.dumps(deploy_payload))
 	debug("redeploy resp=%s" % (pp.pformat(json.loads(resp.text))))
 	if resp.status_code != requests.codes.ok:
