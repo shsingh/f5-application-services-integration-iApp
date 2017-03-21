@@ -38,7 +38,7 @@ class AppSvcsBuilder:
 		'tempdir': 'tmp',
 		'bundledir': 'bundled',
 		'outfile': None,
-		'docsdir': 'docs', 
+		'docsdir': 'docs',
 		'append': "",
 		'roottmpl': os.path.join('src','master.template'),
 		'debug':False,
@@ -278,7 +278,7 @@ class AppSvcsBuilder:
 			line = re.sub(r'%NAME_APPEND%', self.options["append"], line)
 			line = re.sub(r'%TMPL_NAME%', "appsvcs_integration_v%s.%s" % (self.buildinfo["impl_major"], self.options["append"]), line)
 			line = re.sub(r'%TEMP_DIR%', self.options["tempdir"], line)
-				
+
 			match = re.match( r'(.*)\%insertfile:(.*)\%(.*)', line)
 			if match:
 				insertfile = self._safe_open("%s/%s" % (self.options["workingdir"], match.group(2)))
@@ -446,9 +446,9 @@ class AppSvcsBuilder:
 			'isRequired': field["required"],
 			'description': field["description"],
 			'displayName': field["name"],
-			'section': section					
+			'section': section
 		}
-		
+
 		if section:
 			ret["name"] = "%s__%s" % (section, field["name"])
 
@@ -599,12 +599,8 @@ class AppSvcsBuilder:
 						fh.write("\t}\n")
 
 			fh.write("}\n\n")
-			#text.append("")
 
 		fh.write("\ntext {\n")
-
-		#for descr in text:
-		#	print "%s" % descr
 
 		for section in self.pres_data["sections"]:
 			fh.write(section["_apl_text"])
@@ -615,6 +611,7 @@ class AppSvcsBuilder:
 						fh.write(table_field["_apl_text"])
 			fh.write("\n")
 		fh.write("}\n")
+		fh.close()
 
 	def buildiWfTemplate(self, **kwargs):
 		self._debug("in buildiWfTemplate")
@@ -660,9 +657,9 @@ class AppSvcsBuilder:
 							'description': field["description"],
 							'displayName': field["name"],
 							'section': section["name"],
-							'columns': []							
+							'columns': []
 					}
-					
+
 					for table_field in field["fields"]:
 						tableObj['columns'].append(self._iwfjson_generate_field(table_field))
 
@@ -675,7 +672,7 @@ class AppSvcsBuilder:
 			"description": "Enable health and performance monitoring.",
 			"displayName": "app_stats"
 		})
-		
+
 		self._debug("json=%s" % json.dumps(iwfTemplate));
 		if not self.options["outfile"]:
 			self.options["outfile_fn"] = "%s/%s.tmpl" \
@@ -684,6 +681,54 @@ class AppSvcsBuilder:
 
 		fh = self._safe_open(os.path.join(self.options["workingdir"], "iWorkflow_%s.json" % self.buildinfo['template_name']), "wt")
 		fh.write(json.dumps(iwfTemplate, indent=4, sort_keys=False))
+		fh.close()
+
+		fh = self._safe_open(os.path.join(self.options["workingdir"], "parts", "iapp_iwf.json"), "wt")
+		fh.write(json.dumps(json.dumps(iwfTemplate))[1:-1])
+		fh.close()
+
+	def buildJsonTemplate(self, **kwargs):
+		self._debug("in buildJsonTemplate")
+
+		if bool(kwargs):
+			self.__init__(**kwargs)
+
+		self._debug("buildJsonTemplate options=%s" % self.options)
+
+		if not self._template_built:
+			self.buildTemplate(kwargs)
+
+		jsonTemplate = {
+			"name": self.buildinfo['template_name'],
+			"actions": [{
+				"name": "definition",
+				"htmlHelp": "",
+				"implementation": None,
+				"macro": "",
+				"roleAcl": [
+					"admin",
+					"manager",
+					"resource-admin"
+				],
+				"presentation": None
+			}],
+			"totalSigningStatus": "not-all-signed",
+			"requiresBigipVersionMax": "",
+			"ignoreVerification": "false",
+			"requiresModules": [ "" ],
+			"requiresBigipVersionMin": "11.0.0"
+		}
+
+		fh = self._safe_open(os.path.join(self.options["workingdir"], self.options["tempdir"],'apl.build'), "r")
+		jsonTemplate['actions'][0]['presentation'] = fh.read()
+		fh.close
+
+		fh = self._safe_open(os.path.join(self.options["workingdir"], 'parts','iapp.tcl'), "r")
+		jsonTemplate['actions'][0]['implementation'] = fh.read()
+		fh.close
+
+		fh = self._safe_open(os.path.join(self.options["workingdir"], "BIGIP_%s.json" % self.buildinfo['template_name']), "wt")
+		fh.write(json.dumps(jsonTemplate, indent=4, sort_keys=False))
 		fh.close()
 
 	def buildTemplate(self, **kwargs):

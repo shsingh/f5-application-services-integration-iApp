@@ -2,6 +2,8 @@ appsvcs_integration_v*.*.tmpl
 appsvcs_integration_v*.*.apl
 appsvcs_integration_v*.*.tcl
 iWorkflow_appsvcs_integration_v*.*.json
+BIGIP_appsvcs_integration_v*.*.json
+AppSvcs_iApp_Workflows.postman_collection.json
 *.iml
 
 parts/*
