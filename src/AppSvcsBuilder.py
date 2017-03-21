@@ -731,6 +731,10 @@ class AppSvcsBuilder:
 		fh.write(json.dumps(jsonTemplate, indent=4, sort_keys=False))
 		fh.close()
 
+		fh = self._safe_open(os.path.join(self.options["workingdir"], "parts", "iapp_bigip.json"), "wt")
+		fh.write(json.dumps(json.dumps(jsonTemplate))[1:-1])
+		fh.close()
+
 	def buildTemplate(self, **kwargs):
 		self._debug("in buildTmpl")
 
