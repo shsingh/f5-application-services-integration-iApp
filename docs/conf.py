@@ -105,6 +105,7 @@ with open("VERSION","r") as data_file:
     version = "%s.%s" % (ver_data["impl_major"], ver_data["impl_minor"])
     release = "%s.%s" % (ver_data["impl_major"], ver_data["impl_minor"])
     releasefn = "%s.%s" % (ver_data["impl_major"], ver_data["impl_minor"])
+    ver_data['github_release_page'] = "%s%s" % (ver_data['github_root'], 'releases')
 
 data_file.close()
 
@@ -192,8 +193,7 @@ extlinks = {
     'github_url':("%s/%%s" % ver_data['github_root'], 'repository '),
     'github_zip_url':("%s%%s/%s.zip" % (ver_data['github_root'], ver_data['github_tag']), None),
     'github_remote_url':("%sraw/%s/%%s/remote_url_files.tar.gz" % (ver_data['github_root'], ver_data['github_tag']), None),
-    'github_file':("%stree/%s/%%s" % (ver_data['github_root'], ver_data['github_tag']), None),
-    'github_release':("%sreleases/download/v%s/appsvcs_integration_v%%s.tmpl" % (ver_data['github_root'], '2.0.002'), None)
+    'github_file':("%stree/%s/%%s" % (ver_data['github_root'], ver_data['github_tag']), None)
     }
 
 rst_prolog = """
@@ -208,10 +208,12 @@ rst_prolog = """
 .. |f5|  replace:: F5 Networks
 .. |github_tag| replace:: %s
 .. |github_url| replace:: %s
+.. _github_release_page : %s
 .. |ver_major| replace:: %s
 .. |ver_minor| replace:: %s
 """ % (ver_data['github_tag'], 
        ver_data['github_url'],
+       ver_data['github_release_page'],
        ver_data['impl_major'],
        ver_data['impl_minor'])
 

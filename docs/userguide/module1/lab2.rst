@@ -4,8 +4,7 @@ Obtain and Import the Pre-built Template
 Obtain the Pre-built Template
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-#. Download from :github_release:`releases<2.0.002>` and save version |release| of 
-   the template to your system.
+#. The lates released version |appsvcs| can be found at github_release_page_.
 
 .. _ug_module1_lab2:
 
