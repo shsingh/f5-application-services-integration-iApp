@@ -69,6 +69,14 @@ args.outfile = 'parts' + os.sep + 'iapp.apl'
 args.roottmpl = 'tmp' + os.sep + 'apl.build'
 b.buildTemplate(**vars(args))
 
+print "Generating BIGIP JSON template..."
+b.buildJsonTemplate()
+
+print "Generating Postman Collection..."
+args.outfile = 'AppSvcs_iApp_Workflows.postman_collection.json'
+args.roottmpl = 'src' + os.sep + 'AppSvcs_iApp_Workflows.postman_collection.template'
+b.buildTemplate(**vars(args))
+
 if not args.extended:
 	sys.stdout = sys.__stdout__
 
