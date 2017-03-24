@@ -520,11 +520,15 @@ class AppSvcsBuilder:
 			if filetype == "irule" and data.endswith('\n') == False:
 				print "  Adding newline to end of file..."
 				data += '\n';
+			
+			data = base64.b64encode(data)
+
+			data = '\\\n'.join(data[pos:pos+60] for pos in xrange(0, len(data), 60))
 
 			resources.append({
 				"key":key,
 				"ver":apm_bip_version[0],
-				"data":base64.b64encode(data)
+				"data":data
 				})
 
 		#self._debug("resources=%s" % resources)
@@ -536,6 +540,9 @@ class AppSvcsBuilder:
 
 		for r in resources:
 			fh.write("set bundler_data(%s) {%s}\n" % (r["key"], r["data"]))
+
+		for r in resources:
+			fh.write("regsub -all {\s} $bundler_data(%s) {} bundler_data(%s)\n" % (r["key"], r["key"]))
 
 		fh.close()
 
