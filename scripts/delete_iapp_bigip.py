@@ -55,6 +55,8 @@ parser.add_argument("-d", "--dontsave", help="Don't automatically save the confi
 parser.add_argument("-D", "--debug",    help="Enable debug output", action="store_true")
 parser.add_argument("-P", "--partition",help="The BIG-IP partition to use", default="Common")
 parser.add_argument("-n", "--noprompt", help="Do not prompt to confirm deletion", action="store_true")
+parser.add_argument("--password-file",   help="The BIG-IP password stored in a file", dest='password_file')
+
 args = parser.parse_args()
 
 
@@ -65,9 +67,14 @@ iapp_exist_url = "%s/~%s~%s.app~%s" % (iapp_url, args.partition, args.iapp_name,
 full_name      = "/%s/%s" % (args.partition, args.iapp_name)
 
 debug("iapp_exist_url=%s" % (iapp_exist_url))
+
+password = args.password
+if args.password_file:
+        password = open(args.password_file).readline().strip()
+
 # Create request session, set credentials, allow self-signed SSL cert
 s = requests.session()
-s.auth = (args.username, args.password)
+s.auth = (args.username, password)
 s.verify = False
 
 resp = s.get(iapp_exist_url)
