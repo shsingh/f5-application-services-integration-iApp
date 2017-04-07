@@ -1,0 +1,238 @@
+{
+    "name":"iWf_Demo_1",
+    "description":"Create a Demo environment with an Active/Standby BIG-IP Cluster that is ready for L4-7 Service Deployment through iWorkflow",
+    "globalEnvVars":"../framework/f5-postman-workflows.postman_globals.json",
+    "globalOptions": {
+        "insecure":true,
+        "reporters":["cli"]
+    },
+    "globalVars": {
+        "bigip_mgmt": "10.145.251.47",
+        "bigip_username":"admin",
+        "bigip_password":"admin",
+        "iwf_mgmt": "10.145.252.218",
+        "iwf_username": "admin",
+        "iwf_password": "admin",
+        "bigip_root_username": "root",
+        "bigip_root_password": "default",
+        "iwf_connector_name": "Local Connector",
+        "iwf_connector_description": "Connector Description",
+        "iwf_tenant_name": "MyTenant",
+        "iwf_tenant_description":"My Tenant",
+        "iwf_tenant_username":"tenant",
+        "iwf_tenant_password":"tenant",
+        "iwf_appsvcs_name":"appsvcs_integration_v2.0.003",
+        "appsvcs_vip_addr":"172.16.0.100",
+        "appsvcs_vip_port":"443",
+        "appsvcs_member1_addr":"10.0.0.100",
+        "appsvcs_member1_port":"80",
+        "appsvcs_member2_addr":"10.0.0.101",
+        "appsvcs_member2_port":"81"
+    },
+    "saveEnvVars":true,
+    "outputFile":"iWf_Demo_1-run.json",
+    "envOutputFile":"iWf_Demo_1-env.json",
+    "workflow": [
+        {
+            "name":"Authenticate to BIG-IP A",
+            "options": {
+                "collection":"../collections/BIG_IP/BIGIP_API_Authentication.postman_collection.json",
+                "folder":"1_Authenticate"
+            }
+        },
+        {
+            "name":"Authenticate to iWorkflow",
+            "options": {
+                "collection":"../collections/iWorkflow/iWf_API_Authentication.postman_collection.json",
+                "folder":"1_Authenticate"
+            }
+        },
+        {
+            "name":"Discover BIG-IP A",
+            "options": {
+                "collection":"../collections/iWorkflow/iWf_Operational_Workflows.postman_collection.json",
+                "folder":"1A_Discover_BIGIP",
+                "remapPreRun":{
+                    "bigip_username":"bigip_admin_username",
+                    "bigip_password":"bigip_admin_password"
+                }
+            },
+            "children": [
+                {
+                    "name":"Get BIG-IP UUID",
+                    "options": {
+                        "collection":"../collections/iWorkflow/iWf_Operational_Workflows.postman_collection.json",
+                        "folder":"1B_Get_BIGIP_UUID"
+                    }
+                }
+            ]
+        },
+        {
+            "name":"Create BIG-IP Connector",
+            "options": {
+                "collection":"../collections/iWorkflow/iWf_Operational_Workflows.postman_collection.json",
+                "folder":"2A_Create_BIGIP_Connector"
+            }
+        },
+        {
+            "name":"Create iWorkflow Tenant",
+            "options": {
+                "collection":"../collections/iWorkflow/iWf_Operational_Workflows.postman_collection.json",
+                "folder":"3A_Create_Tenant"
+            }
+        },
+        {
+            "name":"Create iWorkflow Tenant User",
+            "options": {
+                "collection":"../collections/iWorkflow/iWf_Operational_Workflows.postman_collection.json",
+                "folder":"4A_Create_Tenant_User"
+            }
+        },
+        {
+            "name":"Import AppSvcs iApp Template",
+            "options": {
+                "collection":"../../../AppSvcs_iApp_Workflows.postman_collection.json",
+                "folder":"2_Install_on_iWorkflow"
+            }
+        },
+        {
+            "name":"Import AppSvcs Service Catalog Template Examples",
+            "options": {
+                "collection":"../../../AppSvcs_iApp_Workflows.postman_collection.json",
+                "folder":"3_iWorkflow_Service_Template_Examples"
+            }
+        },
+        {
+            "name":"Authenticate to iWorkflow Tenant",
+            "options": {
+                "collection":"../collections/iWorkflow/iWf_API_Authentication.postman_collection.json",
+                "folder":"1_Authenticate"
+            },
+            "remapPreRun": {
+                "iwf_tenant_username": "iwf_username",
+                "iwf_tenant_password": "iwf_password"
+            }
+        },
+        {
+            "name":"Import AppSvcs Service Catalog Template Examples",
+            "skip":true,
+            "options": {
+                "collection":"../../../AppSvcs_iApp_Workflows.postman_collection.json",
+                "folder":"4_iWorkflow_Deploy_Example_Services"
+            }
+        },
+        {
+            "name":"Deploy f5-http-lb",
+            "options": {
+                "collection":"../../../AppSvcs_iApp_Workflows.postman_collection.json",
+                "folder":"5A_Deployment_Automation"
+            },
+            "children": [
+                {
+                    "name":"Remove Services",
+                    "options":{
+                        "collection":"../collections/iWorkflow/iWf_Operational_Workflows.postman_collection.json",
+                        "folder":"8A_Special_Remove_All_Instances_iApp"
+                    }
+                }
+            ]
+        },
+        {
+            "name":"Deploy f5-https-offload",
+            "options": {
+                "collection":"../../../AppSvcs_iApp_Workflows.postman_collection.json",
+                "folder":"5B_Deployment_Automation"
+            },
+            "children": [
+                {
+                    "name":"Remove Services",
+                    "options":{
+                        "collection":"../collections/iWorkflow/iWf_Operational_Workflows.postman_collection.json",
+                        "folder":"8A_Special_Remove_All_Instances_iApp"
+                    }
+                }
+            ]
+        },
+        {
+            "name":"Deploy f5-fastl4-tcp-lb",
+            "options": {
+                "collection":"../../../AppSvcs_iApp_Workflows.postman_collection.json",
+                "folder":"5C_Deployment_Automation"
+            },
+            "children": [
+                {
+                    "name":"Remove Services",
+                    "options":{
+                        "collection":"../collections/iWorkflow/iWf_Operational_Workflows.postman_collection.json",
+                        "folder":"8A_Special_Remove_All_Instances_iApp"
+                    }
+                }
+            ]
+        },
+        {
+            "name":"Deploy f5-fastl4-udp-lb",
+            "options": {
+                "collection":"../../../AppSvcs_iApp_Workflows.postman_collection.json",
+                "folder":"5D_Deployment_Automation"
+            },
+            "children": [
+                {
+                    "name":"Remove Services",
+                    "options":{
+                        "collection":"../collections/iWorkflow/iWf_Operational_Workflows.postman_collection.json",
+                        "folder":"8A_Special_Remove_All_Instances_iApp"
+                    }
+                }
+            ]
+        },
+        {
+            "name":"Deploy f5-fasthttp-lb",
+            "options": {
+                "collection":"../../../AppSvcs_iApp_Workflows.postman_collection.json",
+                "folder":"5E_Deployment_Automation"
+            },
+            "children": [
+                {
+                    "name":"Remove Services",
+                    "options":{
+                        "collection":"../collections/iWorkflow/iWf_Operational_Workflows.postman_collection.json",
+                        "folder":"8A_Special_Remove_All_Instances_iApp"
+                    }
+                }
+            ]
+        },
+        {
+            "name":"Deploy f5-http-url-routing-lb",
+            "options": {
+                "collection":"../../../AppSvcs_iApp_Workflows.postman_collection.json",
+                "folder":"5F_Deployment_Automation"
+            },
+            "children": [
+                {
+                    "name":"Remove Services",
+                    "options":{
+                        "collection":"../collections/iWorkflow/iWf_Operational_Workflows.postman_collection.json",
+                        "folder":"8A_Special_Remove_All_Instances_iApp"
+                    }
+                }
+            ]
+        },
+        {
+            "name":"Deploy f5-https-waf-lb",
+            "skip":true,
+            "options": {
+                "collection":"../../../AppSvcs_iApp_Workflows.postman_collection.json",
+                "folder":"5G_Deployment_Automation"
+            },
+            "children": [
+                {
+                    "name":"Remove Services",
+                    "options":{
+                        "collection":"../collections/iWorkflow/iWf_Operational_Workflows.postman_collection.json",
+                        "folder":"8A_Special_Remove_All_Instances_iApp"
+                    }
+                }
+            ]
+        }
+    ]
+}

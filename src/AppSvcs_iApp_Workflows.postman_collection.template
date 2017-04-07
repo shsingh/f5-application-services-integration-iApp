@@ -2,7 +2,7 @@
 	"variables": [],
 	"info": {
 		"name": "AppSvcs_iApp_Workflows",
-		"_postman_id": "5e257d05-0f8c-3924-6372-dd7143144256",
+		"_postman_id": "6aa702e1-783e-f840-014c-ebcd8c2a0157",
 		"description": "Version: {{version}}",
 		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
 	},
@@ -460,6 +460,156 @@
 			"description": "Create example Tenant Deployments using the Service Catalog examples through an F5 iWorkflow device\n\nInput Variables:\niwf_mgmt\t\t\t\tF5 iWorkflow Management Address\niwf_token\t\t\t\tREST API Authentication Token\nappsvcs_vip_addr\t\tVirtual Server Listening IP\nappsvcs_vip_port\t\tVirtual Server Listening Port\nappsvcs_member1_addr\tPool Member 1 IP Address\nappsvcs_member1_port\tPool Member 1 Port\nappsvcs_member2_addr\tPool Member 2 IP Address\nappsvcs_member2_port\tPool Member 2 Port\n",
 			"item": [
 				{
+					"name": "Authenticate and Obtain Token admin",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"eval(postman.getGlobalVariable(\"_f5_workflow_functions\"));",
+									"",
+									"var populate_vars = [",
+									"        {name:\"iwf_token\", value:\"token.token\"}",
+									"    ];",
+									"    ",
+									"f5_populate_env_vars(populate_vars);",
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"url": " https://{{iwf_mgmt}}/mgmt/shared/authn/login",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"username\": {{iwf_username}},\n  \"password\": {{iwf_password}},\n  \"loginProvidername\":\"tmos\"\n}\n"
+						},
+						"description": "Perform authentication and populate the variable iwf_token"
+					},
+					"response": []
+				},
+				{
+					"name": "Get BIG-IP connector UUID remember filter_iwf_connectors",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"eval(postman.getGlobalVariable(\"_f5_workflow_functions\"));",
+									"",
+									"var find_all_connectors_uuids = function(resp) {",
+									"    var iwf_connector_uuids = [];",
+									"    var filter = environment.filter_iwf_connectors;",
+									"    if(typeof filter === \"string\") {",
+									"        filter = filter.split(',');",
+									"    }",
+									"    if (typeof filter !== 'undefined') {",
+									"        resp.items.forEach(function(item){",
+									"            this.item = item;",
+									"            var self = this;",
+									"            filter.forEach(function(filter){",
+									"                if(self.item.name === filter){",
+									"                    iwf_connector_uuids.push(self.item.connectorId);",
+									"                }",
+									"            });",
+									"        });",
+									"    }",
+									"    return iwf_connector_uuids;",
+									"};",
+									"",
+									"environment.iwf_connector_uuids = undefined;",
+									"",
+									"var populate_vars = [",
+									"        {",
+									"            name:\"iwf_connector_uuid\",",
+									"            value:find_all_connectors_uuids",
+									"        }",
+									"    ];",
+									"    ",
+									"f5_populate_env_vars(populate_vars);",
+									"",
+									"if (typeof environment.iwf_connector_uuids === 'undefined' || !environment.iwf_connector_uuids){",
+									"    for (test in tests){",
+									"        tests[test] = true;",
+									"    }",
+									"    postman.setNextRequest(null);",
+									"}"
+								]
+							}
+						}
+					],
+					"request": {
+						"url": "https://{{iwf_mgmt}}/mgmt/cm/cloud/connectors/local",
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							},
+							{
+								"key": "X-F5-Auth-Token",
+								"value": "{{iwf_token}}",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Authenticate and Obtain Token for tenant",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"eval(postman.getGlobalVariable(\"_f5_workflow_functions\"));",
+									"",
+									"var populate_vars = [",
+									"        {name:\"iwf_token\", value:\"token.token\"}",
+									"    ];",
+									"    ",
+									"f5_populate_env_vars(populate_vars);",
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"url": " https://{{iwf_mgmt}}/mgmt/shared/authn/login",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"username\": {{iwf_tenant_username}},\n  \"password\": {{iwf_tenant_password}},\n  \"loginProvidername\":\"tmos\"\n}\n"
+						},
+						"description": "Perform authentication and populate the variable iwf_token"
+					},
+					"response": []
+				},
+				{
 					"name": "Deploy example-f5-http-lb Service",
 					"event": [
 						{
@@ -529,18 +679,25 @@
 						"url": "https://echo.getpostman.com/delay/10",
 						"method": "GET",
 						"header": [],
-						"body": {},
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
 						"description": "Using this endpoint one can configure how long it takes for the server to come back with a response. Appending a number to the URL defines the time (in seconds) the server will wait before responding.\n\nNote that a maximum delay of 10 seconds is accepted by the server."
 					},
 					"response": [
 						{
-							"id": "5545090b-5578-410e-9a8f-8fc0577504a7",
+							"id": "20e4cf6d-23af-4cd6-83e1-8017c23f808b",
 							"name": "sample delay response",
 							"originalRequest": {
 								"url": "https://echo.getpostman.com/delay/1",
 								"method": "GET",
 								"header": [],
-								"body": {}
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"description": ""
 							},
 							"status": "OK",
 							"code": 200,
@@ -622,7 +779,7 @@
 							],
 							"cookie": [
 								{
-									"expires": "Fri Apr 15 2016 20:14:58 GMT+0900 (JST)",
+									"expires": "Invalid Date",
 									"hostOnly": false,
 									"httpOnly": false,
 									"domain": ".getpostman.com",
@@ -633,7 +790,7 @@
 									"key": "getpostmanlogin"
 								},
 								{
-									"expires": "Fri Apr 15 2016 20:14:58 GMT+0900 (JST)",
+									"expires": "Invalid Date",
 									"hostOnly": false,
 									"httpOnly": false,
 									"domain": ".getpostman.com",
@@ -644,7 +801,7 @@
 									"key": "postman.sid"
 								},
 								{
-									"expires": "Sat Mar 31 2018 20:16:21 GMT+0900 (JST)",
+									"expires": "Invalid Date",
 									"hostOnly": false,
 									"httpOnly": false,
 									"domain": ".echo.getpostman.com",
@@ -942,6 +1099,1274 @@
 						"body": {
 							"mode": "raw",
 							"raw": "\n    {\n      \"name\": \"example-f5-https-waf-lb\",\n      \"tenantTemplateReference\": {\n        \"link\": \"https://localhost/mgmt/cm/cloud/tenant/templates/iapp/f5-https-waf-lb\"\n      },\n  \"vars\": [\n    {},\n    {\n      \"name\": \"pool__addr\",\n      \"value\": \"{{appsvcs_vip_addr}}\"\n    },\n    {\n      \"name\": \"pool__port\",\n      \"value\": \"{{appsvcs_vip_port}}\"\n    },\n    {},\n    {\n      \"name\": \"vs__ProfileClientSSLCert\",\n      \"value\": \"/Common/default.crt\"\n    },\n    {\n      \"name\": \"vs__ProfileClientSSLKey\",\n      \"value\": \"/Common/default.key\"\n    }\n  ],\n  \"tables\": [\n    {\n      \"name\": \"pool__Pools\",\n      \"columns\": [\n        \"Index\",\n        \"LbMethod\",\n        \"Monitor\"\n      ],\n      \"rows\": [\n        [\n          \"0\",\n          \"round-robin\",\n          \"0\"\n        ]\n      ]\n    },\n    {\n      \"name\": \"monitor__Monitors\",\n      \"columns\": [\n        \"Index\",\n        \"Name\"\n      ],\n      \"rows\": [\n        [\n          \"0\",\n          \"/Common/http\"\n        ]\n      ]\n    },\n    {\n      \"name\": \"l7policy__rulesMatch\",\n      \"columns\": [\n        \"Group\",\n        \"Operand\",\n        \"Condition\",\n        \"Value\"\n      ],\n      \"rows\": [\n        [\n          \"0\",\n          \"http-uri/request/path\",\n          \"starts-with\",\n          \"/\"\n        ],\n        [\n          \"default\",\n          \"\",\n          \"\",\n          \"\"\n        ]\n      ]\n    },\n    {\n      \"name\": \"l7policy__rulesAction\",\n      \"columns\": [\n        \"Group\",\n        \"Target\",\n        \"Parameter\"\n      ],\n      \"rows\": [\n        [\n          \"0\",\n          \"asm/request/enable/policy\",\n          \"/Common/my_demo_policy\"\n        ],\n        [\n          \"0\",\n          \"forward/request/select/pool\",\n          \"pool:0\"\n        ],\n        [\n          \"default\",\n          \"forward/request/reset\",\n          \"\"\n        ]\n      ]\n    },\n    {\n      \"name\": \"pool__Members\",\n      \"columns\": [\n        \"Index\",\n        \"IPAddress\",\n        \"Port\",\n        \"State\"\n      ],\n      \"rows\": [\n        [\n          \"0\",\n          \"{{appsvcs_member1_addr}}\",\n          \"{{appsvcs_member1_port}}\",\n          \"enabled\"\n        ],\n        [\n          \"0\",\n          \"{{appsvcs_member2_addr}}\",\n          \"{{appsvcs_member2_port}}\",\n          \"enabled\"\n        ]\n      ]\n    }\n  ],\n      \"properties\": [\n        {\n          \"id\": \"cloudConnectorReference\",\n          \"isRequired\": false,\n          \"value\": \"https://localhost/mgmt/cm/cloud/connectors/local/{{iwf_connector_uuid}}\"\n        }\n      ]\n    }"
+						},
+						"description": ""
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "5A_Deployment_Automation",
+			"description": "",
+			"item": [
+				{
+					"name": "Authenticate and Obtain Token for tenant",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"eval(postman.getGlobalVariable(\"_f5_workflow_functions\"));",
+									"",
+									"var populate_vars = [",
+									"        {name:\"iwf_token_tenant_user\", value:\"token.token\"}",
+									"    ];",
+									"    ",
+									"f5_populate_env_vars(populate_vars);",
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"url": " https://{{iwf_mgmt}}/mgmt/shared/authn/login",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"username\": {{iwf_tenant_username}},\n  \"password\": {{iwf_tenant_password}},\n  \"loginProvidername\":\"tmos\"\n}\n"
+						},
+						"description": "Perform authentication and populate the variable iwf_token"
+					},
+					"response": []
+				},
+				{
+					"name": "Deploy example-f5-http-lb Service",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"eval(postman.getGlobalVariable(\"_f5_workflow_functions\"));",
+									"",
+									"var check_vals = [",
+									"        {",
+									"            path:\"name\",",
+									"            value:\"example-f5-http-lb\"",
+									"        }",
+									"    ];",
+									"",
+									"var populate_vars = [",
+									"        {",
+									"            name:\"iapp_instance_name\",",
+									"            value:\"name\"",
+									"        }",
+									"    ];",
+									"    ",
+									"f5_check_response(check_vals);",
+									"",
+									"f5_populate_env_vars(populate_vars);"
+								]
+							}
+						}
+					],
+					"request": {
+						"url": "https://{{iwf_mgmt}}/mgmt/cm/cloud/tenants/{{iwf_tenant_name}}/services/iapp",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							},
+							{
+								"key": "X-F5-Auth-Token",
+								"value": "{{iwf_token_tenant_user}}",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"example-f5-http-lb\",\n  \"tenantTemplateReference\": {\n    \"link\": \"https://localhost/mgmt/cm/cloud/tenant/templates/iapp/f5-http-lb\"\n  },\n  \"vars\": [\n    {\n      \"name\": \"pool__addr\",\n      \"value\": \"{{appsvcs_vip_addr}}\"\n    },\n    {\n      \"name\": \"pool__port\",\n      \"value\": \"{{appsvcs_vip_port}}\"\n    }\n  ],\n  \"tables\": [\n    {\n      \"name\": \"pool__Members\",\n      \"columns\": [\n        \"IPAddress\",\n        \"State\"\n      ],\n      \"rows\": [\n        [\n          \"{{appsvcs_member1_addr}}\",\n          \"enabled\"\n        ],\n        [\n          \"{{appsvcs_member2_addr}}\",\n          \"enabled\"\n        ]\n      ]\n    }\n  ],\n  \"properties\": [\n    {\n      \"id\": \"cloudConnectorReference\",\n      \"value\": \"https://localhost/mgmt/cm/cloud/connectors/local/{{iwf_connector_uuid}}\"\n    }\n  ]\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Get Service placement",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"eval(postman.getGlobalVariable(\"_f5_workflow_functions\"));",
+									"",
+									"f5_enable_poller();",
+									"",
+									"var check_placement = function (json){",
+									"    if (json.entries['health.placement']) {",
+									"        return json.entries['health.placement'].value === 1;",
+									"    }else {",
+									"        return false;",
+									"    }",
+									"};",
+									"",
+									"var check_vals = [",
+									"        {",
+									"            \"path\":\"entries['health.placement'].value\",",
+									"            \"value\":check_placement",
+									"        }",
+									"    ];",
+									"    ",
+									"f5_check_response(check_vals);",
+									"f5_poll_until_all_tests_pass(\"\");",
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"url": "https://{{iwf_mgmt}}/mgmt/cm/cloud/tenants/{{iwf_tenant_name}}/services/iapp/{{iapp_instance_name}}/stats",
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							},
+							{
+								"key": "X-F5-Auth-Token",
+								"value": "{{iwf_token_tenant_user}}",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"description": "Wait for attribute state to be ACTIVE"
+					},
+					"response": []
+				},
+				{
+					"name": "_F5_POLL_DELAY",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"eval(postman.getGlobalVariable(\"_f5_workflow_functions\"));",
+									"f5_poll_next();",
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"url": "{{_f5_poll_apiurl}}/{{_f5_poll_wait}}",
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"description": ""
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "5B_Deployment_Automation",
+			"description": "",
+			"item": [
+				{
+					"name": "Authenticate and Obtain Token for tenant",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"eval(postman.getGlobalVariable(\"_f5_workflow_functions\"));",
+									"",
+									"var populate_vars = [",
+									"        {name:\"iwf_token_tenant_user\", value:\"token.token\"}",
+									"    ];",
+									"    ",
+									"f5_populate_env_vars(populate_vars);",
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"url": " https://{{iwf_mgmt}}/mgmt/shared/authn/login",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"username\": {{iwf_tenant_username}},\n  \"password\": {{iwf_tenant_password}},\n  \"loginProvidername\":\"tmos\"\n}\n"
+						},
+						"description": "Perform authentication and populate the variable iwf_token"
+					},
+					"response": []
+				},
+				{
+					"name": "Deploy example-f5-https-offload Service",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"eval(postman.getGlobalVariable(\"_f5_workflow_functions\"));",
+									"",
+									"var check_vals = [",
+									"        {",
+									"            \"path\":\"name\",",
+									"            \"value\":\"example-f5-https-offload\"",
+									"        }",
+									"    ];",
+									"",
+									"var populate_vars = [",
+									"        {",
+									"            name:\"iapp_instance_name\",",
+									"            value:\"name\"",
+									"        }",
+									"    ];",
+									"    ",
+									"f5_check_response(check_vals);",
+									"",
+									"f5_populate_env_vars(populate_vars);"
+								]
+							}
+						}
+					],
+					"request": {
+						"url": "https://{{iwf_mgmt}}/mgmt/cm/cloud/tenants/{{iwf_tenant_name}}/services/iapp",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							},
+							{
+								"key": "X-F5-Auth-Token",
+								"value": "{{iwf_token_tenant_user}}",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"example-f5-https-offload\",\n  \"tenantTemplateReference\": {\n    \"link\": \"https://localhost/mgmt/cm/cloud/tenant/templates/iapp/f5-https-offload\"\n  },\n  \"properties\": [\n    {\n      \"id\": \"cloudConnectorReference\",\n      \"value\": \"https://localhost/mgmt/cm/cloud/connectors/local/{{iwf_connector_uuid}}\"\n    }\n  ],\n  \"tables\": [\n    {\n      \"name\": \"pool__Members\",\n      \"columns\": [\n        \"IPAddress\",\n        \"State\"\n      ],\n      \"rows\": [\n        [\n          \"{{appsvcs_member1_addr}}\",\n          \"enabled\"\n        ],\n        [\n          \"{{appsvcs_member2_addr}}\",\n          \"enabled\"\n        ]\n      ]\n    }\n  ],\n  \"vars\": [\n    {\n      \"name\": \"pool__addr\",\n      \"value\": \"{{appsvcs_vip_addr}}\"\n    },\n    {\n      \"name\": \"pool__port\",\n      \"value\": \"{{appsvcs_vip_port}}\"\n    },\n    {\n      \"name\": \"vs__ProfileClientSSLCert\",\n      \"value\": \"/Common/default.crt\"\n    },\n    {\n      \"name\": \"vs__ProfileClientSSLKey\",\n      \"value\": \"/Common/default.key\"\n    }\n  ]\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Get Service placement",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"eval(postman.getGlobalVariable(\"_f5_workflow_functions\"));",
+									"",
+									"f5_enable_poller();",
+									"",
+									"var check_placement = function (json){",
+									"    if (json.entries['health.placement']) {",
+									"        return json.entries['health.placement'].value === 1;",
+									"    }else {",
+									"        return false;",
+									"    }",
+									"};",
+									"",
+									"var check_vals = [",
+									"        {",
+									"            \"path\":\"entries['health.placement'].value\",",
+									"            \"value\":check_placement",
+									"        }",
+									"    ];",
+									"    ",
+									"f5_check_response(check_vals);",
+									"f5_poll_until_all_tests_pass(\"\");"
+								]
+							}
+						}
+					],
+					"request": {
+						"url": "https://{{iwf_mgmt}}/mgmt/cm/cloud/tenants/{{iwf_tenant_name}}/services/iapp/{{iapp_instance_name}}/stats",
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							},
+							{
+								"key": "X-F5-Auth-Token",
+								"value": "{{iwf_token_tenant_user}}",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"description": "Wait for attribute state to be ACTIVE"
+					},
+					"response": []
+				},
+				{
+					"name": "_F5_POLL_DELAY",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"eval(postman.getGlobalVariable(\"_f5_workflow_functions\"));",
+									"f5_poll_next();",
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"url": "{{_f5_poll_apiurl}}/{{_f5_poll_wait}}",
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"description": ""
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "5C_Deployment_Automation",
+			"description": "",
+			"item": [
+				{
+					"name": "Authenticate and Obtain Token for tenant",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"eval(postman.getGlobalVariable(\"_f5_workflow_functions\"));",
+									"",
+									"var populate_vars = [",
+									"        {name:\"iwf_token_tenant_user\", value:\"token.token\"}",
+									"    ];",
+									"    ",
+									"f5_populate_env_vars(populate_vars);",
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"url": " https://{{iwf_mgmt}}/mgmt/shared/authn/login",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"username\": {{iwf_tenant_username}},\n  \"password\": {{iwf_tenant_password}},\n  \"loginProvidername\":\"tmos\"\n}\n"
+						},
+						"description": "Perform authentication and populate the variable iwf_token"
+					},
+					"response": []
+				},
+				{
+					"name": "Deploy example-f5-fastl4-tcp-lb Service",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"eval(postman.getGlobalVariable(\"_f5_workflow_functions\"));",
+									"",
+									"var check_vals = [",
+									"        {",
+									"            \"path\":\"name\",",
+									"            \"value\":\"example-f5-fastl4-tcp-lb\"",
+									"        }",
+									"    ];",
+									"",
+									"var populate_vars = [",
+									"        {",
+									"            name:\"iapp_instance_name\",",
+									"            value:\"name\"",
+									"        }",
+									"    ];",
+									"    ",
+									"f5_check_response(check_vals);",
+									"",
+									"f5_populate_env_vars(populate_vars);"
+								]
+							}
+						}
+					],
+					"request": {
+						"url": "https://{{iwf_mgmt}}/mgmt/cm/cloud/tenants/{{iwf_tenant_name}}/services/iapp",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							},
+							{
+								"key": "X-F5-Auth-Token",
+								"value": "{{iwf_token_tenant_user}}",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"example-f5-fastl4-tcp-lb\",\n  \"tenantTemplateReference\": {\n    \"link\": \"https://localhost/mgmt/cm/cloud/tenant/templates/iapp/f5-fastl4-tcp-lb\"\n  },\n  \"properties\": [\n    {\n      \"id\": \"cloudConnectorReference\",\n      \"value\": \"https://localhost/mgmt/cm/cloud/connectors/local/{{iwf_connector_uuid}}\"\n    }\n  ],  \n  \"vars\": [\n    {\n      \"name\": \"pool__addr\",\n      \"value\": \"{{appsvcs_vip_addr}}\"\n    },\n    {\n      \"name\": \"pool__port\",\n      \"value\": \"{{appsvcs_vip_port}}\"\n    }\n  ],\n  \"tables\": [\n    {\n      \"name\": \"pool__Pools\",\n      \"columns\": [\n        \"LbMethod\"\n      ],\n      \"rows\": [\n        [\n          \"round-robin\"\n        ]\n      ]\n    },\n    {\n      \"name\": \"monitor__Monitors\",\n      \"columns\": [\n        \"Name\"\n      ],\n      \"rows\": [\n        [\n          \"/Common/tcp\"\n        ]\n      ]\n    },\n    {\n      \"name\": \"pool__Members\",\n      \"columns\": [\n        \"IPAddress\",\n        \"Port\",\n        \"State\"\n      ],\n      \"rows\": [\n        [\n          \"{{appsvcs_member1_addr}}\",\n          \"{{appsvcs_member1_port}}\",\n          \"enabled\"\n        ],\n        [\n          \"{{appsvcs_member2_addr}}\",\n          \"{{appsvcs_member2_port}}\",\n          \"enabled\"\n        ]\n      ]\n    }\n  ]\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Get Service placement",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"eval(postman.getGlobalVariable(\"_f5_workflow_functions\"));",
+									"",
+									"f5_enable_poller();",
+									"",
+									"var check_placement = function (json){",
+									"    if (json.entries['health.placement']) {",
+									"        return json.entries['health.placement'].value === 1;",
+									"    }else {",
+									"        return false;",
+									"    }",
+									"};",
+									"",
+									"var check_vals = [",
+									"        {",
+									"            \"path\":\"entries['health.placement'].value\",",
+									"            \"value\":check_placement",
+									"        }",
+									"    ];",
+									"    ",
+									"f5_check_response(check_vals);",
+									"f5_poll_until_all_tests_pass(\"\");"
+								]
+							}
+						}
+					],
+					"request": {
+						"url": "https://{{iwf_mgmt}}/mgmt/cm/cloud/tenants/{{iwf_tenant_name}}/services/iapp/{{iapp_instance_name}}/stats",
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							},
+							{
+								"key": "X-F5-Auth-Token",
+								"value": "{{iwf_token_tenant_user}}",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"description": "Wait for attribute state to be ACTIVE"
+					},
+					"response": []
+				},
+				{
+					"name": "_F5_POLL_DELAY",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"eval(postman.getGlobalVariable(\"_f5_workflow_functions\"));",
+									"f5_poll_next();",
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"url": "{{_f5_poll_apiurl}}/{{_f5_poll_wait}}",
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"description": ""
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "5D_Deployment_Automation",
+			"description": "",
+			"item": [
+				{
+					"name": "Authenticate and Obtain Token for tenant",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"eval(postman.getGlobalVariable(\"_f5_workflow_functions\"));",
+									"",
+									"var populate_vars = [",
+									"        {name:\"iwf_token_tenant_user\", value:\"token.token\"}",
+									"    ];",
+									"    ",
+									"f5_populate_env_vars(populate_vars);",
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"url": " https://{{iwf_mgmt}}/mgmt/shared/authn/login",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"username\": {{iwf_tenant_username}},\n  \"password\": {{iwf_tenant_password}},\n  \"loginProvidername\":\"tmos\"\n}\n"
+						},
+						"description": "Perform authentication and populate the variable iwf_token"
+					},
+					"response": []
+				},
+				{
+					"name": "Deploy example-f5-fastl4-udp-lb Service",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"eval(postman.getGlobalVariable(\"_f5_workflow_functions\"));",
+									"",
+									"var check_vals = [",
+									"        {",
+									"            \"path\":\"name\",",
+									"            \"value\":\"example-f5-fastl4-udp-lb\"",
+									"        }",
+									"    ];",
+									"",
+									"var populate_vars = [",
+									"        {",
+									"            name:\"iapp_instance_name\",",
+									"            value:\"name\"",
+									"        }",
+									"    ];",
+									"    ",
+									"f5_check_response(check_vals);",
+									"",
+									"f5_populate_env_vars(populate_vars);"
+								]
+							}
+						}
+					],
+					"request": {
+						"url": "https://{{iwf_mgmt}}/mgmt/cm/cloud/tenants/{{iwf_tenant_name}}/services/iapp",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							},
+							{
+								"key": "X-F5-Auth-Token",
+								"value": "{{iwf_token_tenant_user}}",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"example-f5-fastl4-udp-lb\",\n  \"tenantTemplateReference\": {\n    \"link\": \"https://localhost/mgmt/cm/cloud/tenant/templates/iapp/f5-fastl4-udp-lb\"\n  },\n  \"properties\": [\n    {\n      \"id\": \"cloudConnectorReference\",\n      \"value\": \"https://localhost/mgmt/cm/cloud/connectors/local/{{iwf_connector_uuid}}\"\n    }\n  ],  \n  \"vars\": [\n    {\n      \"name\": \"pool__addr\",\n      \"value\": \"{{appsvcs_vip_addr}}\"\n    },\n    {\n      \"name\": \"pool__port\",\n      \"value\": \"{{appsvcs_vip_port}}\"\n    }\n  ],\n  \"tables\": [\n    {\n      \"name\": \"pool__Pools\",\n      \"columns\": [\n        \"LbMethod\"\n      ],\n      \"rows\": [\n        [\n          \"round-robin\"\n        ]\n      ]\n    },\n    {\n      \"name\": \"monitor__Monitors\",\n      \"columns\": [\n        \"Name\"\n      ],\n      \"rows\": [\n        [\n          \"/Common/udp\"\n        ]\n      ]\n    },\n    {\n      \"name\": \"pool__Members\",\n      \"columns\": [\n        \"IPAddress\",\n        \"Port\",\n        \"State\"\n      ],\n      \"rows\": [\n        [\n          \"{{appsvcs_member1_addr}}\",\n          \"{{appsvcs_member1_port}}\",\n          \"enabled\"\n        ],\n        [\n          \"{{appsvcs_member2_addr}}\",\n          \"{{appsvcs_member2_port}}\",\n          \"enabled\"\n        ]\n      ]\n    }\n  ]\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Get Service placement",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"eval(postman.getGlobalVariable(\"_f5_workflow_functions\"));",
+									"",
+									"f5_enable_poller();",
+									"",
+									"var check_placement = function (json){",
+									"    if (json.entries['health.placement']) {",
+									"        return json.entries['health.placement'].value === 1;",
+									"    }else {",
+									"        return false;",
+									"    }",
+									"};",
+									"",
+									"var check_vals = [",
+									"        {",
+									"            \"path\":\"entries['health.placement'].value\",",
+									"            \"value\":check_placement",
+									"        }",
+									"    ];",
+									"    ",
+									"f5_check_response(check_vals);",
+									"f5_poll_until_all_tests_pass(\"\");"
+								]
+							}
+						}
+					],
+					"request": {
+						"url": "https://{{iwf_mgmt}}/mgmt/cm/cloud/tenants/{{iwf_tenant_name}}/services/iapp/{{iapp_instance_name}}/stats",
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							},
+							{
+								"key": "X-F5-Auth-Token",
+								"value": "{{iwf_token_tenant_user}}",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"description": "Wait for attribute state to be ACTIVE"
+					},
+					"response": []
+				},
+				{
+					"name": "_F5_POLL_DELAY",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"eval(postman.getGlobalVariable(\"_f5_workflow_functions\"));",
+									"f5_poll_next();",
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"url": "{{_f5_poll_apiurl}}/{{_f5_poll_wait}}",
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"description": ""
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "5E_Deployment_Automation",
+			"description": "",
+			"item": [
+				{
+					"name": "Authenticate and Obtain Token for tenant",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"eval(postman.getGlobalVariable(\"_f5_workflow_functions\"));",
+									"",
+									"var populate_vars = [",
+									"        {name:\"iwf_token_tenant_user\", value:\"token.token\"}",
+									"    ];",
+									"    ",
+									"f5_populate_env_vars(populate_vars);",
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"url": " https://{{iwf_mgmt}}/mgmt/shared/authn/login",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"username\": {{iwf_tenant_username}},\n  \"password\": {{iwf_tenant_password}},\n  \"loginProvidername\":\"tmos\"\n}\n"
+						},
+						"description": "Perform authentication and populate the variable iwf_token"
+					},
+					"response": []
+				},
+				{
+					"name": "Deploy example-f5-fasthttp-lb Service",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"eval(postman.getGlobalVariable(\"_f5_workflow_functions\"));",
+									"",
+									"var check_vals = [",
+									"        {",
+									"            \"path\":\"name\",",
+									"            \"value\":\"example-f5-fasthttp-lb\"",
+									"        }",
+									"    ];",
+									"",
+									"var populate_vars = [",
+									"        {",
+									"            name:\"iapp_instance_name\",",
+									"            value:\"name\"",
+									"        }",
+									"    ];",
+									"    ",
+									"f5_check_response(check_vals);",
+									"",
+									"f5_populate_env_vars(populate_vars);"
+								]
+							}
+						}
+					],
+					"request": {
+						"url": "https://{{iwf_mgmt}}/mgmt/cm/cloud/tenants/{{iwf_tenant_name}}/services/iapp",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							},
+							{
+								"key": "X-F5-Auth-Token",
+								"value": "{{iwf_token_tenant_user}}",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"example-f5-fasthttp-lb\",\n  \"tenantTemplateReference\": {\n    \"link\": \"https://localhost/mgmt/cm/cloud/tenant/templates/iapp/f5-fasthttp-lb\"\n  },\n  \"vars\": [\n    {\n      \"name\": \"pool__addr\",\n      \"value\": \"{{appsvcs_vip_addr}}\"\n    },\n    {\n      \"name\": \"pool__port\",\n      \"value\": \"{{appsvcs_vip_port}}\"\n    }\n  ],\n  \"tables\": [\n    {\n      \"name\": \"pool__Members\",\n      \"columns\": [\n        \"IPAddress\",\n        \"State\"\n      ],\n      \"rows\": [\n        [\n          \"{{appsvcs_member1_addr}}\",\n          \"enabled\"\n        ],\n        [\n          \"{{appsvcs_member2_addr}}\",\n          \"enabled\"\n        ]\n      ]\n    }\n  ],\n  \"properties\": [\n    {\n      \"id\": \"cloudConnectorReference\",\n      \"value\": \"https://localhost/mgmt/cm/cloud/connectors/local/{{iwf_connector_uuid}}\"\n    }\n  ]\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Get Service placement",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"eval(postman.getGlobalVariable(\"_f5_workflow_functions\"));",
+									"",
+									"f5_enable_poller();",
+									"",
+									"var check_placement = function (json){",
+									"    if (json.entries['health.placement']) {",
+									"        return json.entries['health.placement'].value === 1;",
+									"    }else {",
+									"        return false;",
+									"    }",
+									"};",
+									"",
+									"var check_vals = [",
+									"        {",
+									"            \"path\":\"entries['health.placement'].value\",",
+									"            \"value\":check_placement",
+									"        }",
+									"    ];",
+									"    ",
+									"f5_check_response(check_vals);",
+									"f5_poll_until_all_tests_pass(\"\");"
+								]
+							}
+						}
+					],
+					"request": {
+						"url": "https://{{iwf_mgmt}}/mgmt/cm/cloud/tenants/{{iwf_tenant_name}}/services/iapp/{{iapp_instance_name}}/stats",
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							},
+							{
+								"key": "X-F5-Auth-Token",
+								"value": "{{iwf_token_tenant_user}}",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"description": "Wait for attribute state to be ACTIVE"
+					},
+					"response": []
+				},
+				{
+					"name": "_F5_POLL_DELAY",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"eval(postman.getGlobalVariable(\"_f5_workflow_functions\"));",
+									"f5_poll_next();",
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"url": "{{_f5_poll_apiurl}}/{{_f5_poll_wait}}",
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"description": ""
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "5F_Deployment_Automation",
+			"description": "",
+			"item": [
+				{
+					"name": "Authenticate and Obtain Token for tenant",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"eval(postman.getGlobalVariable(\"_f5_workflow_functions\"));",
+									"",
+									"var populate_vars = [",
+									"        {name:\"iwf_token_tenant_user\", value:\"token.token\"}",
+									"    ];",
+									"    ",
+									"f5_populate_env_vars(populate_vars);",
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"url": " https://{{iwf_mgmt}}/mgmt/shared/authn/login",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"username\": {{iwf_tenant_username}},\n  \"password\": {{iwf_tenant_password}},\n  \"loginProvidername\":\"tmos\"\n}\n"
+						},
+						"description": "Perform authentication and populate the variable iwf_token"
+					},
+					"response": []
+				},
+				{
+					"name": "Deploy example-f5-http-url-routing-lb Service",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"eval(postman.getGlobalVariable(\"_f5_workflow_functions\"));",
+									"",
+									"var check_vals = [",
+									"        {",
+									"            \"path\":\"name\",",
+									"            \"value\":\"example-f5-http-url-routing-lb\"",
+									"        }",
+									"    ];",
+									"",
+									"var populate_vars = [",
+									"        {",
+									"            name:\"iapp_instance_name\",",
+									"            value:\"name\"",
+									"        }",
+									"    ];",
+									"    ",
+									"f5_check_response(check_vals);",
+									"",
+									"f5_populate_env_vars(populate_vars);"
+								]
+							}
+						}
+					],
+					"request": {
+						"url": "https://{{iwf_mgmt}}/mgmt/cm/cloud/tenants/{{iwf_tenant_name}}/services/iapp",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							},
+							{
+								"key": "X-F5-Auth-Token",
+								"value": "{{iwf_token_tenant_user}}",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"example-f5-http-url-routing-lb\",\n  \"tenantTemplateReference\": {\n    \"link\": \"https://localhost/mgmt/cm/cloud/tenant/templates/iapp/f5-http-url-routing-lb\"\n  },\n  \"vars\": [\n    {\n      \"name\": \"pool__addr\",\n      \"value\": \"{{appsvcs_vip_addr}}\"\n    },\n    {\n      \"name\": \"pool__port\",\n      \"value\": \"{{appsvcs_vip_port}}\"\n    }\n  ],\n  \"tables\": [\n    {\n      \"name\": \"pool__Pools\",\n      \"columns\": [\n        \"Index\",\n        \"LbMethod\",\n        \"Monitor\"\n      ],\n      \"rows\": [\n        [\n          \"0\",\n          \"round-robin\",\n          \"0\"\n        ],\n        [\n          \"1\",\n          \"round-robin\",\n          \"0\"\n        ]\n      ]\n    },\n    {\n      \"name\": \"monitor__Monitors\",\n      \"columns\": [\n        \"Index\",\n        \"Name\"\n      ],\n      \"rows\": [\n        [\n          \"0\",\n          \"\\/Common\\/http\"\n        ]\n      ]\n    },\n    {\n      \"name\": \"l7policy__rulesMatch\",\n      \"columns\": [\n        \"Group\",\n        \"Operand\",\n        \"Condition\",\n        \"Value\"\n      ],\n      \"rows\": [\n        [\n          \"0\",\n          \"http-uri\\/request\\/path\",\n          \"starts-with\",\n          \"\\/a\"\n        ],\n        [\n          \"1\",\n          \"http-uri\\/request\\/path\",\n          \"starts-with\",\n          \"\\/b\"\n        ],\n        [\n          \"default\",\n          \"\",\n          \"\",\n          \"\"\n        ]\n      ]\n    },\n    {\n      \"name\": \"l7policy__rulesAction\",\n      \"columns\": [\n        \"Group\",\n        \"Target\",\n        \"Parameter\"\n      ],\n      \"rows\": [\n        [\n          \"0\",\n          \"forward\\/request\\/select\\/pool\",\n          \"pool:0\"\n        ],\n        [\n          \"1\",\n          \"forward\\/request\\/select\\/pool\",\n          \"pool:1\"\n        ],\n        [\n          \"default\",\n          \"forward\\/request\\/reset\",\n          \"none\"\n        ]\n      ]\n    },\n    {\n      \"name\": \"pool__Members\",\n      \"columns\": [\n        \"Index\",\n        \"IPAddress\",\n        \"Port\",\n        \"State\"\n      ],\n      \"rows\": [\n        [\n          \"0\",\n          \"{{appsvcs_member1_addr}}\",\n          \"{{appsvcs_member1_port}}\",\n          \"enabled\"\n        ],\n        [\n          \"0\",\n          \"{{appsvcs_member2_addr}}\",\n          \"{{appsvcs_member2_port}}\",\n          \"enabled\"\n        ]\n      ]\n    }\n  ],\n  \"properties\": [\n    {\n      \"id\": \"cloudConnectorReference\",\n      \"isRequired\": false,\n      \"value\": \"https:\\/\\/localhost\\/mgmt\\/cm\\/cloud\\/connectors\\/local\\/{{iwf_connector_uuid}}\"\n    }\n  ]\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Get Service placement",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"eval(postman.getGlobalVariable(\"_f5_workflow_functions\"));",
+									"",
+									"f5_enable_poller();",
+									"",
+									"var check_placement = function (json){",
+									"    if (json.entries['health.placement']) {",
+									"        return json.entries['health.placement'].value === 1;",
+									"    }else {",
+									"        return false;",
+									"    }",
+									"};",
+									"",
+									"var check_vals = [",
+									"        {",
+									"            \"path\":\"entries['health.placement'].value\",",
+									"            \"value\":check_placement",
+									"        }",
+									"    ];",
+									"    ",
+									"f5_check_response(check_vals);",
+									"f5_poll_until_all_tests_pass(\"\");"
+								]
+							}
+						}
+					],
+					"request": {
+						"url": "https://{{iwf_mgmt}}/mgmt/cm/cloud/tenants/{{iwf_tenant_name}}/services/iapp/{{iapp_instance_name}}/stats",
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							},
+							{
+								"key": "X-F5-Auth-Token",
+								"value": "{{iwf_token_tenant_user}}",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"description": "Wait for attribute state to be ACTIVE"
+					},
+					"response": []
+				},
+				{
+					"name": "_F5_POLL_DELAY",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"eval(postman.getGlobalVariable(\"_f5_workflow_functions\"));",
+									"f5_poll_next();",
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"url": "{{_f5_poll_apiurl}}/{{_f5_poll_wait}}",
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"description": ""
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "5G_Deployment_Automation",
+			"description": "",
+			"item": [
+				{
+					"name": "Authenticate and Obtain Token for tenant",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"eval(postman.getGlobalVariable(\"_f5_workflow_functions\"));",
+									"",
+									"var populate_vars = [",
+									"        {name:\"iwf_token_tenant_user\", value:\"token.token\"}",
+									"    ];",
+									"    ",
+									"f5_populate_env_vars(populate_vars);",
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"url": " https://{{iwf_mgmt}}/mgmt/shared/authn/login",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"username\": {{iwf_tenant_username}},\n  \"password\": {{iwf_tenant_password}},\n  \"loginProvidername\":\"tmos\"\n}\n"
+						},
+						"description": "Perform authentication and populate the variable iwf_token"
+					},
+					"response": []
+				},
+				{
+					"name": "Deploy example-f5-https-waf-lb Service",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"eval(postman.getGlobalVariable(\"_f5_workflow_functions\"));",
+									"",
+									"var check_vals = [",
+									"        {",
+									"            \"path\":\"name\",",
+									"            \"value\":\"example-f5-https-waf-lb\"",
+									"        }",
+									"    ];",
+									"",
+									"var populate_vars = [",
+									"        {",
+									"            name:\"iapp_instance_name\",",
+									"            value:\"name\"",
+									"        }",
+									"    ];",
+									"    ",
+									"f5_check_response(check_vals);",
+									"",
+									"f5_populate_env_vars(populate_vars);"
+								]
+							}
+						}
+					],
+					"request": {
+						"url": "https://{{iwf_mgmt}}/mgmt/cm/cloud/tenants/{{iwf_tenant_name}}/services/iapp",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							},
+							{
+								"key": "X-F5-Auth-Token",
+								"value": "{{iwf_token_tenant_user}}",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "\n    {\n      \"name\": \"example-f5-https-waf-lb\",\n      \"tenantTemplateReference\": {\n        \"link\": \"https://localhost/mgmt/cm/cloud/tenant/templates/iapp/f5-https-waf-lb\"\n      },\n  \"vars\": [\n    {},\n    {\n      \"name\": \"pool__addr\",\n      \"value\": \"{{appsvcs_vip_addr}}\"\n    },\n    {\n      \"name\": \"pool__port\",\n      \"value\": \"{{appsvcs_vip_port}}\"\n    },\n    {},\n    {\n      \"name\": \"vs__ProfileClientSSLCert\",\n      \"value\": \"/Common/default.crt\"\n    },\n    {\n      \"name\": \"vs__ProfileClientSSLKey\",\n      \"value\": \"/Common/default.key\"\n    }\n  ],\n  \"tables\": [\n    {\n      \"name\": \"pool__Pools\",\n      \"columns\": [\n        \"Index\",\n        \"LbMethod\",\n        \"Monitor\"\n      ],\n      \"rows\": [\n        [\n          \"0\",\n          \"round-robin\",\n          \"0\"\n        ]\n      ]\n    },\n    {\n      \"name\": \"monitor__Monitors\",\n      \"columns\": [\n        \"Index\",\n        \"Name\"\n      ],\n      \"rows\": [\n        [\n          \"0\",\n          \"/Common/http\"\n        ]\n      ]\n    },\n    {\n      \"name\": \"l7policy__rulesMatch\",\n      \"columns\": [\n        \"Group\",\n        \"Operand\",\n        \"Condition\",\n        \"Value\"\n      ],\n      \"rows\": [\n        [\n          \"0\",\n          \"http-uri/request/path\",\n          \"starts-with\",\n          \"/\"\n        ],\n        [\n          \"default\",\n          \"\",\n          \"\",\n          \"\"\n        ]\n      ]\n    },\n    {\n      \"name\": \"l7policy__rulesAction\",\n      \"columns\": [\n        \"Group\",\n        \"Target\",\n        \"Parameter\"\n      ],\n      \"rows\": [\n        [\n          \"0\",\n          \"asm/request/enable/policy\",\n          \"/Common/my_demo_policy\"\n        ],\n        [\n          \"0\",\n          \"forward/request/select/pool\",\n          \"pool:0\"\n        ],\n        [\n          \"default\",\n          \"forward/request/reset\",\n          \"\"\n        ]\n      ]\n    },\n    {\n      \"name\": \"pool__Members\",\n      \"columns\": [\n        \"Index\",\n        \"IPAddress\",\n        \"Port\",\n        \"State\"\n      ],\n      \"rows\": [\n        [\n          \"0\",\n          \"{{appsvcs_member1_addr}}\",\n          \"{{appsvcs_member1_port}}\",\n          \"enabled\"\n        ],\n        [\n          \"0\",\n          \"{{appsvcs_member2_addr}}\",\n          \"{{appsvcs_member2_port}}\",\n          \"enabled\"\n        ]\n      ]\n    }\n  ],\n      \"properties\": [\n        {\n          \"id\": \"cloudConnectorReference\",\n          \"isRequired\": false,\n          \"value\": \"https://localhost/mgmt/cm/cloud/connectors/local/{{iwf_connector_uuid}}\"\n        }\n      ]\n    }"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Get Service placement",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"eval(postman.getGlobalVariable(\"_f5_workflow_functions\"));",
+									"",
+									"f5_enable_poller();",
+									"",
+									"var check_placement = function (json){",
+									"    if (json.entries['health.placement']) {",
+									"        return json.entries['health.placement'].value === 1;",
+									"    }else {",
+									"        return false;",
+									"    }",
+									"};",
+									"",
+									"var check_vals = [",
+									"        {",
+									"            \"path\":\"entries['health.placement'].value\",",
+									"            \"value\":check_placement",
+									"        }",
+									"    ];",
+									"    ",
+									"f5_check_response(check_vals);",
+									"f5_poll_until_all_tests_pass(\"\");"
+								]
+							}
+						}
+					],
+					"request": {
+						"url": "https://{{iwf_mgmt}}/mgmt/cm/cloud/tenants/{{iwf_tenant_name}}/services/iapp/{{iapp_instance_name}}/stats",
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							},
+							{
+								"key": "X-F5-Auth-Token",
+								"value": "{{iwf_token_tenant_user}}",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"description": "Wait for attribute state to be ACTIVE"
+					},
+					"response": []
+				},
+				{
+					"name": "_F5_POLL_DELAY",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"eval(postman.getGlobalVariable(\"_f5_workflow_functions\"));",
+									"f5_poll_next();",
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"url": "{{_f5_poll_apiurl}}/{{_f5_poll_wait}}",
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
 						},
 						"description": ""
 					},
