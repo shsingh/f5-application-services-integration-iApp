@@ -17,7 +17,8 @@
         "bigip_password": "admin",
         "iwf_token_timeout": "3600",
         "iwf_connector_name": "Local Connector",
-        "iwf_appsvcs_name":"appsvcs_integration_v2.0.003"
+        "iwf_appsvcs_name":"appsvcs_integration_v2.0.003",
+        "policy_name":"my_demo_policy"
     },
     "saveEnvVars":true,
     "outputFile":"iWf_clenup-run.json",
@@ -99,6 +100,27 @@
                 "collection":"../collections/iWorkflow/iWf_Operational_Workflows.postman_collection.json",
                 "folder":"8G_Special_Remove_Tenant"
             }
+        },
+        {
+            "name":"Delete ASM Policy",
+            "skip":true,
+            "children": [
+                {
+                    "name":"Authenticate to BIG-IP A",
+                    "options": {
+                        "collection":"../collections/BIG_IP/BIGIP_API_Authentication.postman_collection.json",
+                        "folder":"1_Authenticate"
+                    }
+                },
+                {
+                    "name":"Delete ASM Policy",
+                    "options": {
+                        "collection":"../collections/BIG_IP/BIGIP_Operational_Workflows.postman_collection.json",
+                        "folder":"5B_Delete_ASM_policy"
+                    }
+                }
+            ]
+
         }
     ]
 }
