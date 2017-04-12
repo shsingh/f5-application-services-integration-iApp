@@ -687,7 +687,7 @@
 					},
 					"response": [
 						{
-							"id": "32b27eff-c8d6-4c1c-b968-8cff7b196f9a",
+							"id": "49c0d455-0345-4301-85fb-d38619da593d",
 							"name": "sample delay response",
 							"originalRequest": {
 								"url": "https://echo.getpostman.com/delay/1",
@@ -2464,69 +2464,6 @@
 							"raw": ""
 						},
 						"description": "Wait for service template to change stats health.something to 1"
-					},
-					"response": []
-				},
-				{
-					"name": "Get nodes for local connector",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"type": "text/javascript",
-								"exec": [
-									"eval(postman.getGlobalVariable(\"_f5_workflow_functions\"));",
-									"",
-									"f5_enable_poller();",
-									"",
-									"var test_connector_nodes = function (json){",
-									"    var nodes = [];",
-									"    ",
-									"    for(var i=0; i<json.items.length; i++){",
-									"        nodes.push(json.items[i].ipAddress);",
-									"    }",
-									"    if(nodes.indexOf(environment.appsvcs_member1_addr) === -1){",
-									"        return false;",
-									"    }",
-									"    if(nodes.indexOf(environment.appsvcs_member2_addr) === -1){",
-									"        return false;",
-									"    }",
-									"    return true;",
-									"};",
-									"",
-									"var check_vals = [",
-									"        {",
-									"            \"path\":\"items\",",
-									"            \"value\":test_connector_nodes",
-									"        }",
-									"    ];",
-									"    ",
-									"f5_check_response(check_vals);",
-									"f5_poll_until_all_tests_pass(\"\");"
-								]
-							}
-						}
-					],
-					"request": {
-						"url": "https://{{iwf_mgmt}}/mgmt/cm/cloud/connectors/local/{{iwf_connector_uuid}}/nodes/",
-						"method": "GET",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json",
-								"description": ""
-							},
-							{
-								"key": "X-F5-Auth-Token",
-								"value": "{{iwf_token}}",
-								"description": ""
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
-						"description": ""
 					},
 					"response": []
 				},
