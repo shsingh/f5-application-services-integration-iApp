@@ -1,6 +1,6 @@
 {
-    "name":"iWf_Demo_1",
-    "description":"Create a Demo environment with an Active/Standby BIG-IP Cluster that is ready for L4-7 Service Deployment through iWorkflow",
+    "name":"iWf_test",
+    "description":"Create a Demo environment with an BIG-IP that is ready for L4-7 Service Deployment through iWorkflow",
     "globalEnvVars":"../framework/f5-postman-workflows.postman_globals.json",
     "globalOptions": {
         "insecure":true,
@@ -22,16 +22,18 @@
         "iwf_tenant_username":"tenant",
         "iwf_tenant_password":"tenant",
         "iwf_appsvcs_name":"appsvcs_integration_v2.0.003",
-        "appsvcs_vip_addr":"172.16.0.100",
-        "appsvcs_vip_port":"443",
-        "appsvcs_member1_addr":"10.0.0.100",
+        "appsvcs_vip_addr":"10.0.2.100",
+        "appsvcs_vip_port_http":"80",
+        "appsvcs_vip_port_https":"443",
+        "appsvcs_member1_addr":"10.0.1.15",
         "appsvcs_member1_port":"80",
-        "appsvcs_member2_addr":"10.0.0.101",
-        "appsvcs_member2_port":"81"
+        "appsvcs_member2_addr":"10.0.1.16",
+        "appsvcs_member2_port":"80",
+        "policy_name":"my_demo_policy"
     },
     "saveEnvVars":true,
-    "outputFile":"iWf_Demo_1-run.json",
-    "envOutputFile":"iWf_Demo_1-env.json",
+    "outputFile":"iWf_test-run.json",
+    "envOutputFile":"iWf_test-env.json",
     "workflow": [
         {
             "name":"Authenticate to BIG-IP A",
@@ -103,31 +105,23 @@
             }
         },
         {
-            "name":"Authenticate to iWorkflow Tenant",
-            "options": {
-                "collection":"../collections/iWorkflow/iWf_API_Authentication.postman_collection.json",
-                "folder":"1_Authenticate"
-            },
-            "remapPreRun": {
-                "iwf_tenant_username": "iwf_username",
-                "iwf_tenant_password": "iwf_password"
-            }
-        },
-        {
-            "name":"Import AppSvcs Service Catalog Template Examples",
-            "skip":true,
-            "options": {
-                "collection":"../../../AppSvcs_iApp_Workflows.postman_collection.json",
-                "folder":"4_iWorkflow_Deploy_Example_Services"
-            }
-        },
-        {
             "name":"Deploy f5-http-lb",
             "options": {
                 "collection":"../../../AppSvcs_iApp_Workflows.postman_collection.json",
+                "remapPreRun": {
+                    "appsvcs_vip_port_http": "appsvcs_vip_port"
+                },
                 "folder":"5A_Deployment_Automation"
             },
+
             "children": [
+                {
+                    "name":"Verify deployment",
+                    "options":{
+                        "collection":"../../../AppSvcs_iApp_Workflows.postman_collection.json",
+                        "folder":"6A_Verify_Deployment"
+                    }
+                },
                 {
                     "name":"Remove Services",
                     "options":{
@@ -141,6 +135,9 @@
             "name":"Deploy f5-https-offload",
             "options": {
                 "collection":"../../../AppSvcs_iApp_Workflows.postman_collection.json",
+                "remapPreRun": {
+                    "appsvcs_vip_port_http": "appsvcs_vip_port"
+                },
                 "folder":"5B_Deployment_Automation"
             },
             "children": [
@@ -157,6 +154,9 @@
             "name":"Deploy f5-fastl4-tcp-lb",
             "options": {
                 "collection":"../../../AppSvcs_iApp_Workflows.postman_collection.json",
+                "remapPreRun": {
+                    "appsvcs_vip_port_http": "appsvcs_vip_port"
+                },
                 "folder":"5C_Deployment_Automation"
             },
             "children": [
@@ -173,6 +173,9 @@
             "name":"Deploy f5-fastl4-udp-lb",
             "options": {
                 "collection":"../../../AppSvcs_iApp_Workflows.postman_collection.json",
+                "remapPreRun": {
+                    "appsvcs_vip_port_http": "appsvcs_vip_port"
+                },
                 "folder":"5D_Deployment_Automation"
             },
             "children": [
@@ -189,6 +192,9 @@
             "name":"Deploy f5-fasthttp-lb",
             "options": {
                 "collection":"../../../AppSvcs_iApp_Workflows.postman_collection.json",
+                "remapPreRun": {
+                    "appsvcs_vip_port_http": "appsvcs_vip_port"
+                },
                 "folder":"5E_Deployment_Automation"
             },
             "children": [
@@ -205,6 +211,9 @@
             "name":"Deploy f5-http-url-routing-lb",
             "options": {
                 "collection":"../../../AppSvcs_iApp_Workflows.postman_collection.json",
+                "remapPreRun": {
+                    "appsvcs_vip_port_http": "appsvcs_vip_port"
+                },
                 "folder":"5F_Deployment_Automation"
             },
             "children": [
@@ -220,11 +229,24 @@
         {
             "name":"Deploy f5-https-waf-lb",
             "skip":true,
-            "options": {
-                "collection":"../../../AppSvcs_iApp_Workflows.postman_collection.json",
-                "folder":"5G_Deployment_Automation"
-            },
             "children": [
+                {
+                    "name":"Create Demo asm policy",
+                    "options":{
+                        "collection":"../collections/BIG_IP/BIGIP_Operational_Workflows.postman_collection.json",
+                        "folder":"5A_Create_ASM_policy"
+                    }
+                },
+                {
+                    "name":"Deploy f5-https-waf-lb",
+                    "options": {
+                        "collection":"../../../AppSvcs_iApp_Workflows.postman_collection.json",
+                        "remapPreRun": {
+                            "appsvcs_vip_port_http": "appsvcs_vip_port"
+                        },
+                        "folder":"5G_Deployment_Automation"
+                    }
+                },
                 {
                     "name":"Remove Services",
                     "options":{

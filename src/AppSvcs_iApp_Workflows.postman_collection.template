@@ -687,7 +687,7 @@
 					},
 					"response": [
 						{
-							"id": "20e4cf6d-23af-4cd6-83e1-8017c23f808b",
+							"id": "32b27eff-c8d6-4c1c-b968-8cff7b196f9a",
 							"name": "sample delay response",
 							"originalRequest": {
 								"url": "https://echo.getpostman.com/delay/1",
@@ -1255,7 +1255,7 @@
 							"mode": "raw",
 							"raw": ""
 						},
-						"description": "Wait for attribute state to be ACTIVE"
+						"description": "Wait for service template to change stats health.placment to 1"
 					},
 					"response": []
 				},
@@ -1436,7 +1436,7 @@
 							"mode": "raw",
 							"raw": ""
 						},
-						"description": "Wait for attribute state to be ACTIVE"
+						"description": "Wait for service template to change stats health.placment to 1"
 					},
 					"response": []
 				},
@@ -1617,7 +1617,7 @@
 							"mode": "raw",
 							"raw": ""
 						},
-						"description": "Wait for attribute state to be ACTIVE"
+						"description": "Wait for service template to change stats health.placment to 1"
 					},
 					"response": []
 				},
@@ -1798,7 +1798,7 @@
 							"mode": "raw",
 							"raw": ""
 						},
-						"description": "Wait for attribute state to be ACTIVE"
+						"description": "Wait for service template to change stats health.placment to 1"
 					},
 					"response": []
 				},
@@ -1979,7 +1979,7 @@
 							"mode": "raw",
 							"raw": ""
 						},
-						"description": "Wait for attribute state to be ACTIVE"
+						"description": "Wait for service template to change stats health.placment to 1"
 					},
 					"response": []
 				},
@@ -2160,7 +2160,7 @@
 							"mode": "raw",
 							"raw": ""
 						},
-						"description": "Wait for attribute state to be ACTIVE"
+						"description": "Wait for service template to change stats health.placment to 1"
 					},
 					"response": []
 				},
@@ -2341,7 +2341,192 @@
 							"mode": "raw",
 							"raw": ""
 						},
-						"description": "Wait for attribute state to be ACTIVE"
+						"description": "Wait for service template to change stats health.placment to 1"
+					},
+					"response": []
+				},
+				{
+					"name": "_F5_POLL_DELAY",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"eval(postman.getGlobalVariable(\"_f5_workflow_functions\"));",
+									"f5_poll_next();",
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"url": "{{_f5_poll_apiurl}}/{{_f5_poll_wait}}",
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"description": ""
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "6A_Verify_Deployment",
+			"description": "",
+			"item": [
+				{
+					"name": "Get content from virtual server",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"eval(postman.getGlobalVariable(\"_f5_workflow_functions\"));",
+									"    ",
+									"f5_check_response_code();"
+								]
+							}
+						}
+					],
+					"request": {
+						"url": "http://{{appsvcs_vip_addr}}",
+						"method": "GET",
+						"header": [],
+						"body": {},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Get Service health stats",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"eval(postman.getGlobalVariable(\"_f5_workflow_functions\"));",
+									"",
+									"f5_enable_poller();",
+									"",
+									"var check_placement = function (json){",
+									"    if (json.entries['health.placement'] &&",
+									"        json.entries['health.app'] &&",
+									"        json.entries['health.summary'] &&",
+									"        json.entries['health.summary.app'] &&",
+									"        json.entries['health.summary.placement']) {",
+									"            return  json.entries['health.placement'].value === 1 &&",
+									"                json.entries['health.app'].value === 1 &&",
+									"                json.entries['health.summary'].value === 1 &&",
+									"                json.entries['health.summary.app'].value === 1 &&",
+									"                json.entries['health.summary.placement'].value === 1;",
+									"    }else{",
+									"        return false;",
+									"    }",
+									"};",
+									"",
+									"var check_vals = [",
+									"        {",
+									"            \"path\":\"entries['health.placement'].value\",",
+									"            \"value\":check_placement",
+									"        }",
+									"    ];",
+									"    ",
+									"f5_check_response(check_vals);",
+									"f5_poll_until_all_tests_pass(\"Get nodes for local connector\");",
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"url": "https://{{iwf_mgmt}}/mgmt/cm/cloud/tenants/{{iwf_tenant_name}}/services/iapp/{{iapp_instance_name}}/stats",
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							},
+							{
+								"key": "X-F5-Auth-Token",
+								"value": "{{iwf_token_tenant_user}}",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"description": "Wait for service template to change stats health.something to 1"
+					},
+					"response": []
+				},
+				{
+					"name": "Get nodes for local connector",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"eval(postman.getGlobalVariable(\"_f5_workflow_functions\"));",
+									"",
+									"f5_enable_poller();",
+									"",
+									"var test_connector_nodes = function (json){",
+									"    var nodes = [];",
+									"    ",
+									"    for(var i=0; i<json.items.length; i++){",
+									"        nodes.push(json.items[i].ipAddress);",
+									"    }",
+									"    if(nodes.indexOf(environment.appsvcs_member1_addr) === -1){",
+									"        return false;",
+									"    }",
+									"    if(nodes.indexOf(environment.appsvcs_member2_addr) === -1){",
+									"        return false;",
+									"    }",
+									"    return true;",
+									"};",
+									"",
+									"var check_vals = [",
+									"        {",
+									"            \"path\":\"items\",",
+									"            \"value\":test_connector_nodes",
+									"        }",
+									"    ];",
+									"    ",
+									"f5_check_response(check_vals);",
+									"f5_poll_until_all_tests_pass(\"\");"
+								]
+							}
+						}
+					],
+					"request": {
+						"url": "https://{{iwf_mgmt}}/mgmt/cm/cloud/connectors/local/{{iwf_connector_uuid}}/nodes/",
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							},
+							{
+								"key": "X-F5-Auth-Token",
+								"value": "{{iwf_token}}",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"description": ""
 					},
 					"response": []
 				},

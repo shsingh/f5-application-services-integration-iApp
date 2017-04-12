@@ -1,5 +1,5 @@
 {
-    "name":"iWf_Demo_1_Cleanup",
+    "name":"iWf_clenup",
     "description":"Cleanup the Demo environment deployed by workflow iWf_Demo_1.json",
     "globalEnvVars":"../framework/f5-postman-workflows.postman_globals.json",
     "globalOptions": {
@@ -20,8 +20,8 @@
         "iwf_appsvcs_name":"appsvcs_integration_v2.0.003"
     },
     "saveEnvVars":true,
-    "outputFile":"iWf_Demo_1_Cleanup-run.json",
-    "envOutputFile":"iWf_Demo_1_Cleanup-env.json",
+    "outputFile":"iWf_clenup-run.json",
+    "envOutputFile":"iWf_clenup-env.json",
     "workflow": [
         {
             "name":"Authenticate to iWorkflow",

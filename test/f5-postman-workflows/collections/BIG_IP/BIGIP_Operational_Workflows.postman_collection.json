@@ -2,7 +2,7 @@
 	"variables": [],
 	"info": {
 		"name": "BIGIP_Operational_Workflows",
-		"_postman_id": "04710109-90fe-fb90-a297-94678ad3546f",
+		"_postman_id": "1056ad10-cba9-8199-0d81-221735313ec9",
 		"description": "",
 		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
 	},
@@ -50,7 +50,7 @@
 					},
 					"response": [
 						{
-							"id": "95ada5af-9379-4652-84a7-7baaa912f73f",
+							"id": "1cc0f0a8-e80f-405f-8c46-5cbf829e351d",
 							"name": "Example",
 							"status": "OK",
 							"code": 200,
@@ -163,7 +163,7 @@
 					},
 					"response": [
 						{
-							"id": "7a6804e4-7aff-4136-99d0-066db32befa3",
+							"id": "8f183ca5-fdea-4237-9bb0-b09448a4684f",
 							"name": "Example",
 							"status": "OK",
 							"code": 200,
@@ -309,7 +309,7 @@
 					},
 					"response": [
 						{
-							"id": "a8741202-1b84-4362-83ed-05c803ac30ce",
+							"id": "75278516-ac2e-4cfc-9153-e40e1a84be33",
 							"name": "Example",
 							"status": "OK",
 							"code": 200,
@@ -428,7 +428,7 @@
 					},
 					"response": [
 						{
-							"id": "0a2ea5a2-e353-4ab4-8eb3-4eeae81a7548",
+							"id": "70dcceac-0013-4ae1-b903-08a0d2ae3994",
 							"name": "Example",
 							"status": "OK",
 							"code": 200,
@@ -574,7 +574,7 @@
 					},
 					"response": [
 						{
-							"id": "d4c164dc-fe65-4f2f-839c-c9f970ed8799",
+							"id": "56a7a5ae-99ff-486f-b7e5-9f51c3b47463",
 							"name": "Example",
 							"status": "OK",
 							"code": 200,
@@ -693,7 +693,7 @@
 					},
 					"response": [
 						{
-							"id": "89811e89-e780-4228-968e-714bd40a7a4b",
+							"id": "c17827f1-52cb-41c7-9126-4947ec9ca693",
 							"name": "Example",
 							"status": "OK",
 							"code": 200,
@@ -806,7 +806,7 @@
 					},
 					"response": [
 						{
-							"id": "6ab3f85a-1176-4324-8978-842d3e605051",
+							"id": "dbaaed43-8d14-4e85-b61a-376cf9fb16d1",
 							"name": "Example",
 							"status": "OK",
 							"code": 200,
@@ -919,7 +919,7 @@
 					},
 					"response": [
 						{
-							"id": "e5407c6b-4d7e-4aa2-acf0-1d9ecc57bfa6",
+							"id": "448a969a-c700-4acd-8e01-e3912e579c32",
 							"name": "Example",
 							"status": "OK",
 							"code": 200,
@@ -1038,7 +1038,7 @@
 					},
 					"response": [
 						{
-							"id": "0475bda8-1147-4d0c-94f8-16c9bd80e23f",
+							"id": "bf049596-e5c7-4ee4-9838-4aab50ee55da",
 							"name": "Example",
 							"status": "OK",
 							"code": 200,
@@ -1184,7 +1184,7 @@
 					},
 					"response": [
 						{
-							"id": "07e181b8-6a74-41e5-9a3f-f7653e203df3",
+							"id": "ff6cc57a-d6a7-40d0-87b1-8684868f4bee",
 							"name": "Example",
 							"status": "OK",
 							"code": 200,
@@ -1303,7 +1303,7 @@
 					},
 					"response": [
 						{
-							"id": "5ffec527-c3d7-40f5-afb4-939eb004e49f",
+							"id": "a730aa98-426c-4fb3-ad57-292e8a4d1946",
 							"name": "Example",
 							"status": "OK",
 							"code": 200,
@@ -1450,7 +1450,7 @@
 					},
 					"response": [
 						{
-							"id": "de176301-ac2b-413b-884b-3e0926ff9ada",
+							"id": "deda8e77-9804-4e42-8337-ab32c28725f4",
 							"name": "Example",
 							"status": "OK",
 							"code": 200,
@@ -1593,7 +1593,7 @@
 					},
 					"response": [
 						{
-							"id": "3eccd5ef-d949-41eb-890d-8d7f635e5713",
+							"id": "539385c0-10c2-4355-abf4-26ee310f7d71",
 							"name": "Example",
 							"status": "OK",
 							"code": 200,
@@ -1666,6 +1666,123 @@
 							"body": "{\"username\":\"admin\",\"loginReference\":{\"link\":\"https://localhost/mgmt/cm/system/authn/providers/local/login\"},\"loginProviderName\":\"local\",\"token\":{\"token\":\"BTKMOGLPSSAPSIXJAI76XFFCE7\",\"name\":\"BTKMOGLPSSAPSIXJAI76XFFCE7\",\"userName\":\"admin\",\"authProviderName\":\"local\",\"user\":{\"link\":\"https://localhost/mgmt/shared/authz/users/admin\"},\"groupReferences\":[],\"timeout\":1200,\"startTime\":\"2016-12-19T15:33:06.668-0800\",\"address\":\"192.168.0.20\",\"partition\":\"[All]\",\"generation\":1,\"lastUpdateMicros\":1482190386668185,\"expirationMicros\":1482191586668000,\"kind\":\"shared:authz:tokens:authtokenitemstate\",\"selfLink\":\"https://localhost/mgmt/shared/authz/tokens/BTKMOGLPSSAPSIXJAI76XFFCE7\"},\"generation\":0,\"lastUpdateMicros\":0}"
 						}
 					]
+				}
+			]
+		},
+		{
+			"name": "5A_Create_ASM_policy",
+			"description": "",
+			"item": [
+				{
+					"name": "Create demo ASM policy",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"eval(postman.getGlobalVariable(\"_f5_workflow_functions\"));",
+									"",
+									"var commandResult_existence = function (json){",
+									"    if (json.commandResult) {",
+									"        return false;",
+									"    }else {",
+									"        return true;",
+									"    }",
+									"};",
+									"",
+									"var check_vals = [",
+									"        {",
+									"            \"path\":\"commandResult\",",
+									"            \"value\":commandResult_existence",
+									"        }",
+									"    ];",
+									"    ",
+									"f5_check_response(check_vals);"
+								]
+							}
+						}
+					],
+					"request": {
+						"url": "https://{{bigip_mgmt}}/mgmt/tm/util/bash",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							},
+							{
+								"key": "X-F5-Auth-Token",
+								"value": "{{bigip_token}}",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"command\":\"run\",\n  \"utilCmdArgs\":\"-c 'tmsh create asm policy /Common/{{policy_name}} active encoding utf-8 policy-builder enabled'\"\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "5B_Delete_ASM_policy",
+			"description": "",
+			"item": [
+				{
+					"name": "Delete demo ASM policy",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"eval(postman.getGlobalVariable(\"_f5_workflow_functions\"));",
+									"",
+									"var commandResult_existence = function (json){",
+									"    if (json.commandResult) {",
+									"        console.log(\"Command Result : \" + json.commandResult);",
+									"    }",
+									"    return true;",
+									"};",
+									"",
+									"var check_vals = [",
+									"        {",
+									"            \"path\":\"commandResult\",",
+									"            \"value\":commandResult_existence",
+									"        }",
+									"    ];",
+									"    ",
+									"f5_check_response(check_vals);"
+								]
+							}
+						}
+					],
+					"request": {
+						"url": "https://{{bigip_mgmt}}/mgmt/tm/util/bash",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							},
+							{
+								"key": "X-F5-Auth-Token",
+								"value": "{{bigip_token}}",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"command\":\"run\",\n  \"utilCmdArgs\":\"-c 'tmsh delete asm policy {{policy_name}}'\"\n}"
+						},
+						"description": ""
+					},
+					"response": []
 				}
 			]
 		}
