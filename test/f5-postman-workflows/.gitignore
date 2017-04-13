@@ -1,0 +1,7 @@
+framework/docs/
+node_modules
+local
+f5-postman-workflows.postman_globals.json
+*-env.json
+*-run.json
+.idea

@@ -1,0 +1,126 @@
+{
+    "name":"iWf_clenup",
+    "description":"Cleanup the Demo environment deployed by workflow iWf_Demo_1.json",
+    "globalEnvVars":"../framework/f5-postman-workflows.postman_globals.json",
+    "globalOptions": {
+        "insecure":true,
+        "reporters":["cli"]
+    },
+    "globalVars": {
+        "iwf_mgmt": "10.145.252.218",
+        "iwf_username": "admin",
+        "iwf_password": "admin",
+        "iwf_tenant_name": "MyTenant",
+        "iwf_tenant_username": "tenant",
+        "bigip_mgmt": "10.145.251.47",
+        "bigip_username": "admin",
+        "bigip_password": "admin",
+        "iwf_token_timeout": "3600",
+        "iwf_connector_name": "Local Connector",
+        "iwf_appsvcs_name":"appsvcs_integration_v2.0.003",
+        "policy_name":"my_demo_policy"
+    },
+    "saveEnvVars":true,
+    "outputFile":"iWf_clenup-run.json",
+    "envOutputFile":"iWf_clenup-env.json",
+    "workflow": [
+        {
+            "name":"Authenticate to iWorkflow",
+            "options": {
+                "collection":"../collections/iWorkflow/iWf_API_Authentication.postman_collection.json",
+                "folder":"1_Authenticate"
+            }
+        },
+        {
+            "name":"Remove instnces of iApps",
+            "options": {
+                "remapPreRun": {
+                    "iwf_tenant_username":"iwf_tenant_password"
+                },
+                "collection":"../collections/iWorkflow/iWf_Operational_Workflows.postman_collection.json",
+                "folder":"8A_Special_Remove_All_Instances_iApp"
+            }
+        },
+        {
+            "name":"Remove Service Templates",
+            "options": {
+                "envVars":{
+                    "filter_service_templates":"f5-fasthttp-lb,f5-fastl4-tcp-lb,f5-fastl4-udp-lb,f5-http-lb,f5-http-url-routing-lb,f5-https-offload,f5-https-waf-lb"
+                },
+                "collection":"../collections/iWorkflow/iWf_Operational_Workflows.postman_collection.json",
+                "folder":"8B_Special_Remove_All_Services_Templates"
+            }
+        },
+        {
+            "name":"Remove AppSvcs iApp Template",
+            "options": {
+                "remapPreRun": {
+                    "iwf_appsvcs_name":"filter_iapp_templates"
+                },
+                "collection":"../collections/iWorkflow/iWf_Operational_Workflows.postman_collection.json",
+                "folder":"8C_Special_Remove_iApp_Template"
+            }
+        },
+        {
+            "name":"Remove discovered BIG-IP from iWorkflow",
+            "options": {
+                "remapPreRun": {
+                    "bigip_mgmt":"filter_discovered_bigips"
+                },
+                "collection":"../collections/iWorkflow/iWf_Operational_Workflows.postman_collection.json",
+                "folder":"8D_Special_Remove_Discovered_BIG-IP"
+            }
+        },
+        {
+            "name":"Remove BIG-IP Connector from iWorkflow",
+            "options": {
+                "remapPreRun": {
+                    "iwf_connector_name":"filter_iwf_connectors"
+                },
+                "collection":"../collections/iWorkflow/iWf_Operational_Workflows.postman_collection.json",
+                "folder":"8E_Special_Remove_Connector"
+            }        
+        },
+        {
+            "name":"Remove iWorkflow Tenant User",
+            "options": {
+                "remapPreRun": {
+                    "iwf_tenant_username":"filter_iwf_tenant_usernames"
+                },
+                "collection":"../collections/iWorkflow/iWf_Operational_Workflows.postman_collection.json",
+                "folder":"8F_Special_Delete_Tenant_User"
+            }
+        },
+        {
+            "name":"Remove iWorkflow Tenant",
+            "options": {
+                "remapPreRun": {
+                    "iwf_tenant_name":"filter_iwf_tenant_names"
+                },
+                "collection":"../collections/iWorkflow/iWf_Operational_Workflows.postman_collection.json",
+                "folder":"8G_Special_Remove_Tenant"
+            }
+        },
+        {
+            "name":"Delete ASM Policy",
+            "skip":true,
+            "children": [
+                {
+                    "name":"Authenticate to BIG-IP A",
+                    "options": {
+                        "collection":"../collections/BIG_IP/BIGIP_API_Authentication.postman_collection.json",
+                        "folder":"1_Authenticate"
+                    }
+                },
+                {
+                    "name":"Delete ASM Policy",
+                    "options": {
+                        "collection":"../collections/BIG_IP/BIGIP_Operational_Workflows.postman_collection.json",
+                        "folder":"5B_Delete_ASM_policy"
+                    }
+                }
+            ]
+
+        }
+    ]
+}
