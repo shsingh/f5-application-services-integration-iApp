@@ -55,6 +55,8 @@
             { "row": [ "irule:url=http://%TEST_POLICY_HOST%/appsvcs/remote_1.irule" ] },
             { "row": [ "irule:urloptional=http://%TEST_POLICY_HOST%/appsvcs/remote_1_optional.irule" ] },
             { "row": [ "irule:urloptional=http://%TEST_POLICY_HOST%/appsvcs/remote_2_optional.irule" ] },
+            { "row": [ "irule:url=http://%TEST_POLICY_HOST%/appsvcs/remote_3.irule" ] },
+            { "row": [ "irule:url=http://%TEST_POLICY_HOST%/appsvcs/remote_4.irule" ] },
             { "row": [ "irule:url=http://%TEST_POLICY_HOST%/appsvcs/%APP_NAME%.irule" ] },
             { "row": [ "irule:bundle1" ] },
             { "row": [ "asm:asm_example1" ] },
