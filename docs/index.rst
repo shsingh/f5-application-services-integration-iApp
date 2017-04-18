@@ -48,6 +48,16 @@ We currently test against the following versions of the F5 BIG-IP TMOS:
 - 12.1.0 HF2 Build: 2.0.1468
 - 12.1.1 HF1 Build: 1.0.196
 
+and IWF 2.1.0 service catalog, Big-IP 12.1 with local cloud connector on the following feature collections (Service Template JSON files):
+
+- f5-https-offload_v2.0.003
+- f5-http-lb_v2.0.003
+- f5-fastl4-tcp-lb_v2.0.003
+- f5-fastl4-udp-lb_v2.0.003
+- f5-fasthttp-lb_v2.0.003
+- f5-http-url-routing-lb_v2.0.003
+- f5-https-waf-lb_v2.0.003
+
 Getting Started
 ---------------
 
