@@ -63,3 +63,5 @@ Getting Started
 
 To get started head over to the :doc:`userguide/userguide`.  Advanced users 
 should also read the :doc:`refguide`
+
+Learn :download:`How To Use the App Services Integration iApp with iWorkflow <_static/User-Guide-App-Service-Integration-with-iWorkflow.pdf>`
