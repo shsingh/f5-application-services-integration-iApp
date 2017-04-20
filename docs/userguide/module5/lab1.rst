@@ -51,7 +51,7 @@ Here are steps to use the App Services iApp with iWorkflow:
 
   In your \*.service.json change placeholders { eg. {{appsvcs_vip_addr}} to values from your environment.
 
-  To create asm policy for f5-https-waf-lb-service_v2.0.003.json POST the payload described below to ``https://{{bigip_mgmt}}/mgmt/tm/util/bash``::
+  To create asm policy for f5-https-waf-lb-service_v2.0.003.json POST the payload described below to ``https://{{bigip_mgmt}}/mgmt/tm/util/bash`` or use REST proxy to run this command (Detailed instructions: ``https://devcentral.f5.com/wiki/iWorkflow.HowToSamples_enable_rest_proxy.ashx``)::
 
     {
       "command":"run",
