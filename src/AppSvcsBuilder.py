@@ -317,7 +317,7 @@ class AppSvcsBuilder:
 		if 'create_list' in field.keys():
 			tclstr = """ tcl {
 		tmsh::cd /
-		set results ""
+        set ::choices ""
 	    set cmds [list %s]
 	    foreach cmd $cmds {
 	      set objs [list]
@@ -326,12 +326,13 @@ class AppSvcsBuilder:
 	      foreach obj $objs {
 	      	set name [string map {"\\\"" ""} [tmsh::get_name $obj]]
 	      	if { $name ne "" } {
-		        append results \"/$name\"
-		        append results \"\\n\"
+                append ::choices \"/$name\"
+                append ::choices \"\\n\"
 		    }
 	      }
 	    }
-	    return $results
+
+        return [iapp::safe_display ::choices]
 	}
 		""" % ' '.join(field["create_list"])
 
