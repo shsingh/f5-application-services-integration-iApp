@@ -36,17 +36,6 @@
 					"minver":"0.3_001"
 				},
 				{
-					"name":"appStats",
-					"description":"iApp: Statistics Handler Creation",
-					"help":"Control whether Virtual Server/Pool statistics handlers are created in Standalone or iWorkflow mode",
-					"type":"boolean",
-					"default":true,
-					"required":false,
-					"display":"large",
-					"modes":[1,2],
-					"minver":"0.3_001"
-				},
-				{
 					"name":"mode",
 					"description":"iApp: Mode",
 					"help":"The mode to use during deployment.  The default setting of auto determines the mode automatically.",
