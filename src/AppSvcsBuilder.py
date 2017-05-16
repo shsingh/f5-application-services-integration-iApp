@@ -672,13 +672,6 @@ class AppSvcsBuilder:
 
 					iwfTemplate['template']['tables'].append(tableObj)
 
-		iwfTemplate['template']['vars'].append({
-			"name": "app_stats",
-			"isRequired": False,
-			"defaultValue": "enabled",
-			"description": "Enable health and performance monitoring.",
-			"displayName": "app_stats"
-		})
 
 		self._debug("json=%s" % json.dumps(iwfTemplate));
 		if not self.options["outfile"]:
