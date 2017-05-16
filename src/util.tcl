@@ -49,7 +49,7 @@ proc psplit { str seps {protector "\\"}} {
 # Figure out which type of environment we are executing in.
 # Return: list $mode $folder $partition $routedomainid $newdeploy
 # Modes: 1 = Standalone
-#        2 = iWorkflow
+#        2 = iWorkflow UNUSED/LEGACY
 #        3 = Cisco APIC
 #        4 = VMware NSX
 proc get_mode { } {
@@ -97,13 +97,6 @@ proc get_mode { } {
   if { [regexp -nocase {^edge-[0-9]+_[0-9]+_virtualserver-[0-9]+-serviceprofile-[0-9]+$} $::app] } {
     debug [list get_mode nsx] "app name matches NSX regexp, assuming NSX deployment mode (4)" 10
     return [list 4 $folder $partition $routedomainid $newdeploy]
-  }
-
-  # If we get here we can safely assume that this is either a Standalone or iWorkflow mode deployment
-  # The only way we currently have to check for iWorkflow mode is to see if app_stats was sent
-  if { [info exists ::app_stats] } {
-    debug [list get_mode iworkflow] "all other modes checked for and app_stats set, assuming iWorkflow deployment mode (2)" 10
-    return [list 2 $folder $partition $routedomainid $newdeploy]
   }
 
   # Default is Standalone mode
