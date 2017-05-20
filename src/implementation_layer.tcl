@@ -20,7 +20,7 @@ set bundler_timestamp [clock format $startTime -format {%Y%m%d%H%M%S}]
 set NAME "F5 Application Services Integration iApp (Community Edition)"
 set TMPLNAME "%TMPL_NAME%"
 set IMPLMAJORVERSION "2.0"
-set IMPLMINORVERSION "003"
+set IMPLMINORVERSION "004"
 set IMPLVERSION [format "%s.%s" $IMPLMAJORVERSION $IMPLMINORVERSION]
 set POSTDEPLOY_DELAY 0
 
@@ -106,7 +106,7 @@ tmsh::modify [format "sys application service %s description \"%s\"" $aso $asode
 # Define various global values
 set allVars {
 %PRESENTATION_TCL_ALLVARS%
- app_stats }
+}
 
 set requiredVars {
  pool__addr \
@@ -1867,13 +1867,8 @@ if { $feature__redirectToHTTPS eq "enabled" && $pool__addr ne "255.255.255.254" 
 }
 
 # Create iCall statistics publisher
-# CAVEATS: This is mode specific because $app_stats is not set unless deployment
-# is driven by iWorkflow.  To accomodate all use cases we make this mode specific:
-# mode=1 (Standalone) : Look at $iapp__appStats from the presentation layer to control creation
-# mode=2 (iWorkflow): Look at $app_stats set by iWorkflow to control creation
-# mode=3 (APIC)       : Look at $app_stats set by iWorkflow to control creation
-debug [list stats] [format "mode=%s app_stats=%s iapp__appStats=%s" $mode $app_stats $iapp__appStats] 7
-if { (($mode == 2 || $mode == 3 || $mode == 4) && $app_stats eq "enabled") || ($mode == 1 && $iapp__appStats eq "enabled") } {
+debug [list stats] [format "mode=%s iapp__appStats=%s" $mode $iapp__appStats] 7
+if { ($iapp__appStats eq "enabled") } {
   # Create the iCall stats publisher
   debug [list stats] "creating icall stats publisher" 7
       # START EMBEDDED ICALL SCRIPT
