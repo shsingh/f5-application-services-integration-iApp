@@ -1,6 +1,11 @@
 cli admin-partitions {
     update-partition Common
 }
+
+cli script appsvcs.integration.util {
+%insertfile:src/outside_util.tcl%
+}
+
 sys application template /Common/appsvcs_integration_v%IMPLVERSION_MAJOR%.%IMPLVERSION_MINOR%%NAME_APPEND% {
     actions {
         definition {
