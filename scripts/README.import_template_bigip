@@ -18,6 +18,7 @@ look in the current working directory for the following files:
  iapp.apl		Presentation Layer APL Code	YES	  -a
  iapp.html		HTML based Help			NO	  -n
  iapp.macro		iApp Macro definition		NO	  -m
+ iapp_util.tcl  CLI script              NO    -s
 
 Different filenames can be specified using the corresponding CLI arguments 
 in the table above 
@@ -29,6 +30,8 @@ If you are specifying the require TMOS modules please format as a comma
 seperated list of module names such as:
  
 	ltm,gtm,asm,afm
+
+If you want to import CLI script the script name need to be set.
 
 For further options please run the script with the --help argument
 

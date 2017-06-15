@@ -69,6 +69,11 @@ args.outfile = 'parts' + os.sep + 'iapp.apl'
 args.roottmpl = 'tmp' + os.sep + 'apl.build'
 b.buildTemplate(**vars(args))
 
+print "Assembling CLI script only template..."
+args.outfile = 'parts' + os.sep + 'appsvcs.integration.util.tcl'
+args.roottmpl = 'src' + os.sep + 'outside_util.tcl'
+b.buildTemplate(**vars(args))
+
 print "Generating BIGIP JSON template..."
 b.buildJsonTemplate()
 

@@ -1,12 +1,8 @@
-cli admin-partitions {
-    update-partition Common
-}
-
 cli script appsvcs.integration.util {
 %insertfile:src/outside_util.tcl%
 }
 
-sys application template /Common/appsvcs_integration_v%IMPLVERSION_MAJOR%.%IMPLVERSION_MINOR%%NAME_APPEND% {
+sys application template appsvcs_integration_v%IMPLVERSION_MAJOR%.%IMPLVERSION_MINOR%%NAME_APPEND% {
     actions {
         definition {
             html-help {
@@ -39,12 +35,7 @@ sys application template /Common/appsvcs_integration_v%IMPLVERSION_MAJOR%.%IMPLV
             run-as none
         }
     }
-    description none
-    ignore-verification false
     requires-bigip-version-max none
     requires-bigip-version-min none
     requires-modules { ltm }
-    signing-key none
-    tmpl-checksum none
-    tmpl-signature none
 }
