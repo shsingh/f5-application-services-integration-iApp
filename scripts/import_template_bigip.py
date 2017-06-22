@@ -33,6 +33,8 @@ parser.add_argument("name",             help="The name iApp template")
 parser.add_argument("-a", "--apl",      help="The path to the iApp apl layer file to import",            default="iapp.apl")
 parser.add_argument("-c", "--checkonly",help="Only check to see if a template existings on the device",  action="store_true")
 parser.add_argument("-d", "--dontsave", help="Don't automatically save the config",                      action="store_true")
+parser.add_argument("-sn", "--script_name",   help="The name of iApp additional script",                 default="")
+parser.add_argument("-s", "--script",   help="The path to the iApp additional script to import",         default="iapp_util.tcl")
 parser.add_argument("-i", "--impl",     help="The path to the iApp implementation layer file to import", default="iapp.tcl")
 parser.add_argument("-m", "--macro",    help="The path to the iApp HTML help file to import",            default="iapp.macro")
 parser.add_argument("-n", "--html",     help="The path to the iApp HTML help file to import",            default="iapp.html")
@@ -42,7 +44,7 @@ parser.add_argument("-r", "--modules",  help="The BIG-IP TMOS modules required (
 parser.add_argument("-u", "--username", help="The BIG-IP username",                                      default="admin")
 parser.add_argument("-v", "--minver",   help="The minimum version of BIG-IP TMOS required",              default="11.0.0")
 parser.add_argument("-x", "--maxver",   help="The maximum version of BIG-IP TMOS required",              default="")
-parser.add_argument("--password-file",   help="The BIG-IP password stored in a file", dest='password_file')
+parser.add_argument("--password-file",   help="The BIG-IP password stored in a file",                    dest='password_file')
 args = parser.parse_args()
 
 password = args.password
@@ -58,6 +60,8 @@ template_url       = "https://%s/mgmt/tm/sys/application/template" % (args.host)
 save_url           = "https://%s/mgmt/tm/sys/config" % (args.host)
 template_exist_url = "%s/%s" % (template_url, args.name)
 definition_url     = "%s/actions/definition" % (template_exist_url)
+cli_script_url     = "https://%s/mgmt/tm/cli/script" % (args.host)
+cli_script_exist_url     = "%s/%s" % (cli_script_url, args.script_name)
 
 # Check to see if the template with the name specified in the arguments exists on the BIG-IP device
 resp = s.get(template_exist_url)
@@ -86,6 +90,14 @@ impl.close()
 with open(args.apl) as apl:
 	apl_data = apl.read()
 apl.close()
+
+# OPTIONAL: Get data from the file containing utilities tcl procedures code (-s argument)
+try:
+    with open(args.script) as script:
+	    script_data = script.read()
+except IOError as error:
+        print "[warning] CLI script file \"%s\" not found, setting to blank" % (args.script)
+        script_data = ""
 
 # OPTIONAL: Get data from the file containing HTML Help (-n argument)
 try:
@@ -160,6 +172,40 @@ else:
 		sys.exit(1)
 
 	print "[success] Template \"%s\" updated on BIG-IP \"%s\"" % (args.name, args.host)
+
+if script_data != "" and args.script_name != "":
+    #Check if cli script exist
+    resp = s.get(cli_script_exist_url)
+
+    cli_script_payload = {}
+    cli_script_payload["name"] = args.script_name
+    cli_script_payload["partition"] = "Common"
+    cli_script_payload["apiAnonymous"] = script_data
+    cli_script_payload["ignoreVerification"] = "false"
+    cli_script_payload["totalSigningStatus"] = "not-all-signed"
+    # The cli script exists and the -o argument (overwrite) was not specified.  Print error and exit
+    if resp.status_code == 200 and not args.overwrite:
+        print "[error] A cli script named \"%s\" already exists on BIG-IP \"%s\". To overwrite please specify the '-o' flag" % (args.scirpt_name, args.host)
+        sys.exit(1)
+
+    #If not exist Install it
+    if resp.status_code == 404:
+        resp = s.post(cli_script_url, data=json.dumps(cli_script_payload))
+        if resp.status_code != requests.codes.ok:
+            print "[error] Cli script creation failed: %s" % (resp.json())
+            sys.exit(1)
+        print "[success] Cli script \"%s\" created on BIG-IP \"%s\"" % (args.script_name, args.host)
+    #If exist and overwrite flag then update it
+    else:
+        cli_script_payload = {}
+        cli_script_payload["name"] = args.script_name
+        cli_script_payload["apiAnonymous"] = script_data
+
+        resp = s.put(cli_script_exist_url, data=json.dumps(cli_script_payload))
+        if resp.status_code != requests.codes.ok:
+            print "[error] Cli script update failed: %s" % (resp.json())
+            sys.exit(1)
+        print "[success] Cli script \"%s\" updated on BIG-IP \"%s\"" % (args.script_name, args.host)
 
 # Save the config (unless -d option was specified)
 save_payload = { "command":"save" }

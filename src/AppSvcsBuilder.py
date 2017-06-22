@@ -332,7 +332,7 @@ class AppSvcsBuilder:
 	      }
 	    }
 
-        return [iapp::safe_display ::choices]
+        return [tmsh::run_proc appsvcs.integration.util:iapp_safe_display ::choices]
 	}
 		""" % ' '.join(field["create_list"])
 
