@@ -39,7 +39,7 @@ BIG-IP
 +---------------------------------------+----------------------------------+-------------------+----------------------+
 | Test Case                             | Summary                          | Success Criteria  | Explanation          |
 +=======================================+==================================+===================+======================+
-| 'test_monitors<test_monitors.json>'_  | Monitor                          | - HTTP 200        | Monitor Types:       |
+| test_monitors.json_                   | Monitor                          | - HTTP 200        | Monitor Types:       |
 |                                       | Creation &                       | - Deployment_     |                      |
 |                                       | Pool Cross-referencing           |                   | - TCP default        |
 |                                       |                                  |                   | - HTTP default       |
@@ -54,6 +54,7 @@ BIG-IP
 +---------------------------------------+----------------------------------+-------------------+----------------------+
 
 .. _Deployment: https://devcentral.f5.com/wiki/iApp.AppSvcsiApp_execflow.ashx#determining-success-failure-of-deployment
+.. _test_monitors.json: test_monitors.json
 
 Contributing
 ------------
