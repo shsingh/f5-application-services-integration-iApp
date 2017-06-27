@@ -39,9 +39,10 @@ BIG-IP
 +------------------------------------+----------------------------------+-------------------+----------------------+
 | Test Case                          | Summary                          | Success Criteria  | Explanation          |
 +====================================+==================================+===================+======================+
-| test_monitors.json_                | Monitor                          | - HTTP 200        | Monitor Types        |
-|                                    | Creation &                       | - Deployment_     | - TCP default        |
-|                                    | Pool Cross-referencing           |                   | - HTTP default       |
+| test_monitors.json                 | Monitor                          | - HTTP 200        | Monitor Types:       |
+|                                    | Creation &                       | - Deployment_     |                      |
+|                                    | Pool Cross-referencing           |                   | - TCP default        |
+|                                    |                                  |                   | - HTTP default       |
 |                                    |                                  |                   | - HTTP custom inline |
 |                                    |                                  |                   | - HTTP custom by ref |
 +------------------------------------+----------------------------------+-------------------+----------------------+
