@@ -39,13 +39,13 @@ BIG-IP
 +---------------------+------------+----------------------------------+
 | Test Case           | Summary    | Success Criteria  | Explanation  |
 +=====================+============+===================+==============+
-| 'test_monitors.json<test_monitors.json>'_ | column 2   | column 3 | column 4 |
+| column 1 | column 2 | column 3 | column 4 |
 +---------------------+------------+-------------------+--------------+
-| 'test_monitors_noindex.json<test_monitors_noindex.json>'_ | column 2 | column 3 | column 4 |
+| column 1 | column 2 | column 3 | column 4 |
 +---------------------+------------+-------------------+--------------+
-| 'test_pools.json<test_pools.json>'_ |  |  | - Cells      |
-|                     |            |        | - contain    |
-|                     |            |        | - blocks.    |
+| column 1 | column 2 | column 3 | - Cells   |
+|          |          |          | - contain |
+|          |          |          | - blocks. |
 +---------------------+------------+-------------------+--------------+
 
 Contributing
