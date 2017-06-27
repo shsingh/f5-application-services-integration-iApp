@@ -39,13 +39,13 @@ BIG-IP
 +---------------------+------------+----------------------------------+
 | Test Case           | Summary    | Success Criteria  | Explanation  |
 +=====================+============+===================+==============+
-| column 1 | column 2 | column 3 | column 4 |
+| column 1            | column 2   | column 3          | column 4     |
 +---------------------+------------+-------------------+--------------+
-| column 1 | column 2 | column 3 | column 4 |
+| column 1            | column 2   | column 3          | column 4     |
 +---------------------+------------+-------------------+--------------+
-| column 1 | column 2 | column 3 | - Cells   |
-|          |          |          | - contain |
-|          |          |          | - blocks. |
+| column 1            | column 2   | column 3          | - Cells      |
+|                     |            |                   | - contain    |
+|                     |            |                   | - blocks.    |
 +---------------------+------------+-------------------+--------------+
 
 Contributing
