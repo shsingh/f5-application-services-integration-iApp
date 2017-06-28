@@ -66,13 +66,13 @@ BIG-IP
 |                                       |                                  |                                                         |
 |                                       |                                  | Pools:                                                  |
 |                                       |                                  |                                                         |
-|                                       |                                  | - Default-named round robin                             |
-|                                       |                                  |   - 3 members: 1 negative and 1 duplicate               |
-|                                       |                                  | - Explicit-named least connections w/ min 2 active      |
-|                                       |                                  |   - 13 members: 7 pre-existing by ref, 1 compound,      |
-|                                       |                                  | 3 FQDN and 1 duplicate                                  |
-|                                       |                                  | - Explicit-named round robin w/ advanced options        |
-|                                       |                                  |   - 2 members: many duplications                        |
+|                                       |                                  | - Default-named round robin w/ 3 members: 1 negative    |
+|                                       |                                  |   and 1 duplicate                                       |
+|                                       |                                  | - Explicit-named least connections w/ 13 members and    |
+|                                       |                                  |   min of 2 active: 7 pre-existing by ref, 1 compound,   |
+|                                       |                                  |   3 FQDN and 1 duplicate                                |
+|                                       |                                  | - Explicit-named round robin w/ 2 members: many         |
+|                                       |                                  |   duplicates and AdvOptions employed                    |
 +---------------------------------------+----------------------------------+-------------------+-------------------------------------+
 
 .. _Deployment: https://devcentral.f5.com/wiki/iApp.AppSvcsiApp_execflow.ashx#determining-success-failure-of-deployment
