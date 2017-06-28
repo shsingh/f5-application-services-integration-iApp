@@ -39,23 +39,46 @@ BIG-IP
 +---------------------------------------+----------------------------------+---------------------------------------------------------+
 | Test Case                             | Success Criteria                 | Summary                                                 |
 +=======================================+==================================+=========================================================+
-| test_monitors.json_                   | - HTTP 200                       | LTM Monitor Creation & utilize in LTM Pool.  Monitor    |
+| test_monitors.json_                   | - HTTP 200                       | LTM Virtual Server, Monitor & Pool creation.  Monitor   |
 |                                       | - Deployment_                    | types:                                                  |
 |                                       |                                  |                                                         |
 |                                       |                                  | - TCP default                                           |
 |                                       |                                  | - HTTP default                                          |
-|                                       |                                  | - HTTP custom inline                                    |
-|                                       |                                  | - HTTP custom by ref                                    |
+|                                       |                                  | - HTTP custom inline (ASO encapsulated)                 |
+|                                       |                                  | - HTTP pre-existing by ref                              |
 +---------------------------------------+----------------------------------+-------------------+-------------------------------------+
-| test_monitors_noindex.json_           | - HTTP 200                       | LTM Monitor Creation w/o Index & utilize in LTM Pool.   |
-|                                       | - Deployment_                    | Monitor types:                                          |
+| test_monitors_noindex.json_           | - HTTP 200                       | LTM Virtual Server, Monitor & Pool creation.  Monitor   |
+|                                       | - Deployment_                    | purposely omits Index.  Monitor types:                  |
 |                                       |                                  |                                                         |
 |                                       |                                  | - TCP default                                           |
 +---------------------------------------+----------------------------------+---------------------------------------------------------+
+| test_pools.json_                      | - HTTP 200                       | LTM Virtual Server, Monitor, Pool & Pool Member         |
+|                                       | - Deployment_                    | creation.                                               |
+|                                       |                                  |                                                         |
+|                                       |                                  | Virtual Server:                                         |
+|                                       |                                  |                                                         |
+|                                       |                                  | - Address requested plus one?                           |
+|                                       |                                  |                                                         |
+|                                       |                                  | Monitor types:                                          |
+|                                       |                                  |                                                         |
+|                                       |                                  | - TCP default                                           |
+|                                       |                                  | - HTTP default                                          |
+|                                       |                                  |                                                         |
+|                                       |                                  | Pools:                                                  |
+|                                       |                                  |                                                         |
+|                                       |                                  | - Default-named round robin                             |
+|                                       |                                  |   - 3 members: 1 negative and 1 duplicate               |
+|                                       |                                  | - Explicit-named least connections w/ min 2 active      |
+|                                       |                                  |   - 13 members: 7 pre-existing by ref, 1 compound,      |
+|                                       |                                  | 3 FQDN and 1 duplicate                                  |
+|                                       |                                  | - Explicit-named round robin w/ advanced options        |
+|                                       |                                  |   - 2 members: many duplications                        |
++---------------------------------------+----------------------------------+-------------------+-------------------------------------+
 
 .. _Deployment: https://devcentral.f5.com/wiki/iApp.AppSvcsiApp_execflow.ashx#determining-success-failure-of-deployment
 .. _test_monitors.json: test_monitors.json
 .. _test_monitors_noindex.json: test_monitors_noindex.json
+.. _test_pools.json: test_pools.json
 
 
 iWorkflow
