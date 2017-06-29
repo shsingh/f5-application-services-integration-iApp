@@ -129,6 +129,117 @@ BIG-IP
 | test_vs_standard_http_bundle_irule.json_              | - HTTP 200       | coming soon                                             |
 |                                                       | - Deployment_    |                                                         |
 +-------------------------------------------------------+------------------+---------------------------------------------------------+
+| test_vs_standard_http_ipv6.json_                      | - HTTP 200       | coming soon                                             |
+|                                                       | - Deployment_    |                                                         |
++-------------------------------------------------------+------------------+---------------------------------------------------------+
+| test_vs_standard_http_options.json_                   | - HTTP 200       | coming soon                                             |
+|                                                       | - Deployment_    |                                                         |
++-------------------------------------------------------+------------------+---------------------------------------------------------+
+| test_vs_standard_http_options_2.json_                 | - HTTP 200       | coming soon                                             |
+|                                                       | - Deployment_    |                                                         |
++-------------------------------------------------------+------------------+---------------------------------------------------------+
+| test_vs_standard_https.json_                          | - HTTP 200       | coming soon                                             |
+|                                                       | - Deployment_    |                                                         |
++-------------------------------------------------------+------------------+---------------------------------------------------------+
+| test_vs_standard_https_bundle_all_preserve.json_      | - HTTP 200       | coming soon                                             |
+|                                                       | - Deployment_    |                                                         |
++-------------------------------------------------------+------------------+---------------------------------------------------------+
+| test_vs_standard_https_bundle_all_preserve_2.json_    | - HTTP 200       | coming soon                                             |
+|                                                       | - Deployment_    |                                                         |
++-------------------------------------------------------+------------------+---------------------------------------------------------+
+| test_vs_standard_https_bundle_all_redeploy.json_      | - HTTP 200       | coming soon                                             |
+|                                                       | - Deployment_    |                                                         |
++-------------------------------------------------------+------------------+---------------------------------------------------------+
+| test_vs_standard_https_bundle_all_redeploy_2.json_    | - HTTP 200       | coming soon                                             |
+|                                                       | - Deployment_    |                                                         |
++-------------------------------------------------------+------------------+---------------------------------------------------------+
+| test_vs_standard_https_bundle_all_url.json_           | - HTTP 200       | coming soon                                             |
+|                                                       | - Deployment_    |                                                         |
++-------------------------------------------------------+------------------+---------------------------------------------------------+
+| test_vs_standard_https_bundle_apm_preserve.json_      | - HTTP 200       | coming soon                                             |
+|                                                       | - Deployment_    |                                                         |
++-------------------------------------------------------+------------------+---------------------------------------------------------+
+| test_vs_standard_https_bundle_apm_preserve_2.json_    | - HTTP 200       | coming soon                                             |
+|                                                       | - Deployment_    |                                                         |
++-------------------------------------------------------+------------------+---------------------------------------------------------+
+| test_vs_standard_https_bundle_apm_redeploy.json_      | - HTTP 200       | coming soon                                             |
+|                                                       | - Deployment_    |                                                         |
++-------------------------------------------------------+------------------+---------------------------------------------------------+
+| test_vs_standard_https_bundle_apm_redeploy_2.json_    | - HTTP 200       | coming soon                                             |
+|                                                       | - Deployment_    |                                                         |
++-------------------------------------------------------+------------------+---------------------------------------------------------+
+| test_vs_standard_https_bundle_asm_preserve.json_      | - HTTP 200       | coming soon                                             |
+|                                                       | - Deployment_    |                                                         |
++-------------------------------------------------------+------------------+---------------------------------------------------------+
+| test_vs_standard_https_bundle_asm_preserve_2.json_    | - HTTP 200       | coming soon                                             |
+|                                                       | - Deployment_    |                                                         |
++-------------------------------------------------------+------------------+---------------------------------------------------------+
+| test_vs_standard_https_bundle_asm_redeploy.json_      | - HTTP 200       | coming soon                                             |
+|                                                       | - Deployment_    |                                                         |
++-------------------------------------------------------+------------------+---------------------------------------------------------+
+| test_vs_standard_https_bundle_asm_redeploy_2.json_    | - HTTP 200       | coming soon                                             |
+|                                                       | - Deployment_    |                                                         |
++-------------------------------------------------------+------------------+---------------------------------------------------------+
+| test_vs_standard_https_create.json_                   | - HTTP 200       | coming soon                                             |
+|                                                       | - Deployment_    |                                                         |
++-------------------------------------------------------+------------------+---------------------------------------------------------+
+| test_vs_standard_https_create_url.json_               | - HTTP 200       | coming soon                                             |
+|                                                       | - Deployment_    |                                                         |
++-------------------------------------------------------+------------------+---------------------------------------------------------+
+| test_vs_standard_https_create_url_partition.json_     | - HTTP 200       | coming soon                                             |
+|                                                       | - Deployment_    |                                                         |
++-------------------------------------------------------+------------------+---------------------------------------------------------+
+| test_vs_standard_https_create_url_partition.json_     | - HTTP 200       | coming soon                                             |
+|                                                       | - Deployment_    |                                                         |
++-------------------------------------------------------+------------------+---------------------------------------------------------+
+| test_vs_standard_https_features.json_                 | - HTTP 200       | coming soon                                             |
+|                                                       | - Deployment_    |                                                         |
++-------------------------------------------------------+------------------+---------------------------------------------------------+
+| test_vs_standard_https_l7policy.json_                 | - HTTP 200       | coming soon                                             |
+|                                                       | - Deployment_    |                                                         |
++-------------------------------------------------------+------------------+---------------------------------------------------------+
+| test_vs_standard_https_multi_listeners.json_          | - HTTP 200       | coming soon                                             |
+|                                                       | - Deployment_    |                                                         |
++-------------------------------------------------------+------------------+---------------------------------------------------------+
+| test_vs_standard_https_serverssl.json_                | - HTTP 200       | coming soon                                             |
+|                                                       | - Deployment_    |                                                         |
++-------------------------------------------------------+------------------+---------------------------------------------------------+
+| test_vs_standard_https_serverssl_create.json_         | - HTTP 200       | coming soon                                             |
+|                                                       | - Deployment_    |                                                         |
++-------------------------------------------------------+------------------+---------------------------------------------------------+
+| test_vs_standard_tcp.json_                            | - HTTP 200       | coming soon                                             |
+|                                                       | - Deployment_    |                                                         |
++-------------------------------------------------------+------------------+---------------------------------------------------------+
+| test_vs_standard_tcp_afm.json_                        | - HTTP 200       | coming soon                                             |
+|                                                       | - Deployment_    |                                                         |
++-------------------------------------------------------+------------------+---------------------------------------------------------+
+| test_vs_standard_tcp_options.json_                    | - HTTP 200       | coming soon                                             |
+|                                                       | - Deployment_    |                                                         |
++-------------------------------------------------------+------------------+---------------------------------------------------------+
+| test_vs_standard_tcp_rd_auto.json_                    | - HTTP 200       | coming soon                                             |
+|                                                       | - Deployment_    |                                                         |
++-------------------------------------------------------+------------------+---------------------------------------------------------+
+| test_vs_standard_tcp_rd_nonauto.json_                 | - HTTP 200       | coming soon                                             |
+|                                                       | - Deployment_    |                                                         |
++-------------------------------------------------------+------------------+---------------------------------------------------------+
+| test_vs_standard_tcp_routeadv_all.json_               | - HTTP 200       | coming soon                                             |
+|                                                       | - Deployment_    |                                                         |
++-------------------------------------------------------+------------------+---------------------------------------------------------+
+| test_vs_standard_tcp_routeadv_always.json_            | - HTTP 200       | coming soon                                             |
+|                                                       | - Deployment_    |                                                         |
++-------------------------------------------------------+------------------+---------------------------------------------------------+
+| test_vs_standard_tcp_routeadv_any.json_               | - HTTP 200       | coming soon                                             |
+|                                                       | - Deployment_    |                                                         |
++-------------------------------------------------------+------------------+---------------------------------------------------------+
+| test_vs_standard_tcp_virt_addr_options.json_          | - HTTP 200       | coming soon                                             |
+|                                                       | - Deployment_    |                                                         |
++-------------------------------------------------------+------------------+---------------------------------------------------------+
+| test_vs_standard_udp.json_                            | - HTTP 200       | coming soon                                             |
+|                                                       | - Deployment_    |                                                         |
++-------------------------------------------------------+------------------+---------------------------------------------------------+
+| test_vs_standard_udp_afm.json_                        | - HTTP 200       | coming soon                                             |
+|                                                       | - Deployment_    |                                                         |
++-------------------------------------------------------+------------------+---------------------------------------------------------+
 
 .. _Deployment: https://devcentral.f5.com/wiki/iApp.AppSvcsiApp_execflow.ashx#determining-success-failure-of-deployment
 .. _test_monitors.json: test_monitors.json
@@ -153,6 +264,42 @@ BIG-IP
 .. _test_vs_standard_http_afm.json: test_vs_standard_http_afm.json
 .. _test_vs_standard_http_autoxff.json: test_vs_standard_http_autoxff.json
 .. _test_vs_standard_http_bundle_irule.json: test_vs_standard_http_bundle_irule.json
+.. _test_vs_standard_http_ipv6.json: test_vs_standard_http_ipv6.json
+.. _test_vs_standard_http_options.json: test_vs_standard_http_options.json
+.. _test_vs_standard_http_options_2.json: test_vs_standard_http_options_2.json
+.. _test_vs_standard_https.json: test_vs_standard_https.json
+.. _test_vs_standard_https_bundle_all_preserve.json: test_vs_standard_https_bundle_all_preserve.json
+.. _test_vs_standard_https_bundle_all_preserve_2.json: test_vs_standard_https_bundle_all_preserve_2.json
+.. _test_vs_standard_https_bundle_all_redeploy.json: test_vs_standard_https_bundle_all_redeploy.json
+.. _test_vs_standard_https_bundle_all_redeploy_2.json: test_vs_standard_https_bundle_all_redeploy_2.json
+.. _test_vs_standard_https_bundle_all_url.json: test_vs_standard_https_bundle_all_url.json
+.. _test_vs_standard_https_bundle_apm_preserve.json: test_vs_standard_https_bundle_apm_preserve.json
+.. _test_vs_standard_https_bundle_apm_preserve_2.json: test_vs_standard_https_bundle_apm_preserve_2.json
+.. _test_vs_standard_https_bundle_apm_redeploy.json: test_vs_standard_https_bundle_apm_redeploy.json
+.. _test_vs_standard_https_bundle_apm_redeploy_2.json: test_vs_standard_https_bundle_apm_redeploy_2.json
+.. _test_vs_standard_https_bundle_asm_preserve.json: test_vs_standard_https_bundle_asm_preserve.json
+.. _test_vs_standard_https_bundle_asm_preserve_2.json: test_vs_standard_https_bundle_asm_preserve_2.json
+.. _test_vs_standard_https_bundle_asm_redeploy.json: test_vs_standard_https_bundle_asm_redeploy.json
+.. _test_vs_standard_https_bundle_asm_redeploy_2.json: test_vs_standard_https_bundle_asm_redeploy_2.json
+.. _test_vs_standard_https_create.json: test_vs_standard_https_create.json
+.. _test_vs_standard_https_create_url.json: test_vs_standard_https_create_url.json
+.. _test_vs_standard_https_create_url_partition.json: test_vs_standard_https_create_url_partition.json
+.. _test_vs_standard_https_features.json: test_vs_standard_https_features.json
+.. _test_vs_standard_https_l7policy.json: test_vs_standard_https_l7policy.json
+.. _test_vs_standard_https_multi_listeners.json: test_vs_standard_https_multi_listeners.json
+.. _test_vs_standard_https_serverssl.json: test_vs_standard_https_serverssl.json
+.. _test_vs_standard_https_serverssl_create.json: test_vs_standard_https_serverssl_create.json
+.. _test_vs_standard_tcp.json: test_vs_standard_tcp.json
+.. _test_vs_standard_tcp_afm.json: test_vs_standard_tcp_afm.json
+.. _test_vs_standard_tcp_options.json: test_vs_standard_tcp_options.json
+.. _test_vs_standard_tcp_rd_auto.json: test_vs_standard_tcp_rd_auto.json
+.. _test_vs_standard_tcp_rd_nonauto.json: test_vs_standard_tcp_rd_nonauto.json
+.. _test_vs_standard_tcp_routeadv_all.json: test_vs_standard_tcp_routeadv_all.json
+.. _test_vs_standard_tcp_routeadv_always.json: test_vs_standard_tcp_routeadv_always.json
+.. _test_vs_standard_tcp_routeadv_any.json: test_vs_standard_tcp_routeadv_any.json
+.. _test_vs_standard_tcp_virt_addr_options.json: test_vs_standard_tcp_virt_addr_options.json
+.. _test_vs_standard_udp.json: test_vs_standard_udp.json
+.. _test_vs_standard_udp_afm.json: test_vs_standard_udp_afm.json
 
 
 iWorkflow
