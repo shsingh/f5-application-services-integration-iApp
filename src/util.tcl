@@ -223,7 +223,7 @@ proc change_var { name value } {
   lappend ::postfinal_deferred_cmds "if { \$\:\:errorCode != \"\" && \[regexp \"was not found\" \$err\] } {"
   lappend ::postfinal_deferred_cmds [create_escaped_tmsh [format "tmsh::modify sys application service %s/%s variables add \{ %s \{ value \"%s\" \} \}" $::app_path $::app $name $value]]
   lappend ::postfinal_deferred_cmds "} elseif { \$\:\:errorCode != \"\" } {"
-  lappend ::postfinal_deferred_cmds [format "    puts \"Error while tring modify %s with value %s error is msg -> \$err\"" $name $value ]
+  lappend ::postfinal_deferred_cmds [format "    puts \"Error while trying modify %s with value %s error is msg -> \$err\"" $name $value ]
   lappend ::postfinal_deferred_cmds "}"
   set [subst ::$name] $value
   set ::aso_config($name) $value
