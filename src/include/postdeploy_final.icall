@@ -1,6 +1,3 @@
-sys icall script %APP_PATH%/postdeploy_final {
-    app-service %APP_PATH%/%APP_NAME%
-    definition {
 set app %APP_NAME%
 set app_path %APP_PATH%
 set partition %PARTITION%
@@ -37,35 +34,3 @@ if { $strict_updates eq "enabled" } {
 set systemTime [clock seconds]
 puts "$logprefix Finished at [clock format $systemTime -format %D] [clock format $systemTime -format %H:%M:%S]"
 istats::set [format "%s string deploy.postdeploy_final" $iaso] [format "FINISHED_%s" $systemTime]
-    }
-    description none
-    events none
-}
-
-sys icall handler periodic %APP_PATH%/postdeploy_final {
-    app-service %APP_PATH%/%APP_NAME%
-    first-occurrence %ICALLTIME%
-    interval 3000
-    last-occurrence now+10m
-    script %APP_PATH%/postdeploy_final
-    status %HANDLER_STATE%
-}
-
-cli script /Common/appsvcs_get_istat {
-proc script::init {} {
-}
-
-proc script::run {} {
-    if { $tmsh::argc < 2 } {
-        puts "Please specify a iStat key to get"
-        exit
-    }
-    puts [istats::get [lindex $tmsh::argv 1]]
-}
-
-proc script::help {} {
-}
-
-proc script::tabc {} {
-}
-}

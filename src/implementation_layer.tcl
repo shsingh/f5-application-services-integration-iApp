@@ -2122,12 +2122,8 @@ if { $bundler_all_deploy } {
   debug [list bundler icall_src] [format "%s" $bundler_icall_src] 10
   debug [list bundler icall_handler] [format "creating iCall handler; executing postdeploy script at: %s" $bundler_icall_time] 7
 
-  set fn [format "/var/tmp/appsvcs_postdeploy_%s.conf" $app]
-  catch {
-      set fh [open $fn w]
-      puts $fh $bundler_icall_src
-      close $fh
-  } {}
+  tmsh::create sys icall script postdeploy_bundler definition \{ $postfinal_icall_src \}
+  tmsh::create sys icall handler periodic postdeploy_bundler interval 60 script postdeploy_bundler
 
   debug [list bundler deploy] "Bundled policy deployment will complete momentarily..." 5
 }
@@ -2183,30 +2179,8 @@ set postfinal_script_map [list %APP_NAME%  $::app \
 set postfinal_icall_src [string map $postfinal_script_map $postfinal_icall_tmpl]
 debug [list postfinal icall_src] [format "%s" $postfinal_icall_src] 10
 debug [list postfinal icall_handler] [format "creating iCall handler; executing postdeploy_final script at: %s" $postfinal_icall_time] 7
-
-set fn [format "/var/tmp/appsvcs_postdeploy_%s.conf" $app]
-catch {
-    if { $bundler_all_deploy } {
-      set fh [open $fn a]
-    } else {
-      set fh [open $fn w]
-    }
-    puts $fh ""
-    puts $fh $postfinal_icall_src
-    close $fh
-} {}
-
-set fn [format "/var/tmp/appsvcs_load_postdeploy_%s.sh" $app]
-catch {
-    set fh [open $fn w]
-    puts $fh "sleep 5"
-    puts $fh [format "tmsh load sys config file /var/tmp/appsvcs_postdeploy_%s.conf merge" $app]
-    puts $fh [format "rm -f /var/tmp/appsvcs_postdeploy_%s.conf" $app]
-    puts $fh [format "rm -f /var/tmp/appsvcs_load_postdeploy_%s.sh" $app]
-    close $fh
-    exec chmod 777 $fn
-    exec $fn &
-} {}
+tmsh::create sys icall script postdeploy_final definition \{ $postfinal_icall_src \}
+tmsh::create sys icall handler periodic postdeploy_final interval 60 script postdeploy_final status $postfinal_handler_state
 
 if { $iapp__strictUpdates eq "disabled" } {
   debug [list strict_updates] "disabling strict updates" 5

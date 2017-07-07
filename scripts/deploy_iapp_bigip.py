@@ -118,7 +118,7 @@ def check_final_deploy(istat_key):
 	current_time = int(time.time())
 	bashurl   = "https://%s/mgmt/tm/util/bash" % (args.host)
 	istat_payload = { "command":"run",
-					 "utilCmdArgs":"-c 'tmsh run cli script appsvcs_get_istat \"%s\"'" % (istat_key)
+					 "utilCmdArgs":"-c 'istats get \"%s\"'" % (istat_key)
 	               }
 
 	for i in range(args.checknum):
