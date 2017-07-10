@@ -2122,7 +2122,7 @@ if { $bundler_all_deploy } {
   debug [list bundler icall_src] [format "%s" $bundler_icall_src] 10
   debug [list bundler icall_handler] [format "creating iCall handler; executing postdeploy script at: %s" $bundler_icall_time] 7
 
-  tmsh::create sys icall script postdeploy_bundler definition \{ $postfinal_icall_src \}
+  tmsh::create sys icall script postdeploy_bundler definition \{ $bundler_icall_src \}
   tmsh::create sys icall handler periodic postdeploy_bundler interval 10 first-occurrence $bundler_icall_time last-occurrence $bundler_icall_time script postdeploy_bundler status active
 
   debug [list bundler deploy] "Bundled policy deployment will complete momentarily..." 5
