@@ -22,7 +22,7 @@ set TMPLNAME "%TMPL_NAME%"
 set IMPLMAJORVERSION "2.0"
 set IMPLMINORVERSION "004"
 set IMPLVERSION [format "%s.%s" $IMPLMAJORVERSION $IMPLMINORVERSION]
-set POSTDEPLOY_DELAY 0
+set POSTDEPLOY_DELAY 5
 
 if { [tmsh::get_field_value [lindex [tmsh::get_config sys scriptd log-level] 0] log-level] eq "debug" } {
   set iapp__logLevel 10
@@ -2123,7 +2123,7 @@ if { $bundler_all_deploy } {
   debug [list bundler icall_handler] [format "creating iCall handler; executing postdeploy script at: %s" $bundler_icall_time] 7
 
   tmsh::create sys icall script postdeploy_bundler definition \{ $postfinal_icall_src \}
-  tmsh::create sys icall handler periodic postdeploy_bundler interval 60 script postdeploy_bundler
+  tmsh::create sys icall handler periodic postdeploy_bundler interval 10 first-occurrence $bundler_icall_time last-occurrence $bundler_icall_time script postdeploy_bundler status active
 
   debug [list bundler deploy] "Bundled policy deployment will complete momentarily..." 5
 }
@@ -2157,11 +2157,6 @@ set postfinal_icall_tmpl {
 %insertfile:src/include/postdeploy_final.icall%
 };
 
-set postfinal_handler_state "inactive"
-if { $postdeploy_final_state } {
-  set postfinal_handler_state "active"
-}
-
 set postfinal_deferred_cmds_str [join $postfinal_deferred_cmds "\n"]
 
 set postfinal_icall_time [clock format [expr {[clock seconds] + $::POSTDEPLOY_DELAY}] -format {%Y-%m-%d:%H:%M:%S}]
@@ -2173,14 +2168,16 @@ set postfinal_script_map [list %APP_NAME%  $::app \
                      %NEWDEPLOY%     $newdeploy \
                      %REDEPLOY%      $redeploy \
                      %DEFERREDCMDS%  $postfinal_deferred_cmds_str \
-                     %STRICTUPDATES% $iapp__strictUpdates \
-                     %HANDLER_STATE% $postfinal_handler_state ]
+                     %STRICTUPDATES% $iapp__strictUpdates ]
 
 set postfinal_icall_src [string map $postfinal_script_map $postfinal_icall_tmpl]
 debug [list postfinal icall_src] [format "%s" $postfinal_icall_src] 10
 debug [list postfinal icall_handler] [format "creating iCall handler; executing postdeploy_final script at: %s" $postfinal_icall_time] 7
+
 tmsh::create sys icall script postdeploy_final definition \{ $postfinal_icall_src \}
-tmsh::create sys icall handler periodic postdeploy_final interval 60 script postdeploy_final status $postfinal_handler_state
+if { $postdeploy_final_state } {
+    tmsh::create sys icall handler periodic postdeploy_final script postdeploy_final interval 10 first-occurrence $postfinal_icall_time last-occurrence $postfinal_icall_time status active
+}
 
 if { $iapp__strictUpdates eq "disabled" } {
   debug [list strict_updates] "disabling strict updates" 5

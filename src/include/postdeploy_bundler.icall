@@ -150,7 +150,7 @@ foreach df $dellist {
 }
 
 tmsh::delete sys icall handler periodic postdeploy_bundler
-tmsh::modify sys icall handler periodic postdeploy_final first-occurrence now status active
+tmsh::create sys icall handler periodic postdeploy_final interval 10 first-occurrence now last-occurrence now script postdeploy_final status active
 if { $strict_updates eq "enabled" } {
 	tmsh::modify sys application service $aso strict-updates enabled
 }
