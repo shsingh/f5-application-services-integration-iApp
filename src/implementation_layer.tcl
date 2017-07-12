@@ -2157,6 +2157,12 @@ set postfinal_icall_tmpl {
 %insertfile:src/include/postdeploy_final.icall%
 };
 
+set postfinal_handler_state "inactive"
+
+if { $postdeploy_final_state } {
+  set postfinal_handler_state "active"
+}
+
 set postfinal_deferred_cmds_str [join $postfinal_deferred_cmds "\n"]
 
 set postfinal_icall_time [clock format [expr {[clock seconds] + $::POSTDEPLOY_DELAY}] -format {%Y-%m-%d:%H:%M:%S}]
@@ -2175,9 +2181,7 @@ debug [list postfinal icall_src] [format "%s" $postfinal_icall_src] 10
 debug [list postfinal icall_handler] [format "creating iCall handler; executing postdeploy_final script at: %s" $postfinal_icall_time] 7
 
 tmsh::create sys icall script postdeploy_final definition \{ $postfinal_icall_src \}
-if { $postdeploy_final_state } {
-    tmsh::create sys icall handler periodic postdeploy_final script postdeploy_final interval 10 first-occurrence $postfinal_icall_time last-occurrence $postfinal_icall_time status active
-}
+tmsh::create sys icall handler periodic postdeploy_final script postdeploy_final interval 10 first-occurrence $postfinal_icall_time last-occurrence $postfinal_icall_time status $postfinal_handler_state
 
 if { $iapp__strictUpdates eq "disabled" } {
   debug [list strict_updates] "disabling strict updates" 5
