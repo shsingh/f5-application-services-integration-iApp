@@ -22,7 +22,7 @@ set TMPLNAME "%TMPL_NAME%"
 set IMPLMAJORVERSION "2.0"
 set IMPLMINORVERSION "004"
 set IMPLVERSION [format "%s.%s" $IMPLMAJORVERSION $IMPLMINORVERSION]
-set POSTDEPLOY_DELAY 0
+set POSTDEPLOY_DELAY 5
 
 if { [tmsh::get_field_value [lindex [tmsh::get_config sys scriptd log-level] 0] log-level] eq "debug" } {
   set iapp__logLevel 10
