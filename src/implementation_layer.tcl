@@ -2199,7 +2199,7 @@ catch {
 set fn [format "/var/tmp/appsvcs_load_postdeploy_%s.sh" $app]
 catch {
     set fh [open $fn w]
-    puts $fh "sleep 5"
+    puts $fh "sleep 15"
     puts $fh [format "tmsh load sys config file /var/tmp/appsvcs_postdeploy_%s.conf merge" $app]
     puts $fh [format "rm -f /var/tmp/appsvcs_postdeploy_%s.conf" $app]
     puts $fh [format "rm -f /var/tmp/appsvcs_load_postdeploy_%s.sh" $app]
