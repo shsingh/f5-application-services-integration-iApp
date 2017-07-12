@@ -50,22 +50,3 @@ sys icall handler periodic %APP_PATH%/postdeploy_final {
     script %APP_PATH%/postdeploy_final
     status %HANDLER_STATE%
 }
-
-cli script /Common/appsvcs_get_istat {
-proc script::init {} {
-}
-
-proc script::run {} {
-    if { $tmsh::argc < 2 } {
-        puts "Please specify a iStat key to get"
-        exit
-    }
-    puts [istats::get [lindex $tmsh::argv 1]]
-}
-
-proc script::help {} {
-}
-
-proc script::tabc {} {
-}
-}

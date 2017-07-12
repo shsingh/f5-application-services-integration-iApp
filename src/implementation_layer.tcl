@@ -22,7 +22,7 @@ set TMPLNAME "%TMPL_NAME%"
 set IMPLMAJORVERSION "2.0"
 set IMPLMINORVERSION "004"
 set IMPLVERSION [format "%s.%s" $IMPLMAJORVERSION $IMPLMINORVERSION]
-set POSTDEPLOY_DELAY 0
+set POSTDEPLOY_DELAY 8
 
 if { [tmsh::get_field_value [lindex [tmsh::get_config sys scriptd log-level] 0] log-level] eq "debug" } {
   set iapp__logLevel 10
@@ -2099,7 +2099,7 @@ if { $bundler_all_deploy } {
     }
   }
 
-  set bundler_icall_time [clock format [expr {[clock seconds] + $::POSTDEPLOY_DELAY}] -format {%Y-%m-%d:%H:%M:%S}]
+  set bundler_icall_time [clock format [expr {[clock seconds] + $::POSTDEPLOY_DELAY*2}] -format {%Y-%m-%d:%H:%M:%S}]
   set bundler_script_map [list %APP_NAME%  $::app \
                        %APP_PATH%      $::app_path \
                        %VS_NAME%       $::vs__Name \
@@ -2164,11 +2164,13 @@ set postfinal_icall_tmpl {
 set postfinal_handler_state "inactive"
 if { $postdeploy_final_state } {
   set postfinal_handler_state "active"
+  set postfinal_icall_time [clock format [expr {[clock seconds] + $::POSTDEPLOY_DELAY*2}] -format {%Y-%m-%d:%H:%M:%S}]
+} else {
+  set postfinal_icall_time [clock format [expr {[clock seconds] + $::POSTDEPLOY_DELAY*3}] -format {%Y-%m-%d:%H:%M:%S}]
 }
 
 set postfinal_deferred_cmds_str [join $postfinal_deferred_cmds "\n"]
 
-set postfinal_icall_time [clock format [expr {[clock seconds] + $::POSTDEPLOY_DELAY}] -format {%Y-%m-%d:%H:%M:%S}]
 set postfinal_script_map [list %APP_NAME%  $::app \
                      %APP_PATH%      $::app_path \
                      %VS_NAME%       $::vs__Name \
@@ -2196,17 +2198,23 @@ catch {
     close $fh
 } {}
 
-set fn [format "/var/tmp/appsvcs_load_postdeploy_%s.sh" $app]
-catch {
-    set fh [open $fn w]
-    puts $fh "sleep 5"
-    puts $fh [format "tmsh load sys config file /var/tmp/appsvcs_postdeploy_%s.conf merge" $app]
-    puts $fh [format "rm -f /var/tmp/appsvcs_postdeploy_%s.conf" $app]
-    puts $fh [format "rm -f /var/tmp/appsvcs_load_postdeploy_%s.sh" $app]
-    close $fh
-    exec chmod 777 $fn
-    exec $fn &
-} {}
+set tmsh_load_icall_tmpl {
+%insertfile:src/include/tmsh_load.icall%
+};
+
+set tmsh_load_icall_time [clock format [expr {[clock seconds] + $::POSTDEPLOY_DELAY}] -format {%Y-%m-%d:%H:%M:%S}]
+set tmsh_load_script_map [list %APP_NAME%  $::app \
+                            %APP_PATH%      $::app_path \
+                            %VS_NAME%       $::vs__Name \
+                            %STRICTUPDATES% $iapp__strictUpdates \
+                            %PARTITION%     $::partition ]
+
+set tmsh_load_icall_src [string map $tmsh_load_script_map $tmsh_load_icall_tmpl]
+debug [list tmsh_load icall_src] [format "%s" $tmsh_load_icall_src] 10
+debug [list tmsh_load icall_handler] [format "creating iCall handler; executing tmsh_load script at: %s" $tmsh_load_icall_time] 7
+
+tmsh::create sys icall script tmsh_load_script definition \{ $tmsh_load_icall_src \}
+tmsh::create sys icall handler periodic tmsh_load_icall script tmsh_load_script interval 10 first-occurrence $tmsh_load_icall_time status active
 
 if { $iapp__strictUpdates eq "disabled" } {
   debug [list strict_updates] "disabling strict updates" 5

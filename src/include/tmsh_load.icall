@@ -1,0 +1,22 @@
+set app %APP_NAME%
+set app_path %APP_PATH%
+set partition %PARTITION%
+set vs_name %VS_NAME%
+set strict_updates %STRICTUPDATES%
+
+set aso "/$partition/${app}.app/$app"
+set iaso [format "sys.application.service %s" $aso]
+set logprefix "\[appsvcs_postdeploy_final\]\[$app\]"
+set filename [format "/var/tmp/appsvcs_postdeploy_%s.conf" $app]
+
+if { [file exists $filename] } {
+    tmsh::cd $app_path
+    tmsh::modify sys application service $aso strict-updates disabled
+
+    tmsh::load sys config file $filename merge
+    file delete -force $filename
+
+    if { $strict_updates eq "enabled" } {
+    	tmsh::modify sys application service $aso strict-updates enabled
+    }
+}

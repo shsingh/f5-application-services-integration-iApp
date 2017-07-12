@@ -62,6 +62,9 @@ foreach policy $asm_policy_list {
 	istats::set [format "%s string deploy.postdeploy_bundler.asm.%s" $iaso $policy] "DEPLOY_IN_PROGRESS"
 	set policy_filename [format "/var/tmp/appsvcs_asm_%s_%s_%s.xml" $app $policy $timestamp]
 	puts "$logprefix Loading ASM policy from $policy_filename to ASO $aso..."
+	if { $newdeploy } {
+	    tmsh::create asm policy $policy
+	}
 	tmsh::load asm policy $policy file $policy_filename overwrite
 	tmsh::modify asm policy $policy app-service $aso
 
