@@ -1,0 +1,114 @@
+{
+  "name": "test_pools", 
+  "parent": "include_defaults.json", 
+  "strings": [
+    {
+      "pool__addr": "255.255.255.254"
+    }, 
+    {
+      "pool__port": "8081"
+    }, 
+    {
+      "pool__DefaultPoolIndex": "0"
+    }, 
+    {
+      "pool__MemberDefaultPort": ""
+    }
+  ], 
+  "tables": [
+    {
+      "columnNames": [
+        "Index", 
+        "Name", 
+        "Type", 
+        "Options"
+      ], 
+      "name": "monitor__Monitors", 
+      "rows": [
+        {
+          "row": [
+            "0", 
+            "/Common/tcp", 
+            "none", 
+            "none"
+          ]
+        }
+      ]
+    }, 
+    {
+      "columnNames": [
+        "Index", 
+        "Name", 
+        "Description", 
+        "LbMethod", 
+        "Monitor", 
+        "AdvOptions"
+      ], 
+      "name": "pool__Pools", 
+      "rows": [
+        {
+          "row": [
+            "", 
+            "", 
+            "", 
+            "round-robin", 
+            "0", 
+            "none"
+          ]
+        }
+      ]
+    }, 
+    {
+      "columnNames": [
+        "Index", 
+        "IPAddress", 
+        "Port", 
+        "ConnectionLimit", 
+        "Ratio", 
+        "PriorityGroup", 
+        "State", 
+        "AdvOptions"
+      ], 
+      "name": "pool__Members", 
+      "rows": [
+        {
+          "row": [
+            "", 
+            "%TEST_MEMBER_IP%", 
+            "", 
+            "0", 
+            "1", 
+            "0", 
+            "enabled", 
+            "none"
+          ]
+        }, 
+        {
+          "row": [
+            "", 
+            "%TEST_MEMBER_IP%", 
+            "", 
+            "1000", 
+            "1", 
+            "0", 
+            "disabled", 
+            "none"
+          ]
+        }, 
+        {
+          "row": [
+            "", 
+            "%TEST_MEMBER_IP%", 
+            "", 
+            "2000", 
+            "1", 
+            "0", 
+            "drain-disabled", 
+            "none"
+          ]
+        }
+      ]
+    }
+  ], 
+  "test_parent": "test_pools"
+}

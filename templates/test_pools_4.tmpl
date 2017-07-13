@@ -1,0 +1,85 @@
+{
+  "name": "test_pools", 
+  "parent": "include_defaults.json", 
+  "strings": [
+    {
+      "pool__addr": "255.255.255.254"
+    }, 
+    {
+      "pool__port": "8081"
+    }, 
+    {
+      "pool__DefaultPoolIndex": "0"
+    }, 
+    {
+      "pool__MemberDefaultPort": ""
+    }
+  ], 
+  "tables": [
+    {
+      "columnNames": [
+        "Index", 
+        "Name", 
+        "Type", 
+        "Options"
+      ], 
+      "name": "monitor__Monitors", 
+      "rows": [
+        {
+          "row": [
+            "0", 
+            "/Common/tcp", 
+            "none", 
+            "none"
+          ]
+        }, 
+        {
+          "row": [
+            "1", 
+            "/Common/http", 
+            "none", 
+            "none"
+          ]
+        }
+      ]
+    }, 
+    {
+      "columnNames": [
+        "Index", 
+        "Name", 
+        "Description", 
+        "LbMethod", 
+        "Monitor", 
+        "AdvOptions"
+      ], 
+      "name": "pool__Pools", 
+      "rows": [
+        {
+          "row": [
+            "0", 
+            "", 
+            "", 
+            "round-robin", 
+            "0", 
+            "none"
+          ]
+        }
+      ]
+    }, 
+    {
+      "columnNames": [
+        "Index", 
+        "IPAddress", 
+        "Port", 
+        "ConnectionLimit", 
+        "Ratio", 
+        "PriorityGroup", 
+        "State", 
+        "AdvOptions"
+      ], 
+      "name": "pool__Members", 
+      "rows": []
+    }
+  ], 
+  "test_parent": "test_pools"
+}

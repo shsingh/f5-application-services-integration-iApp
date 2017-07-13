@@ -5,6 +5,8 @@ iWorkflow_appsvcs_integration_v*.*.json
 BIGIP_appsvcs_integration_v*.*.json
 AppSvcs_iApp_Workflows.postman_collection.json
 *.iml
+*.pyc
+pylint.log
 
 parts/*
 docs/_build/*
@@ -13,5 +15,6 @@ docs/VERSION
 test/run/*
 
 .idea/
-
-src/*.pyc
+payloads/
+venv/
+test/*.tmp
