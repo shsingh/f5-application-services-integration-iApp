@@ -1,5 +1,5 @@
 cli script appsvcs.integration.util {
-%insertfile:src/outside_util.tcl%
+%insertfile:outside_util.tcl%
 }
 
 sys application template appsvcs_integration_v%IMPLVERSION_MAJOR%.%IMPLVERSION_MINOR%%NAME_APPEND% {
@@ -8,7 +8,7 @@ sys application template appsvcs_integration_v%IMPLVERSION_MAJOR%.%IMPLVERSION_M
             html-help {
             }
             implementation {
-%insertfile:src/implementation_layer.tcl%
+%insertfile:implementation_layer.tcl%
             }
             macro {
             }

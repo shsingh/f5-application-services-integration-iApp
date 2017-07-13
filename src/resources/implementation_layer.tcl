@@ -28,11 +28,11 @@ if { [tmsh::get_field_value [lindex [tmsh::get_config sys scriptd log-level] 0] 
   set iapp__logLevel 10
 }
 
-%insertfile:src/util.tcl%
+%insertfile:util.tcl%
 
 set_version_info
 
-%insertfile:src/include/custom_extensions.tcl%
+%insertfile:include/custom_extensions.tcl%
 
 array set bundler_objects {}
 array set bundler_data {}
@@ -252,7 +252,7 @@ if { [string length $vs__ProfileClientSSLKey] > 0 && [string length $vs__Profile
       append cmd [format " chain %s" $vs__ProfileClientSSLChain]
   }
 
-%insertfile:src/include/feature_sslEasyCipher.tcl%
+%insertfile:include/feature_sslEasyCipher.tcl%
 
   if { [string length $vs__ProfileClientSSLCipherString] > 0 } {
       debug [list client_ssl create cipher_string] "adding cipher string" 7
@@ -1172,10 +1172,10 @@ if { [is_provisioned afm] && $pool__addr != "255.255.255.254" } {
 if { $clientssl > 0 && [string match enabled* $feature__securityEnableHSTS] } {
   # include iRules used for feature__securityEnableHSTS
   set irule_HSTS {
-    %insertfile:src/include/feature_securityEnableHSTS.irule%
+    %insertfile:include/feature_securityEnableHSTS.irule%
   }; # end irule_HSTS
   set irule_HSTS_redirect {
-    %insertfile:src/include/feature_securityEnableHSTS_redirect.irule%
+    %insertfile:include/feature_securityEnableHSTS_redirect.irule%
   };
 
   debug [list virtual_server feature__securityEnableHSTS] "creating HSTS iRule" 5
@@ -1368,7 +1368,7 @@ if { $feature__easyL4Firewall == "enabled" } {
   set fw_name [create_obj_name "firewall"]
   set fw_cmd [format ""]
   set fw_tmpl {
-%insertfile:src/include/feature_easyL4Firewall.tmpl%
+%insertfile:include/feature_easyL4Firewall.tmpl%
   };
 
   set tmpl_map [list %NAME%             $fw_name \
@@ -1873,7 +1873,7 @@ if { ($iapp__appStats eq "enabled") } {
   debug [list stats] "creating icall stats publisher" 7
       # START EMBEDDED ICALL SCRIPT
   set icall_script_tmpl {
-%insertfile:src/include/base_statistics_script.icall%
+%insertfile:include/base_statistics_script.icall%
   }; # END EMBEDDED ICALL SCRIPT
 
   set stats_pool 0
@@ -2077,7 +2077,7 @@ if { $bundler_all_deploy } {
   }
 
   set bundler_icall_tmpl {
-%insertfile:src/include/postdeploy_bundler.icall%
+%insertfile:include/postdeploy_bundler.icall%
   };
 
   set bundler_apm_importcmd ""
@@ -2158,7 +2158,7 @@ if { [string length $vs__VirtualAddrAdvOptions] > 0 } {
 custom_extensions_end
 
 set postfinal_icall_tmpl {
-%insertfile:src/include/postdeploy_final.icall%
+%insertfile:include/postdeploy_final.icall%
 };
 
 set postfinal_handler_state "inactive"
