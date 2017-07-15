@@ -53,7 +53,7 @@ def router(parser, argv):
     if args.clean:
         clean()
     else:
-        build_iapp(args)
+        build_iapp(args.build_dir)
 
 
 def clean():
@@ -76,17 +76,23 @@ def mk_dir(my_dir):
     return my_dir
 
 
-def build_iapp(args):
-    build_dir = mk_dir(args.build_dir)
+def build_iapp(build_dir):
+    build_dir = mk_dir(build_dir)
     tmp_dir = mk_dir('tmp')
     resource_dir = os.path.abspath(os.path.join('src', 'resources'))
 
-    args.resource_dir = resource_dir
-    args.tempdir = tmp_dir
+    builder = AppServicesBuilder(
+        build_dir=build_dir,
+        resource_dir=resource_dir,
+        tempdir=tmp_dir
+    )
 
-    builder = AppServicesBuilder(**vars(args))
     builder.buildAPL()
-    builder.buildTemplate(**vars(args))
+    builder.buildTemplate(
+        build_dir=build_dir,
+        resource_dir=resource_dir,
+        tempdir=tmp_dir)
+
     builder.buildiWfTemplate()
 
     print("Assembling TCL only template...")

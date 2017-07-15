@@ -181,6 +181,9 @@ def run_test():
     print "IPv6 Member Subnet: %s, nextip %s%s" % (member6_subnet, member6_subnet, member6_nextip)
     print "Device Version: %s" % version
     print "Loading test config (test_config.conf)..."
+
+    return
+
     # dirty hack for ci-integration
     if args.SSHPort != 22:
         host = args.host.split(":")[0]
@@ -223,6 +226,7 @@ def run_test():
         test_name = test_template.split('.')[0]
 
         (del_override, del_override_name, del_partition) = process_file(test_template)
+        continue
 
         cmddebug = ""
         if args.debug:

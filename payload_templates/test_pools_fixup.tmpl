@@ -1,0 +1,171 @@
+{
+    "name": "%TEST_NAME%", 
+    "parent": "include_defaults.json", 
+    "strings": [
+        {
+            "pool__addr": "255.255.255.254"
+        }, 
+        {
+            "pool__port": "80"
+        }, 
+        {
+            "pool__DefaultPoolIndex": "1"
+        }
+    ], 
+    "tables": [
+        {
+            "columnNames": [
+                "Index", 
+                "Name", 
+                "Type", 
+                "Options"
+            ], 
+            "name": "monitor__Monitors", 
+            "rows": [
+                {
+                    "row": [
+                        "0", 
+                        "/Common/tcp", 
+                        "none", 
+                        "none"
+                    ]
+                }
+            ]
+        }, 
+        {
+            "columnNames": [
+                "Index", 
+                "Name", 
+                "Description", 
+                "LbMethod", 
+                "Monitor", 
+                "AdvOptions"
+            ], 
+            "name": "pool__Pools", 
+            "rows": []
+        }, 
+        {
+            "columnNames": [
+                "Index", 
+                "IPAddress", 
+                "Port", 
+                "ConnectionLimit", 
+                "Ratio", 
+                "PriorityGroup", 
+                "State", 
+                "AdvOptions"
+            ], 
+            "name": "pool__Members", 
+            "rows": [
+                {
+                    "row": [
+                        "0", 
+                        "%TEST_MEMBER_IP%", 
+                        "80", 
+                        "0", 
+                        "1", 
+                        "0", 
+                        "enabled", 
+                        "none"
+                    ]
+                }, 
+                {
+                    "row": [
+                        "0", 
+                        "%TEST_MEMBER_IP%", 
+                        "80", 
+                        "1000", 
+                        "1", 
+                        "0", 
+                        "disabled", 
+                        "none"
+                    ]
+                }, 
+                {
+                    "row": [
+                        "0", 
+                        "%TEST_MEMBER_IP%", 
+                        "80", 
+                        "2000", 
+                        "1", 
+                        "0", 
+                        "drain-disabled", 
+                        "none"
+                    ]
+                }, 
+                {
+                    "row": [
+                        "1", 
+                        "%TEST_MEMBER_IP%", 
+                        "80", 
+                        "0", 
+                        "1", 
+                        "0", 
+                        "enabled", 
+                        "none"
+                    ]
+                }, 
+                {
+                    "row": [
+                        "1", 
+                        "%TEST_MEMBER_IP%", 
+                        "80", 
+                        "0", 
+                        "1", 
+                        "0", 
+                        "disabled", 
+                        "none"
+                    ]
+                }, 
+                {
+                    "row": [
+                        "1", 
+                        "%TEST_MEMBER_IP%", 
+                        "80", 
+                        "0", 
+                        "1", 
+                        "0", 
+                        "drain-disabled", 
+                        "none"
+                    ]
+                }, 
+                {
+                    "row": [
+                        "2", 
+                        "%TEST_MEMBER_IP%", 
+                        "80", 
+                        "0", 
+                        "1", 
+                        "0", 
+                        "enabled", 
+                        "none"
+                    ]
+                }, 
+                {
+                    "row": [
+                        "2", 
+                        "%TEST_MEMBER_IP%", 
+                        "80", 
+                        "0", 
+                        "1", 
+                        "0", 
+                        "disabled", 
+                        "none"
+                    ]
+                }, 
+                {
+                    "row": [
+                        "2", 
+                        "%TEST_MEMBER_IP%", 
+                        "80", 
+                        "0", 
+                        "1", 
+                        "0", 
+                        "drain-disabled", 
+                        "none"
+                    ]
+                }
+            ]
+        }
+    ]
+}

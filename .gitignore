@@ -1,14 +1,17 @@
 *.iml
 *.pyc
 pylint.log
-test/*.tmp
+*.tmp
 
 build/*
 docs/_build/*
 docs/presoref.rst
 docs/VERSION
 test/run/*
-.idea/
 payloads/
 venv/
+
+.idea/
+.cache
+src/.cache
 
