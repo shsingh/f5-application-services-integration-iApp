@@ -1,13 +1,14 @@
+pylint.log
+
 *.iml
 *.pyc
-pylint.log
 *.tmp
 
 build/*
 docs/_build/*
+test/run/*
 docs/presoref.rst
 docs/VERSION
-test/run/*
 payloads/
 venv/
 

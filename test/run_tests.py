@@ -182,8 +182,6 @@ def run_test():
     print "Device Version: %s" % version
     print "Loading test config (test_config.conf)..."
 
-    return
-
     # dirty hack for ci-integration
     if args.SSHPort != 22:
         host = args.host.split(":")[0]
