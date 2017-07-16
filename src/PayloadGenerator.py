@@ -25,18 +25,27 @@ class PayloadGenerator(object):
     def get_tmp_dir(self):
         return self._tmp_dir
 
-    def fill_template(self, abs_template_path, session_id, version,
-                       policy_host, server_v4_network, server_v6_network,
-                       pull_v4_network, pull_v6_network):
+    def fill_template(
+            self, abs_template_path, session_id, version, policy_host,
+            server_v4_network, server_v6_network,
+            server_first_v4_address, server_first_v6_address,
+            pull_v4_network, pull_v6_network,
+            pull_first_v4_address, pull_first_v6_address):
 
-        server_v4_gen = IPv4AddressGenerator(server_v4_network)
-        server_v6_gen = IPv6AddressGenerator(server_v6_network)
-        pull_v4_gen = IPv4AddressGenerator(pull_v4_network)
-        pull_v6_gen = IPv6AddressGenerator(pull_v6_network)
+        server_v4_gen = IPv4AddressGenerator(
+            server_v4_network, server_first_v4_address)
+        server_v6_gen = IPv6AddressGenerator(
+            server_v6_network, server_first_v6_address)
+        pull_v4_gen = IPv4AddressGenerator(
+            pull_v4_network, pull_first_v4_address)
+        pull_v6_gen = IPv6AddressGenerator(
+            pull_v6_network, pull_first_v6_address)
 
         result = [False, "", "Common"]
 
         tmp_file_name = os.path.basename(abs_template_path)
+
+        mk_dir(self._tmp_dir)
 
         with open(abs_template_path, 'r') as template:
             with open(os.path.join(

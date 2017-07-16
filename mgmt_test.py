@@ -8,20 +8,22 @@ from src.AppServicesTools import fix_indents as as_fix_indents
 from src.AppServicesTools import BIPClient
 
 
-def build_payloads():
+def build_templates(host):
     pay_gen = PayloadGenerator(os.getcwd())
-    version = {
-        'major': "1",
-        'minor': "2",
-        'version': "3"
-    }
+    bip = BIPClient(host)
+    version = bip.get_version()
+
     for payload_template in glob(os.path.join("payload_templates", "*.tmpl")):
         pay_gen.fill_template(
             payload_template, 123456, version, "10.144.72.137",
             u"172.16.0.0/24",
             u"2001:dead:beef:1::/120",
+            u"172.16.0.100",
+            u"2001:dead:beef:1::10",
             u"10.0.0.0/24",
-            u"2001:dead:beef:2::/120")
+            u"2001:dead:beef:2::/120",
+            u"10.0.0.10",
+            u"2001:dead:beef:2::10")
 
 
 def fix_indents(path):
@@ -53,8 +55,7 @@ def get_version(host):
 def get_parser():
     parser = argparse.ArgumentParser()
     parser.add_argument('-t', '--build_templates',
-                        help='Build templates',
-                        action="store_true")
+                        help='Build templates')
     parser.add_argument('-v', '--version',
                         help='BIP version',)
     parser.add_argument('-f', '--fix_indents',
@@ -69,7 +70,7 @@ def router(parser, argv):
         sys.exit(1)
 
     if args.build_templates:
-        build_payloads()
+        build_templates(args.build_templates)
 
     if args.fix_indents:
         fix_indents(args.fix_indents)
