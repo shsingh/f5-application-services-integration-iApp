@@ -8,8 +8,23 @@ import glob
 import json
 import paramiko
 import os
+import errno
 from requests.exceptions import ConnectionError
 from requests.packages.urllib3.exceptions import InsecureRequestWarning
+
+
+def mk_dir(dir_name):
+    try:
+        os.mkdir(dir_name)
+    except OSError as exception:
+        if exception.errno != errno.EEXIST:
+            raise
+        pass
+
+
+def save_json(filename, json_content):
+    with open(filename, 'w+') as template:
+        json.dump(json_content, template, indent=4, sort_keys=True)
 
 
 def fix_indents(path):
@@ -17,8 +32,7 @@ def fix_indents(path):
         with open(filename, 'r') as template:
             json_content = json.load(template)
 
-        with open(filename, 'w+') as template:
-            json.dump(json_content, template, indent=4, sort_keys=True)
+        save_json(filename, json_content)
 
 
 class IPAddressGenerator(object):
@@ -68,6 +82,8 @@ class BIPClient(object):
             host)
         self._version_url = "https://{}/mgmt/tm/sys/software/volume?" \
                             "$select=active,version".format(host)
+        self._app_url = "https://{}/mgmt/tm/sys/application/template?" \
+                         "$select=name".format(host)
 
     def _get_session(self):
         requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
@@ -97,6 +113,23 @@ class BIPClient(object):
                         'minor': parts[2]
                     }
         return {}
+
+    def get_template_name(self):
+        session = self._get_session()
+        resp = session.get(self._app_url)
+        templates = resp.json()
+
+        result = []
+        for item in templates["items"]:
+            if item["name"].startswith("appsvcs_integration_"):
+                logging.debug(
+                    "[template_list] found template named {}".format(
+                        item["name"]))
+                result.append(item["name"])
+
+        result.sort()
+
+        return result.pop()
 
     def upload_files(self, local_files, remote_files):
         client = paramiko.Transport((self._host, self._ssh_port))

@@ -10,7 +10,10 @@ test/run/*
 docs/presoref.rst
 docs/VERSION
 payloads/
+payloads_back/
+payloads_new/
 venv/
+tmp/
 
 .idea/
 .cache

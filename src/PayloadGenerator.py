@@ -4,9 +4,11 @@ import os
 import re
 import random
 import json
-import sys
 import logging
-from AppServicesTools import IPv4AddressGenerator, IPv6AddressGenerator
+from AppServicesTools import IPv4AddressGenerator
+from AppServicesTools import IPv6AddressGenerator
+from AppServicesTools import save_json
+from AppServicesTools import mk_dir
 
 
 class PayloadGenerator(object):
@@ -23,7 +25,7 @@ class PayloadGenerator(object):
     def get_tmp_dir(self):
         return self._tmp_dir
 
-    def build_template(self, abs_template_path, session_id, version,
+    def fill_template(self, abs_template_path, session_id, version,
                        policy_host, server_v4_network, server_v6_network,
                        pull_v4_network, pull_v6_network):
 
@@ -139,31 +141,128 @@ class PayloadGenerator(object):
 
         return result
 
-    def flatten_template(self, parent, child, indent):
+    @staticmethod
+    def read_template(template_path):
+        try:
+            template_file = open(template_path)
+            content = json.load(template_file)
+            template_file.close()
+            return content
+        except (IOError, ValueError, NameError) as error:
+            raise error
+
+    @staticmethod
+    def validate_template(template):
+        required_fields = [
+            'name', 'template_name', 'partition', 'username', 'password',
+            'inheritedDevicegroup', 'inheritedTrafficGroup', 'deviceGroup',
+            'trafficGroup']
+        for field in required_fields:
+            if field not in template:
+                msg = "The required key \"{}\" was not found in" \
+                      " the JSON template (or it's parent(s))".format(field)
+                raise Exception(msg)
+
+    @staticmethod
+    def _append_credentials(tmpl, username=None, password=None,
+                            password_file=None):
+        if username is not None:
+            if 'username' in tmpl:
+                logging.info("Username found in JSON but specified on CLI,"
+                             "using CLI value")
+            tmpl["username"] = username
+
+        if password is not None:
+            if 'password' in tmpl:
+                logging.info("Password found in JSON but specified on CLI,"
+                             "using CLI value")
+            tmpl["password"] = password
+        if password_file is not None:
+            if 'password' in tmpl:
+                logging.info("Password found in JSON but specified in CLI,"
+                             " using CLI value")
+            with open(password_file, 'r') as p_file:
+                tmpl["password"] = p_file.readline().strip()
+
+        return tmpl
+
+    def build_template(self, template_dir, template_file_name,
+                       username=None, password=None, password_file=None):
+        tmpl = self.read_template(
+            os.path.join(template_dir, template_file_name))
+        flat_tmpl = self.flatten_template(tmpl['parent'], tmpl, template_dir)
+
+        flat_tmpl = self._append_credentials(
+            flat_tmpl, username, password, password_file)
+
+        self.validate_template(flat_tmpl)
+
+        return flat_tmpl
+
+    @staticmethod
+    def update_app_services_name(tmpl, name):
+        logging.debug("[template_select] specified={}".format(
+            tmpl["template_name"]))
+        if tmpl["template_name"] == "latest":
+            tmpl["template_name"] = name
+            logging.debug("[template_select] selected={}".format(
+                tmpl["template_name"]))
+        else:
+            if tmpl["template_name"] not in tmpllist:
+                msg = "iApp template \"{}\"" \
+                      " is not installed on BIG-IP".format(
+                    tmpl["template_name"])
+                raise Exception(msg)
+
+        return tmpl
+
+    def build_payload(self, template, app_name,
+                      payload_filename=None, payload_directory=None):
+
+        template = self.update_app_services_name(template, app_name)
+
+        deploy_payload = {
+            "inheritedDevicegroup": template["inheritedDevicegroup"],
+            "inheritedTrafficGroup": template["inheritedTrafficGroup"],
+            "deviceGroup": template["deviceGroup"],
+            "trafficGroup": template["trafficGroup"],
+            "template": template["template_name"],
+            "partition": template["partition"],
+            "name": template["name"],
+            "variables": [],
+            "tables": [],
+            "lists": []
+        }
+
+        for string in template["strings"]:
+            k, v = string.popitem()
+            deploy_payload["variables"].append(
+                {"name": k, "value": v})
+
+        deploy_payload["tables"] = template["tables"]
+        deploy_payload["lists"] = template["lists"]
+
+        if payload_filename is not None and payload_directory is not None:
+            mk_dir(payload_directory)
+            save_json(
+                os.path.join(payload_directory, payload_filename),
+                deploy_payload
+            )
+
+        return deploy_payload
+
+    def flatten_template(self, parent, child, template_dir, indent=" "):
         logging.info("{} processing parent file \"{}\"".format(
             indent, parent))
-        try:
-            parent_file = open(parent)
-        except IOError as error:
-            logging.error(
-                "Open of parent JSON template \"{}\" failed: {}".format(
-                    parent, error))
-            sys.exit(1)
 
-        try:
-            parent_dict = json.load(parent_file)
-        except (ValueError, NameError) as error:
-            logging.error(
-                "JSON format error in template \"{}\": {}".format(
-                    parent, error))
-            sys.exit(1)
-
-        parent_file.close()
+        parent_dict = self.read_template(
+            os.path.join(template_dir, parent))
 
         # Recursion happens here
         if 'parent' in parent_dict:
             parent_dict = self.flatten_template(
-                parent_dict["parent"], parent_dict, indent + " ")
+                os.path.join(template_dir, parent_dict["parent"]),
+                parent_dict, template_dir, indent + " ")
 
         # Process the child objects 'strings' and 'tables' keys.
         child_strings = {}

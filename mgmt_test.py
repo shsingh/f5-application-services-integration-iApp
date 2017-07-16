@@ -16,7 +16,7 @@ def build_payloads():
         'version': "3"
     }
     for payload_template in glob(os.path.join("payload_templates", "*.tmpl")):
-        pay_gen.build_template(
+        pay_gen.fill_template(
             payload_template, 123456, version, "10.144.72.137",
             u"172.16.0.0/24",
             u"2001:dead:beef:1::/120",
@@ -35,10 +35,19 @@ def get_version(host):
     # result = bip.run_command('tmsh -c \"delete ltm pool all;'
     #                          ' delete ltm node all\"')
     # print(result)
-    bip.upload_files(
-        ['upload_files/test_config.conf'],
-        ['/var/tmp/test_config.conf']
-    )
+    # bip.upload_files(
+    #     ['upload_files/test_config.conf'],
+    #     ['/var/tmp/test_config.conf']
+    # )
+
+    pay_gen = PayloadGenerator(os.getcwd())
+    tmpl = pay_gen.build_template(
+        "tmp", "test_pools.tmpl.123456.tmp", "admin", "admin")
+
+    template_name = bip.get_template_name()
+
+    payload = pay_gen.build_payload(
+        tmpl, template_name, 'test_pools.json', 'payloads_new')
 
 
 def get_parser():
