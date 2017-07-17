@@ -44,12 +44,16 @@ def get_version(host):
 
     pay_gen = PayloadGenerator(os.getcwd())
     tmpl = pay_gen.build_template(
-        "tmp", "test_pools.tmpl.123456.tmp", "admin", "admin")
+        "tmp", "test_monitors.tmpl.123456.tmp", "admin", "admin")
 
     template_name = bip.get_template_name()
 
     payload = pay_gen.build_payload(
-        tmpl, template_name, 'test_pools.json', 'payloads_new')
+        tmpl, template_name, 'test_monitors.json', 'payloads_new')
+
+    url = bip.deploy_app_service(payload)
+
+    print(url)
 
 
 def get_parser():

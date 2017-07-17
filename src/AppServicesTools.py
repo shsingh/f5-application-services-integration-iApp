@@ -9,6 +9,7 @@ import json
 import paramiko
 import os
 import errno
+import time
 from requests.exceptions import ConnectionError
 from requests.packages.urllib3.exceptions import InsecureRequestWarning
 
@@ -92,8 +93,8 @@ class BIPClient(object):
             host)
         self._version_url = "https://{}/mgmt/tm/sys/software/volume?" \
                             "$select=active,version".format(host)
-        self._app_url = "https://{}/mgmt/tm/sys/application/template?" \
-                         "$select=name".format(host)
+        self._app_template_url = "https://{}/mgmt/tm/sys/application/" \
+                                 "template?$select=name".format(host)
 
     def _get_session(self):
         requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
@@ -102,6 +103,66 @@ class BIPClient(object):
         session.verify = False
 
         return session
+
+    @staticmethod
+    def _get_app_services_existence_url(url, name, partition):
+        return "{0}/~{1}~{2}.app~{2}".format(
+            url, partition, name)
+
+    @staticmethod
+    def _get_istat_key(partition, name):
+        return "sys.application.service " \
+               "/{0}/{1}.app/{1} string deploy.postdeploy_final".format(
+            partition, name)
+
+    def app_services_deployed(
+            self, payload, no_check=False, max_check=10, wait=6):
+        if no_check:
+            return True
+
+        current_time = int(time.time())
+        istat_key = self._get_istat_key(payload['partition'], payload['name'])
+        command = 'tmsh run cli script appsvcs_get_istat \"{}\"'.format(
+            istat_key)
+
+        for check_run in range(max_check):
+            logging.info("checking for deployment completion (%s/%s)".format(
+                check_run, max_check))
+            stdout = self.run_command(command)
+            logging.debug("[check_deploy] current_time={} result={}".format(
+                current_time, stdout))
+
+            if stdout.startswith("FINISHED_"):
+                parts = stdout.split('_')
+                fin_time = int(parts[1])
+                if fin_time > current_time:
+                    return True
+            time.sleep(wait)
+
+        return False
+
+    def app_services_exists(self, partition, name):
+        session = self._get_session()
+        url = self._get_app_services_existence_url(
+            self._app_url,
+            partition,
+            name
+        )
+        result = session.get(url)
+        if result.status_code == 200:
+            return True
+        elif result.status_code == 404:
+            return False
+        else:
+            raise Exception(result)
+
+    def deploy_app_service(self, payload):
+        session = self._get_session()
+        if not self.app_services_exists(payload['partition'], payload['name']):
+            session.post(self._app_url, data=json.dumps(payload))
+
+        deployed = self.app_services_deployed(payload)
+        return deployed
 
     def get_version(self):
         session = self._get_session()
@@ -126,7 +187,7 @@ class BIPClient(object):
 
     def get_template_name(self):
         session = self._get_session()
-        resp = session.get(self._app_url)
+        resp = session.get(self._app_template_url)
         templates = resp.json()
 
         result = []

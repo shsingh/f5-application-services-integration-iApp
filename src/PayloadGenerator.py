@@ -260,9 +260,8 @@ class PayloadGenerator(object):
 
         return deploy_payload
 
-    def flatten_template(self, parent, child, template_dir, indent=" "):
-        logging.info("{} processing parent file \"{}\"".format(
-            indent, parent))
+    def flatten_template(self, parent, child, template_dir):
+        logging.info("processing parent file \"{}\"".format(parent))
 
         parent_dict = self.read_template(
             os.path.join(template_dir, parent))
@@ -271,7 +270,7 @@ class PayloadGenerator(object):
         if 'parent' in parent_dict:
             parent_dict = self.flatten_template(
                 os.path.join(template_dir, parent_dict["parent"]),
-                parent_dict, template_dir, indent + " ")
+                parent_dict, template_dir)
 
         # Process the child objects 'strings' and 'tables' keys.
         child_strings = {}
