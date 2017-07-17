@@ -1,0 +1,131 @@
+ltm classification signature-definition { }
+ltm classification signature-update-schedule { }
+ltm classification signature-version { }
+ltm default-node-monitor {
+    rule none
+}
+ltm dns analytics global-settings { }
+ltm dns cache global-settings { }
+ltm global-settings connection { }
+ltm global-settings general {
+    share-single-mac vmw-compat
+}
+ltm global-settings traffic-control { }
+ltm persistence global-settings { }
+ltm pool test_vs_standard_tcp_options_pool_0 {
+    app-service /Common/test_vs_standard_tcp_options.app/test_vs_standard_tcp_options
+    members {
+        /Common/10.0.0.10%0:http {
+            address 10.0.0.10
+            app-service /Common/test_vs_standard_tcp_options.app/test_vs_standard_tcp_options
+            session monitor-enabled
+            state checking
+        }
+        /Common/10.0.0.11%0:http {
+            address 10.0.0.11
+            app-service /Common/test_vs_standard_tcp_options.app/test_vs_standard_tcp_options
+            session user-disabled
+            state checking
+        }
+        /Common/10.0.0.12%0:http {
+            address 10.0.0.12
+            app-service /Common/test_vs_standard_tcp_options.app/test_vs_standard_tcp_options
+            session user-disabled
+            state checking
+        }
+    }
+    monitor /Common/tcp 
+}
+ltm profile tcp test_vs_standard_tcp_options_profile_tcp_clientside {
+    app-service /Common/test_vs_standard_tcp_options.app/test_vs_standard_tcp_options
+    defaults-from /Common/tcp-wan-optimized
+    fin-wait-timeout 300
+    idle-timeout 600
+    nagle disabled
+}
+ltm profile tcp test_vs_standard_tcp_options_profile_tcp_serverside {
+    app-service /Common/test_vs_standard_tcp_options.app/test_vs_standard_tcp_options
+    defaults-from /Common/tcp-lan-optimized
+    fin-wait-timeout 600
+    idle-timeout 300
+    nagle enabled
+}
+ltm snatpool test_vs_standard_tcp_options_snatpool {
+    app-service /Common/test_vs_standard_tcp_options.app/test_vs_standard_tcp_options
+    members {
+        /Common/10.0.0.251%0
+        /Common/10.0.0.252%0
+        /Common/10.0.0.253%0
+        /Common/10.0.0.254%0
+        /Common/2001:dead:beef:2::8185%0
+        /Common/2001:dead:beef:2::8186%0
+        /Common/2001:dead:beef:2::8187%0
+        /Common/2001:dead:beef:2::8188%0
+    }
+}
+ltm tacdb licenseddb /Common/licensed-tacdb {
+    partition none
+}
+ltm virtual test_vs_standard_tcp_options_vs {
+    app-service /Common/test_vs_standard_tcp_options.app/test_vs_standard_tcp_options
+    connection-limit 123456
+    description "Standard TCP Virtual Server Option Permutations"
+    destination /Common/172.16.0.100%0:81
+    ip-protocol tcp
+    mask 255.255.255.255
+    mirror enabled
+    persist {
+        /Common/source_addr {
+            default yes
+        }
+    }
+    pool test_vs_standard_tcp_options_pool_0
+    profiles {
+        test_vs_standard_tcp_options_profile_tcp_clientside {
+            context clientside
+        }
+        test_vs_standard_tcp_options_profile_tcp_serverside {
+            context serverside
+        }
+    }
+    rate-limit-mode object-source-destination
+    rate-limit-src-mask 8
+    source 10.0.0.0/8
+    source-address-translation {
+        pool test_vs_standard_tcp_options_snatpool
+        type snat
+    }
+    source-port change
+    translate-address enabled
+    translate-port enabled
+    vs-index 191
+}
+asm predefined-policy POLICY_TEMPLATE_ACTIVESYNC_V1_0_V2_0_HTTP { }
+asm predefined-policy POLICY_TEMPLATE_ACTIVESYNC_V1_0_V2_0_HTTPS { }
+asm predefined-policy POLICY_TEMPLATE_LOTUSDOMINO_6_5_HTTP { }
+asm predefined-policy POLICY_TEMPLATE_LOTUSDOMINO_6_5_HTTPS { }
+asm predefined-policy POLICY_TEMPLATE_ORACLE_10G_PORTAL_HTTP { }
+asm predefined-policy POLICY_TEMPLATE_ORACLE_10G_PORTAL_HTTPS { }
+asm predefined-policy POLICY_TEMPLATE_ORACLE_APPLICATIONS_11I_HTTP { }
+asm predefined-policy POLICY_TEMPLATE_ORACLE_APPLICATIONS_11I_HTTPS { }
+asm predefined-policy POLICY_TEMPLATE_OWA_EXCHANGE_2003_HTTP { }
+asm predefined-policy POLICY_TEMPLATE_OWA_EXCHANGE_2003_HTTPS { }
+asm predefined-policy POLICY_TEMPLATE_OWA_EXCHANGE_2003_WITH_ACTIVESYNC_HTTP { }
+asm predefined-policy POLICY_TEMPLATE_OWA_EXCHANGE_2003_WITH_ACTIVESYNC_HTTPS { }
+asm predefined-policy POLICY_TEMPLATE_OWA_EXCHANGE_2007_HTTP { }
+asm predefined-policy POLICY_TEMPLATE_OWA_EXCHANGE_2007_HTTPS { }
+asm predefined-policy POLICY_TEMPLATE_OWA_EXCHANGE_2007_WITH_ACTIVESYNC_HTTP { }
+asm predefined-policy POLICY_TEMPLATE_OWA_EXCHANGE_2007_WITH_ACTIVESYNC_HTTPS { }
+asm predefined-policy POLICY_TEMPLATE_OWA_EXCHANGE_2010_HTTP { }
+asm predefined-policy POLICY_TEMPLATE_OWA_EXCHANGE_2010_HTTPS { }
+asm predefined-policy POLICY_TEMPLATE_PEOPLESOFT_PORTAL_9_HTTP { }
+asm predefined-policy POLICY_TEMPLATE_PEOPLESOFT_PORTAL_9_HTTPS { }
+asm predefined-policy POLICY_TEMPLATE_RAPID_DEPLOYMENT { }
+asm predefined-policy POLICY_TEMPLATE_SAP_NETWEAVER_7_HTTP { }
+asm predefined-policy POLICY_TEMPLATE_SAP_NETWEAVER_7_HTTPS { }
+asm predefined-policy POLICY_TEMPLATE_SHAREPOINT_2003_HTTP { }
+asm predefined-policy POLICY_TEMPLATE_SHAREPOINT_2003_HTTPS { }
+asm predefined-policy POLICY_TEMPLATE_SHAREPOINT_2007_HTTP { }
+asm predefined-policy POLICY_TEMPLATE_SHAREPOINT_2007_HTTPS { }
+asm predefined-policy POLICY_TEMPLATE_SHAREPOINT_2010_HTTP { }
+asm predefined-policy POLICY_TEMPLATE_SHAREPOINT_2010_HTTPS { }

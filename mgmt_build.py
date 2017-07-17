@@ -4,7 +4,7 @@ import argparse
 import os
 import sys
 import shutil
-from src.AppServicesBuilder import AppServicesBuilder
+from src.appservices.Builder import AppServicesBuilder
 
 
 def cli_parser():

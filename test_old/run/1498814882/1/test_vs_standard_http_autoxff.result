@@ -1,0 +1,101 @@
+ltm classification signature-definition { }
+ltm classification signature-update-schedule { }
+ltm classification signature-version { }
+ltm default-node-monitor {
+    rule none
+}
+ltm dns analytics global-settings { }
+ltm dns cache global-settings { }
+ltm global-settings connection { }
+ltm global-settings general {
+    share-single-mac vmw-compat
+}
+ltm global-settings traffic-control { }
+ltm persistence global-settings { }
+ltm pool test_vs_standard_http_autoxff_pool_0 {
+    app-service /Common/test_vs_standard_http_autoxff.app/test_vs_standard_http_autoxff
+    members {
+        /Common/10.0.0.10%0:http {
+            address 10.0.0.10
+            app-service /Common/test_vs_standard_http_autoxff.app/test_vs_standard_http_autoxff
+            session monitor-enabled
+            state checking
+        }
+        /Common/10.0.0.11%0:http {
+            address 10.0.0.11
+            app-service /Common/test_vs_standard_http_autoxff.app/test_vs_standard_http_autoxff
+            session user-disabled
+            state checking
+        }
+        /Common/10.0.0.12%0:http {
+            address 10.0.0.12
+            app-service /Common/test_vs_standard_http_autoxff.app/test_vs_standard_http_autoxff
+            session user-disabled
+            state checking
+        }
+    }
+    monitor /Common/http 
+}
+ltm profile http test_vs_standard_http_autoxff_profile_http {
+    app-service /Common/test_vs_standard_http_autoxff.app/test_vs_standard_http_autoxff
+    defaults-from /Common/http
+    insert-xforwarded-for enabled
+}
+ltm tacdb licenseddb /Common/licensed-tacdb {
+    partition none
+}
+ltm virtual test_vs_standard_http_autoxff_vs {
+    app-service /Common/test_vs_standard_http_autoxff.app/test_vs_standard_http_autoxff
+    description "Standard HTTP Virtual Server with Auto X-Forwarded-For header insertion"
+    destination /Common/172.16.0.100%0:http
+    ip-protocol tcp
+    mask 255.255.255.255
+    pool test_vs_standard_http_autoxff_pool_0
+    profiles {
+        /Common/httpcompression { }
+        /Common/oneconnect { }
+        /Common/tcp-lan-optimized {
+            context serverside
+        }
+        /Common/tcp-wan-optimized {
+            context clientside
+        }
+        test_vs_standard_http_autoxff_profile_http { }
+    }
+    source 0.0.0.0/0
+    source-address-translation {
+        type automap
+    }
+    translate-address enabled
+    translate-port enabled
+    vs-index 285
+}
+asm predefined-policy POLICY_TEMPLATE_ACTIVESYNC_V1_0_V2_0_HTTP { }
+asm predefined-policy POLICY_TEMPLATE_ACTIVESYNC_V1_0_V2_0_HTTPS { }
+asm predefined-policy POLICY_TEMPLATE_LOTUSDOMINO_6_5_HTTP { }
+asm predefined-policy POLICY_TEMPLATE_LOTUSDOMINO_6_5_HTTPS { }
+asm predefined-policy POLICY_TEMPLATE_ORACLE_10G_PORTAL_HTTP { }
+asm predefined-policy POLICY_TEMPLATE_ORACLE_10G_PORTAL_HTTPS { }
+asm predefined-policy POLICY_TEMPLATE_ORACLE_APPLICATIONS_11I_HTTP { }
+asm predefined-policy POLICY_TEMPLATE_ORACLE_APPLICATIONS_11I_HTTPS { }
+asm predefined-policy POLICY_TEMPLATE_OWA_EXCHANGE_2003_HTTP { }
+asm predefined-policy POLICY_TEMPLATE_OWA_EXCHANGE_2003_HTTPS { }
+asm predefined-policy POLICY_TEMPLATE_OWA_EXCHANGE_2003_WITH_ACTIVESYNC_HTTP { }
+asm predefined-policy POLICY_TEMPLATE_OWA_EXCHANGE_2003_WITH_ACTIVESYNC_HTTPS { }
+asm predefined-policy POLICY_TEMPLATE_OWA_EXCHANGE_2007_HTTP { }
+asm predefined-policy POLICY_TEMPLATE_OWA_EXCHANGE_2007_HTTPS { }
+asm predefined-policy POLICY_TEMPLATE_OWA_EXCHANGE_2007_WITH_ACTIVESYNC_HTTP { }
+asm predefined-policy POLICY_TEMPLATE_OWA_EXCHANGE_2007_WITH_ACTIVESYNC_HTTPS { }
+asm predefined-policy POLICY_TEMPLATE_OWA_EXCHANGE_2010_HTTP { }
+asm predefined-policy POLICY_TEMPLATE_OWA_EXCHANGE_2010_HTTPS { }
+asm predefined-policy POLICY_TEMPLATE_PEOPLESOFT_PORTAL_9_HTTP { }
+asm predefined-policy POLICY_TEMPLATE_PEOPLESOFT_PORTAL_9_HTTPS { }
+asm predefined-policy POLICY_TEMPLATE_RAPID_DEPLOYMENT { }
+asm predefined-policy POLICY_TEMPLATE_SAP_NETWEAVER_7_HTTP { }
+asm predefined-policy POLICY_TEMPLATE_SAP_NETWEAVER_7_HTTPS { }
+asm predefined-policy POLICY_TEMPLATE_SHAREPOINT_2003_HTTP { }
+asm predefined-policy POLICY_TEMPLATE_SHAREPOINT_2003_HTTPS { }
+asm predefined-policy POLICY_TEMPLATE_SHAREPOINT_2007_HTTP { }
+asm predefined-policy POLICY_TEMPLATE_SHAREPOINT_2007_HTTPS { }
+asm predefined-policy POLICY_TEMPLATE_SHAREPOINT_2010_HTTP { }
+asm predefined-policy POLICY_TEMPLATE_SHAREPOINT_2010_HTTPS { }

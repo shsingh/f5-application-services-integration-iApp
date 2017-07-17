@@ -1,0 +1,1096 @@
+ltm classification signature-definition { }
+ltm classification signature-update-schedule { }
+ltm classification signature-version { }
+ltm default-node-monitor {
+    rule none
+}
+ltm dns analytics global-settings { }
+ltm dns cache global-settings { }
+ltm global-settings connection { }
+ltm global-settings general {
+    share-single-mac vmw-compat
+}
+ltm global-settings traffic-control { }
+ltm persistence global-settings { }
+ltm pool adv_options_2 {
+    allow-nat no
+    app-service /Common/test_pools.app/test_pools
+    description "pool 2 description"
+    ip-tos-to-client mimic
+    members {
+        /Common/10.0.0.100%0:http {
+            address 10.0.0.100
+            app-service /Common/test_pools.app/test_pools
+            session monitor-enabled
+            state down
+        }
+        /Common/10.0.0.101%0:http {
+            address 10.0.0.101
+            app-service /Common/test_pools.app/test_pools
+            session user-disabled
+            state down
+        }
+        /Common/10.0.0.102%0:http {
+            address 10.0.0.102
+            app-service /Common/test_pools.app/test_pools
+            session user-disabled
+            state down
+        }
+        /Common/10.0.0.103%0:http {
+            address 10.0.0.103
+            app-service /Common/test_pools.app/test_pools
+            session monitor-enabled
+            state down
+        }
+        /Common/10.0.0.104%0:http {
+            address 10.0.0.104
+            app-service /Common/test_pools.app/test_pools
+            session user-disabled
+            state down
+        }
+        /Common/10.0.0.105%0:http {
+            address 10.0.0.105
+            app-service /Common/test_pools.app/test_pools
+            session user-disabled
+            state down
+        }
+        /Common/10.0.0.106%0:http {
+            address 10.0.0.106
+            app-service /Common/test_pools.app/test_pools
+            session monitor-enabled
+            state down
+        }
+        /Common/10.0.0.107%0:http {
+            address 10.0.0.107
+            app-service /Common/test_pools.app/test_pools
+            session user-disabled
+            state down
+        }
+        /Common/10.0.0.108%0:http {
+            address 10.0.0.108
+            app-service /Common/test_pools.app/test_pools
+            session user-disabled
+            state down
+        }
+        /Common/10.0.0.109%0:http {
+            address 10.0.0.109
+            app-service /Common/test_pools.app/test_pools
+            session monitor-enabled
+            state down
+        }
+        /Common/10.0.0.110%0:http {
+            address 10.0.0.110
+            app-service /Common/test_pools.app/test_pools
+            session user-disabled
+            state down
+        }
+        /Common/10.0.0.111%0:http {
+            address 10.0.0.111
+            app-service /Common/test_pools.app/test_pools
+            session user-disabled
+            state down
+        }
+        /Common/10.0.0.112%0:http {
+            address 10.0.0.112
+            app-service /Common/test_pools.app/test_pools
+            session monitor-enabled
+            state down
+        }
+        /Common/10.0.0.113%0:http {
+            address 10.0.0.113
+            app-service /Common/test_pools.app/test_pools
+            session user-disabled
+            state down
+        }
+        /Common/10.0.0.114%0:http {
+            address 10.0.0.114
+            app-service /Common/test_pools.app/test_pools
+            session user-disabled
+            state down
+        }
+        /Common/10.0.0.115%0:http {
+            address 10.0.0.115
+            app-service /Common/test_pools.app/test_pools
+            session monitor-enabled
+            state down
+        }
+        /Common/10.0.0.116%0:http {
+            address 10.0.0.116
+            app-service /Common/test_pools.app/test_pools
+            session user-disabled
+            state down
+        }
+        /Common/10.0.0.117%0:http {
+            address 10.0.0.117
+            app-service /Common/test_pools.app/test_pools
+            session user-disabled
+            state down
+        }
+        /Common/10.0.0.118%0:http {
+            address 10.0.0.118
+            app-service /Common/test_pools.app/test_pools
+            session monitor-enabled
+            state down
+        }
+        /Common/10.0.0.119%0:http {
+            address 10.0.0.119
+            app-service /Common/test_pools.app/test_pools
+            session user-disabled
+            state down
+        }
+        /Common/10.0.0.120%0:http {
+            address 10.0.0.120
+            app-service /Common/test_pools.app/test_pools
+            session user-disabled
+            state down
+        }
+        /Common/10.0.0.121%0:http {
+            address 10.0.0.121
+            app-service /Common/test_pools.app/test_pools
+            session monitor-enabled
+            state down
+        }
+        /Common/10.0.0.122%0:http {
+            address 10.0.0.122
+            app-service /Common/test_pools.app/test_pools
+            session user-disabled
+            state down
+        }
+        /Common/10.0.0.123%0:http {
+            address 10.0.0.123
+            app-service /Common/test_pools.app/test_pools
+            session user-disabled
+            state down
+        }
+        /Common/10.0.0.124%0:http {
+            address 10.0.0.124
+            app-service /Common/test_pools.app/test_pools
+            session monitor-enabled
+            state down
+        }
+        /Common/10.0.0.125%0:http {
+            address 10.0.0.125
+            app-service /Common/test_pools.app/test_pools
+            session user-disabled
+            state down
+        }
+        /Common/10.0.0.126%0:http {
+            address 10.0.0.126
+            app-service /Common/test_pools.app/test_pools
+            session user-disabled
+            state down
+        }
+        /Common/10.0.0.127%0:http {
+            address 10.0.0.127
+            app-service /Common/test_pools.app/test_pools
+            session monitor-enabled
+            state down
+        }
+        /Common/10.0.0.128%0:http {
+            address 10.0.0.128
+            app-service /Common/test_pools.app/test_pools
+            session user-disabled
+            state down
+        }
+        /Common/10.0.0.129%0:http {
+            address 10.0.0.129
+            app-service /Common/test_pools.app/test_pools
+            session user-disabled
+            state down
+        }
+        /Common/10.0.0.130%0:http {
+            address 10.0.0.130
+            app-service /Common/test_pools.app/test_pools
+            session monitor-enabled
+            state down
+        }
+        /Common/10.0.0.131%0:http {
+            address 10.0.0.131
+            app-service /Common/test_pools.app/test_pools
+            session user-disabled
+            state down
+        }
+        /Common/10.0.0.132%0:http {
+            address 10.0.0.132
+            app-service /Common/test_pools.app/test_pools
+            session user-disabled
+            state down
+        }
+        /Common/10.0.0.133%0:http {
+            address 10.0.0.133
+            app-service /Common/test_pools.app/test_pools
+            session monitor-enabled
+            state down
+        }
+        /Common/10.0.0.134%0:http {
+            address 10.0.0.134
+            app-service /Common/test_pools.app/test_pools
+            session user-disabled
+            state down
+        }
+        /Common/10.0.0.135%0:http {
+            address 10.0.0.135
+            app-service /Common/test_pools.app/test_pools
+            session user-disabled
+            state down
+        }
+        /Common/10.0.0.136%0:http {
+            address 10.0.0.136
+            app-service /Common/test_pools.app/test_pools
+            session monitor-enabled
+            state down
+        }
+        /Common/10.0.0.137%0:http {
+            address 10.0.0.137
+            app-service /Common/test_pools.app/test_pools
+            session user-disabled
+            state down
+        }
+        /Common/10.0.0.138%0:http {
+            address 10.0.0.138
+            app-service /Common/test_pools.app/test_pools
+            session user-disabled
+            state down
+        }
+        /Common/10.0.0.139%0:http {
+            address 10.0.0.139
+            app-service /Common/test_pools.app/test_pools
+            session monitor-enabled
+            state down
+        }
+        /Common/10.0.0.140%0:http {
+            address 10.0.0.140
+            app-service /Common/test_pools.app/test_pools
+            session user-disabled
+            state down
+        }
+        /Common/10.0.0.141%0:http {
+            address 10.0.0.141
+            app-service /Common/test_pools.app/test_pools
+            session user-disabled
+            state down
+        }
+        /Common/10.0.0.142%0:http {
+            address 10.0.0.142
+            app-service /Common/test_pools.app/test_pools
+            session monitor-enabled
+            state down
+        }
+        /Common/10.0.0.143%0:http {
+            address 10.0.0.143
+            app-service /Common/test_pools.app/test_pools
+            session user-disabled
+            state down
+        }
+        /Common/10.0.0.144%0:http {
+            address 10.0.0.144
+            app-service /Common/test_pools.app/test_pools
+            session user-disabled
+            state down
+        }
+        /Common/10.0.0.145%0:http {
+            address 10.0.0.145
+            app-service /Common/test_pools.app/test_pools
+            session monitor-enabled
+            state down
+        }
+        /Common/10.0.0.146%0:http {
+            address 10.0.0.146
+            app-service /Common/test_pools.app/test_pools
+            session user-disabled
+            state down
+        }
+        /Common/10.0.0.147%0:http {
+            address 10.0.0.147
+            app-service /Common/test_pools.app/test_pools
+            session user-disabled
+            state down
+        }
+        /Common/10.0.0.148%0:http {
+            address 10.0.0.148
+            app-service /Common/test_pools.app/test_pools
+            session monitor-enabled
+            state down
+        }
+        /Common/10.0.0.149%0:http {
+            address 10.0.0.149
+            app-service /Common/test_pools.app/test_pools
+            session user-disabled
+            state down
+        }
+        /Common/10.0.0.150%0:http {
+            address 10.0.0.150
+            app-service /Common/test_pools.app/test_pools
+            session user-disabled
+            state down
+        }
+        /Common/10.0.0.151%0:http {
+            address 10.0.0.151
+            app-service /Common/test_pools.app/test_pools
+            session monitor-enabled
+            state down
+        }
+        /Common/10.0.0.152%0:http {
+            address 10.0.0.152
+            app-service /Common/test_pools.app/test_pools
+            session user-disabled
+            state down
+        }
+        /Common/10.0.0.153%0:http {
+            address 10.0.0.153
+            app-service /Common/test_pools.app/test_pools
+            session user-disabled
+            state down
+        }
+        /Common/10.0.0.154%0:http {
+            address 10.0.0.154
+            app-service /Common/test_pools.app/test_pools
+            session monitor-enabled
+            state down
+        }
+        /Common/10.0.0.155%0:http {
+            address 10.0.0.155
+            app-service /Common/test_pools.app/test_pools
+            session user-disabled
+            state down
+        }
+        /Common/10.0.0.16%0:http {
+            address 10.0.0.16
+            app-service /Common/test_pools.app/test_pools
+            session monitor-enabled
+            state down
+        }
+        /Common/10.0.0.17%0:http {
+            address 10.0.0.17
+            app-service /Common/test_pools.app/test_pools
+            session user-disabled
+            state down
+        }
+        /Common/10.0.0.18%0:http {
+            address 10.0.0.18
+            app-service /Common/test_pools.app/test_pools
+            session user-disabled
+            state down
+        }
+        /Common/10.0.0.19%0:http {
+            address 10.0.0.19
+            app-service /Common/test_pools.app/test_pools
+            session monitor-enabled
+            state down
+        }
+        /Common/10.0.0.20%0:http {
+            address 10.0.0.20
+            app-service /Common/test_pools.app/test_pools
+            session user-disabled
+            state down
+        }
+        /Common/10.0.0.21%0:http {
+            address 10.0.0.21
+            app-service /Common/test_pools.app/test_pools
+            session user-disabled
+            state down
+        }
+        /Common/10.0.0.22%0:http {
+            address 10.0.0.22
+            app-service /Common/test_pools.app/test_pools
+            session monitor-enabled
+            state down
+        }
+        /Common/10.0.0.23%0:http {
+            address 10.0.0.23
+            app-service /Common/test_pools.app/test_pools
+            session user-disabled
+            state down
+        }
+        /Common/10.0.0.24%0:http {
+            address 10.0.0.24
+            app-service /Common/test_pools.app/test_pools
+            session user-disabled
+            state down
+        }
+        /Common/10.0.0.25%0:http {
+            address 10.0.0.25
+            app-service /Common/test_pools.app/test_pools
+            session monitor-enabled
+            state down
+        }
+        /Common/10.0.0.26%0:http {
+            address 10.0.0.26
+            app-service /Common/test_pools.app/test_pools
+            session user-disabled
+            state down
+        }
+        /Common/10.0.0.27%0:http {
+            address 10.0.0.27
+            app-service /Common/test_pools.app/test_pools
+            session user-disabled
+            state down
+        }
+        /Common/10.0.0.28%0:http {
+            address 10.0.0.28
+            app-service /Common/test_pools.app/test_pools
+            session monitor-enabled
+            state down
+        }
+        /Common/10.0.0.29%0:http {
+            address 10.0.0.29
+            app-service /Common/test_pools.app/test_pools
+            session user-disabled
+            state down
+        }
+        /Common/10.0.0.30%0:http {
+            address 10.0.0.30
+            app-service /Common/test_pools.app/test_pools
+            session user-disabled
+            state down
+        }
+        /Common/10.0.0.31%0:http {
+            address 10.0.0.31
+            app-service /Common/test_pools.app/test_pools
+            session monitor-enabled
+            state down
+        }
+        /Common/10.0.0.32%0:http {
+            address 10.0.0.32
+            app-service /Common/test_pools.app/test_pools
+            session user-disabled
+            state down
+        }
+        /Common/10.0.0.33%0:http {
+            address 10.0.0.33
+            app-service /Common/test_pools.app/test_pools
+            session user-disabled
+            state down
+        }
+        /Common/10.0.0.34%0:http {
+            address 10.0.0.34
+            app-service /Common/test_pools.app/test_pools
+            session monitor-enabled
+            state down
+        }
+        /Common/10.0.0.35%0:http {
+            address 10.0.0.35
+            app-service /Common/test_pools.app/test_pools
+            session user-disabled
+            state down
+        }
+        /Common/10.0.0.36%0:http {
+            address 10.0.0.36
+            app-service /Common/test_pools.app/test_pools
+            session user-disabled
+            state down
+        }
+        /Common/10.0.0.37%0:http {
+            address 10.0.0.37
+            app-service /Common/test_pools.app/test_pools
+            session monitor-enabled
+            state down
+        }
+        /Common/10.0.0.38%0:http {
+            address 10.0.0.38
+            app-service /Common/test_pools.app/test_pools
+            session user-disabled
+            state down
+        }
+        /Common/10.0.0.39%0:http {
+            address 10.0.0.39
+            app-service /Common/test_pools.app/test_pools
+            session user-disabled
+            state down
+        }
+        /Common/10.0.0.40%0:http {
+            address 10.0.0.40
+            app-service /Common/test_pools.app/test_pools
+            session monitor-enabled
+            state down
+        }
+        /Common/10.0.0.41%0:http {
+            address 10.0.0.41
+            app-service /Common/test_pools.app/test_pools
+            session user-disabled
+            state down
+        }
+        /Common/10.0.0.42%0:http {
+            address 10.0.0.42
+            app-service /Common/test_pools.app/test_pools
+            session user-disabled
+            state down
+        }
+        /Common/10.0.0.43%0:http {
+            address 10.0.0.43
+            app-service /Common/test_pools.app/test_pools
+            session monitor-enabled
+            state down
+        }
+        /Common/10.0.0.44%0:http {
+            address 10.0.0.44
+            app-service /Common/test_pools.app/test_pools
+            session user-disabled
+            state down
+        }
+        /Common/10.0.0.45%0:http {
+            address 10.0.0.45
+            app-service /Common/test_pools.app/test_pools
+            session user-disabled
+            state down
+        }
+        /Common/10.0.0.46%0:http {
+            address 10.0.0.46
+            app-service /Common/test_pools.app/test_pools
+            session monitor-enabled
+            state down
+        }
+        /Common/10.0.0.47%0:http {
+            address 10.0.0.47
+            app-service /Common/test_pools.app/test_pools
+            session user-disabled
+            state down
+        }
+        /Common/10.0.0.48%0:http {
+            address 10.0.0.48
+            app-service /Common/test_pools.app/test_pools
+            session user-disabled
+            state down
+        }
+        /Common/10.0.0.49%0:http {
+            address 10.0.0.49
+            app-service /Common/test_pools.app/test_pools
+            session monitor-enabled
+            state down
+        }
+        /Common/10.0.0.50%0:http {
+            address 10.0.0.50
+            app-service /Common/test_pools.app/test_pools
+            session user-disabled
+            state down
+        }
+        /Common/10.0.0.51%0:http {
+            address 10.0.0.51
+            app-service /Common/test_pools.app/test_pools
+            session user-disabled
+            state down
+        }
+        /Common/10.0.0.52%0:http {
+            address 10.0.0.52
+            app-service /Common/test_pools.app/test_pools
+            session monitor-enabled
+            state down
+        }
+        /Common/10.0.0.53%0:http {
+            address 10.0.0.53
+            app-service /Common/test_pools.app/test_pools
+            session user-disabled
+            state down
+        }
+        /Common/10.0.0.54%0:http {
+            address 10.0.0.54
+            app-service /Common/test_pools.app/test_pools
+            session user-disabled
+            state down
+        }
+        /Common/10.0.0.55%0:http {
+            address 10.0.0.55
+            app-service /Common/test_pools.app/test_pools
+            session monitor-enabled
+            state down
+        }
+        /Common/10.0.0.56%0:http {
+            address 10.0.0.56
+            app-service /Common/test_pools.app/test_pools
+            session user-disabled
+            state down
+        }
+        /Common/10.0.0.57%0:http {
+            address 10.0.0.57
+            app-service /Common/test_pools.app/test_pools
+            session user-disabled
+            state down
+        }
+        /Common/10.0.0.58%0:http {
+            address 10.0.0.58
+            app-service /Common/test_pools.app/test_pools
+            session monitor-enabled
+            state down
+        }
+        /Common/10.0.0.59%0:http {
+            address 10.0.0.59
+            app-service /Common/test_pools.app/test_pools
+            session user-disabled
+            state down
+        }
+        /Common/10.0.0.60%0:http {
+            address 10.0.0.60
+            app-service /Common/test_pools.app/test_pools
+            session user-disabled
+            state down
+        }
+        /Common/10.0.0.61%0:http {
+            address 10.0.0.61
+            app-service /Common/test_pools.app/test_pools
+            session monitor-enabled
+            state down
+        }
+        /Common/10.0.0.62%0:http {
+            address 10.0.0.62
+            app-service /Common/test_pools.app/test_pools
+            session user-disabled
+            state down
+        }
+        /Common/10.0.0.63%0:http {
+            address 10.0.0.63
+            app-service /Common/test_pools.app/test_pools
+            session user-disabled
+            state down
+        }
+        /Common/10.0.0.64%0:http {
+            address 10.0.0.64
+            app-service /Common/test_pools.app/test_pools
+            session monitor-enabled
+            state down
+        }
+        /Common/10.0.0.65%0:http {
+            address 10.0.0.65
+            app-service /Common/test_pools.app/test_pools
+            session user-disabled
+            state down
+        }
+        /Common/10.0.0.66%0:http {
+            address 10.0.0.66
+            app-service /Common/test_pools.app/test_pools
+            session user-disabled
+            state down
+        }
+        /Common/10.0.0.67%0:http {
+            address 10.0.0.67
+            app-service /Common/test_pools.app/test_pools
+            session monitor-enabled
+            state down
+        }
+        /Common/10.0.0.68%0:http {
+            address 10.0.0.68
+            app-service /Common/test_pools.app/test_pools
+            session user-disabled
+            state down
+        }
+        /Common/10.0.0.69%0:http {
+            address 10.0.0.69
+            app-service /Common/test_pools.app/test_pools
+            session user-disabled
+            state down
+        }
+        /Common/10.0.0.70%0:http {
+            address 10.0.0.70
+            app-service /Common/test_pools.app/test_pools
+            session monitor-enabled
+            state down
+        }
+        /Common/10.0.0.71%0:http {
+            address 10.0.0.71
+            app-service /Common/test_pools.app/test_pools
+            session user-disabled
+            state down
+        }
+        /Common/10.0.0.72%0:http {
+            address 10.0.0.72
+            app-service /Common/test_pools.app/test_pools
+            session user-disabled
+            state down
+        }
+        /Common/10.0.0.73%0:http {
+            address 10.0.0.73
+            app-service /Common/test_pools.app/test_pools
+            session monitor-enabled
+            state down
+        }
+        /Common/10.0.0.74%0:http {
+            address 10.0.0.74
+            app-service /Common/test_pools.app/test_pools
+            session user-disabled
+            state down
+        }
+        /Common/10.0.0.75%0:http {
+            address 10.0.0.75
+            app-service /Common/test_pools.app/test_pools
+            session user-disabled
+            state down
+        }
+        /Common/10.0.0.76%0:http {
+            address 10.0.0.76
+            app-service /Common/test_pools.app/test_pools
+            session monitor-enabled
+            state down
+        }
+        /Common/10.0.0.77%0:http {
+            address 10.0.0.77
+            app-service /Common/test_pools.app/test_pools
+            session user-disabled
+            state down
+        }
+        /Common/10.0.0.78%0:http {
+            address 10.0.0.78
+            app-service /Common/test_pools.app/test_pools
+            session user-disabled
+            state down
+        }
+        /Common/10.0.0.79%0:http {
+            address 10.0.0.79
+            app-service /Common/test_pools.app/test_pools
+            session monitor-enabled
+            state down
+        }
+        /Common/10.0.0.80%0:http {
+            address 10.0.0.80
+            app-service /Common/test_pools.app/test_pools
+            session user-disabled
+            state down
+        }
+        /Common/10.0.0.81%0:http {
+            address 10.0.0.81
+            app-service /Common/test_pools.app/test_pools
+            session user-disabled
+            state down
+        }
+        /Common/10.0.0.82%0:http {
+            address 10.0.0.82
+            app-service /Common/test_pools.app/test_pools
+            session monitor-enabled
+            state down
+        }
+        /Common/10.0.0.83%0:http {
+            address 10.0.0.83
+            app-service /Common/test_pools.app/test_pools
+            session user-disabled
+            state down
+        }
+        /Common/10.0.0.84%0:http {
+            address 10.0.0.84
+            app-service /Common/test_pools.app/test_pools
+            session user-disabled
+            state down
+        }
+        /Common/10.0.0.85%0:http {
+            address 10.0.0.85
+            app-service /Common/test_pools.app/test_pools
+            session monitor-enabled
+            state down
+        }
+        /Common/10.0.0.86%0:http {
+            address 10.0.0.86
+            app-service /Common/test_pools.app/test_pools
+            session user-disabled
+            state down
+        }
+        /Common/10.0.0.87%0:http {
+            address 10.0.0.87
+            app-service /Common/test_pools.app/test_pools
+            session user-disabled
+            state down
+        }
+        /Common/10.0.0.88%0:http {
+            address 10.0.0.88
+            app-service /Common/test_pools.app/test_pools
+            session monitor-enabled
+            state down
+        }
+        /Common/10.0.0.89%0:http {
+            address 10.0.0.89
+            app-service /Common/test_pools.app/test_pools
+            session user-disabled
+            state down
+        }
+        /Common/10.0.0.90%0:http {
+            address 10.0.0.90
+            app-service /Common/test_pools.app/test_pools
+            session user-disabled
+            state down
+        }
+        /Common/10.0.0.91%0:http {
+            address 10.0.0.91
+            app-service /Common/test_pools.app/test_pools
+            session monitor-enabled
+            state down
+        }
+        /Common/10.0.0.92%0:http {
+            address 10.0.0.92
+            app-service /Common/test_pools.app/test_pools
+            session user-disabled
+            state down
+        }
+        /Common/10.0.0.93%0:http {
+            address 10.0.0.93
+            app-service /Common/test_pools.app/test_pools
+            session user-disabled
+            state down
+        }
+        /Common/10.0.0.94%0:http {
+            address 10.0.0.94
+            app-service /Common/test_pools.app/test_pools
+            session monitor-enabled
+            state down
+        }
+        /Common/10.0.0.95%0:http {
+            address 10.0.0.95
+            app-service /Common/test_pools.app/test_pools
+            session user-disabled
+            state down
+        }
+        /Common/10.0.0.96%0:http {
+            address 10.0.0.96
+            app-service /Common/test_pools.app/test_pools
+            session user-disabled
+            state down
+        }
+        /Common/10.0.0.97%0:http {
+            address 10.0.0.97
+            app-service /Common/test_pools.app/test_pools
+            session monitor-enabled
+            state down
+        }
+        /Common/10.0.0.98%0:http {
+            address 10.0.0.98
+            app-service /Common/test_pools.app/test_pools
+            session user-disabled
+            state down
+        }
+        /Common/10.0.0.99%0:http {
+            address 10.0.0.99
+            app-service /Common/test_pools.app/test_pools
+            session user-disabled
+            state down
+        }
+        /Common/2001:dead:beef:2::11%0.http {
+            address 2001:dead:beef:2::11
+            app-service /Common/test_pools.app/test_pools
+            session user-disabled
+            state down
+        }
+        /Common/2001:dead:beef:2::12%0.http {
+            address 2001:dead:beef:2::12
+            app-service /Common/test_pools.app/test_pools
+            session monitor-enabled
+            state down
+        }
+        /Common/2001:dead:beef:2::13%0.http {
+            address 2001:dead:beef:2::13
+            app-service /Common/test_pools.app/test_pools
+            session user-disabled
+            state down
+        }
+        /Common/2001:dead:beef:2::14%0.http {
+            address 2001:dead:beef:2::14
+            app-service /Common/test_pools.app/test_pools
+            session user-disabled
+            state down
+        }
+        /Common/2001:dead:beef:2::15%0.http {
+            address 2001:dead:beef:2::15
+            app-service /Common/test_pools.app/test_pools
+            session monitor-enabled
+            state down
+        }
+        /Common/2001:dead:beef:2::16%0.http {
+            address 2001:dead:beef:2::16
+            app-service /Common/test_pools.app/test_pools
+            session user-disabled
+            state down
+        }
+        /Common/2001:dead:beef:2::17%0.http {
+            address 2001:dead:beef:2::17
+            app-service /Common/test_pools.app/test_pools
+            session user-disabled
+            state down
+        }
+        /Common/2001:dead:beef:2::18%0.http {
+            address 2001:dead:beef:2::18
+            app-service /Common/test_pools.app/test_pools
+            session monitor-enabled
+            state down
+        }
+        /Common/2001:dead:beef:2::19%0.http {
+            address 2001:dead:beef:2::19
+            app-service /Common/test_pools.app/test_pools
+            session user-disabled
+            state down
+        }
+        /Common/2001:dead:beef:2::20%0.http {
+            address 2001:dead:beef:2::20
+            app-service /Common/test_pools.app/test_pools
+            session user-disabled
+            state down
+        }
+        /Common/test_node3:http {
+            address 10.255.255.3
+            app-service /Common/test_pools.app/test_pools
+            session monitor-enabled
+            state down
+        }
+        /Common/test_node3:81 {
+            address 10.255.255.3
+            app-service /Common/test_pools.app/test_pools
+            session monitor-enabled
+            state down
+        }
+    }
+    monitor min 2 of { /Common/tcp /Common/http }
+    slow-ramp-time 300
+}
+ltm pool custom_pool_name_1 {
+    app-service /Common/test_pools.app/test_pools
+    description "pool 1 description"
+    load-balancing-mode least-connections-member
+    members {
+        /Common/10.0.0.14%0:http {
+            address 10.0.0.14
+            app-service /Common/test_pools.app/test_pools
+            connection-limit 3000
+            monitor /Common/tcp_half_open 
+            priority-group 1
+            rate-limit 100
+            session monitor-enabled
+            state down
+        }
+        /Common/10.0.0.15%0:http {
+            address 10.0.0.15
+            app-service /Common/test_pools.app/test_pools
+            connection-limit 3000
+            monitor /Common/tcp_half_open 
+            priority-group 1
+            rate-limit 100
+            session monitor-enabled
+            state down
+        }
+        /Common/appsvcs_node_94186:http {
+            address 10.0.0.13
+            app-service /Common/test_pools.app/test_pools
+            session monitor-enabled
+            state down
+        }
+        /Common/test6_node0:http {
+            address 2001:dead:beef:3::
+            app-service /Common/test_pools.app/test_pools
+            session monitor-enabled
+            state down
+        }
+        /Common/test6_node1:http {
+            address 2001:dead:beef:3::1
+            app-service /Common/test_pools.app/test_pools
+            session monitor-enabled
+            state down
+        }
+        /Common/test_folder/test6_node10:http {
+            address 2001:dead:beef:3::10
+            app-service /Common/test_pools.app/test_pools
+            session monitor-enabled
+            state down
+        }
+        /Common/test_folder/test_node10:http {
+            address 10.255.255.10
+            app-service /Common/test_pools.app/test_pools
+            session monitor-enabled
+            state down
+        }
+        /Common/test_node0:http {
+            address 10.255.255.0
+            app-service /Common/test_pools.app/test_pools
+            session monitor-enabled
+            state down
+        }
+        /Common/test_node1:http {
+            address 10.255.255.1
+            app-service /Common/test_pools.app/test_pools
+            session monitor-enabled
+            state down
+        }
+        /Common/test_node3:http {
+            address 10.255.255.3
+            app-service /Common/test_pools.app/test_pools
+            session monitor-enabled
+            state down
+        }
+        /Common/www.f5.com:http {
+            address 104.219.104.148
+            app-service /Common/test_pools.app/test_pools
+            session monitor-enabled
+            state up
+        }
+        /Common/www.facebook.com:http {
+            address 31.13.70.36
+            app-service /Common/test_pools.app/test_pools
+            session monitor-enabled
+            state up
+        }
+        /Common/www.google.com:http {
+            address 172.217.3.164
+            app-service /Common/test_pools.app/test_pools
+            session monitor-enabled
+            state up
+        }
+    }
+    min-active-members 2
+    monitor /Common/tcp and /Common/http 
+}
+ltm pool test_pools_pool_0 {
+    app-service /Common/test_pools.app/test_pools
+    members {
+        /Common/10.0.0.10%0:http {
+            address 10.0.0.10
+            app-service /Common/test_pools.app/test_pools
+            session monitor-enabled
+            state down
+        }
+        /Common/10.0.0.11%0:http {
+            address 10.0.0.11
+            app-service /Common/test_pools.app/test_pools
+            connection-limit 2000
+            session user-disabled
+            state down
+        }
+        /Common/10.0.0.12%0:http {
+            address 10.0.0.12
+            app-service /Common/test_pools.app/test_pools
+            connection-limit 3000
+            session user-disabled
+            state user-down
+        }
+        /Common/2001:dead:beef:2::10%0.http {
+            address 2001:dead:beef:2::10
+            app-service /Common/test_pools.app/test_pools
+            connection-limit 1000
+            session user-disabled
+            state down
+        }
+    }
+    monitor /Common/tcp 
+}
+ltm tacdb licenseddb /Common/licensed-tacdb {
+    partition none
+}
+asm predefined-policy POLICY_TEMPLATE_ACTIVESYNC_V1_0_V2_0_HTTP { }
+asm predefined-policy POLICY_TEMPLATE_ACTIVESYNC_V1_0_V2_0_HTTPS { }
+asm predefined-policy POLICY_TEMPLATE_LOTUSDOMINO_6_5_HTTP { }
+asm predefined-policy POLICY_TEMPLATE_LOTUSDOMINO_6_5_HTTPS { }
+asm predefined-policy POLICY_TEMPLATE_ORACLE_10G_PORTAL_HTTP { }
+asm predefined-policy POLICY_TEMPLATE_ORACLE_10G_PORTAL_HTTPS { }
+asm predefined-policy POLICY_TEMPLATE_ORACLE_APPLICATIONS_11I_HTTP { }
+asm predefined-policy POLICY_TEMPLATE_ORACLE_APPLICATIONS_11I_HTTPS { }
+asm predefined-policy POLICY_TEMPLATE_OWA_EXCHANGE_2003_HTTP { }
+asm predefined-policy POLICY_TEMPLATE_OWA_EXCHANGE_2003_HTTPS { }
+asm predefined-policy POLICY_TEMPLATE_OWA_EXCHANGE_2003_WITH_ACTIVESYNC_HTTP { }
+asm predefined-policy POLICY_TEMPLATE_OWA_EXCHANGE_2003_WITH_ACTIVESYNC_HTTPS { }
+asm predefined-policy POLICY_TEMPLATE_OWA_EXCHANGE_2007_HTTP { }
+asm predefined-policy POLICY_TEMPLATE_OWA_EXCHANGE_2007_HTTPS { }
+asm predefined-policy POLICY_TEMPLATE_OWA_EXCHANGE_2007_WITH_ACTIVESYNC_HTTP { }
+asm predefined-policy POLICY_TEMPLATE_OWA_EXCHANGE_2007_WITH_ACTIVESYNC_HTTPS { }
+asm predefined-policy POLICY_TEMPLATE_OWA_EXCHANGE_2010_HTTP { }
+asm predefined-policy POLICY_TEMPLATE_OWA_EXCHANGE_2010_HTTPS { }
+asm predefined-policy POLICY_TEMPLATE_PEOPLESOFT_PORTAL_9_HTTP { }
+asm predefined-policy POLICY_TEMPLATE_PEOPLESOFT_PORTAL_9_HTTPS { }
+asm predefined-policy POLICY_TEMPLATE_RAPID_DEPLOYMENT { }
+asm predefined-policy POLICY_TEMPLATE_SAP_NETWEAVER_7_HTTP { }
+asm predefined-policy POLICY_TEMPLATE_SAP_NETWEAVER_7_HTTPS { }
+asm predefined-policy POLICY_TEMPLATE_SHAREPOINT_2003_HTTP { }
+asm predefined-policy POLICY_TEMPLATE_SHAREPOINT_2003_HTTPS { }
+asm predefined-policy POLICY_TEMPLATE_SHAREPOINT_2007_HTTP { }
+asm predefined-policy POLICY_TEMPLATE_SHAREPOINT_2007_HTTPS { }
+asm predefined-policy POLICY_TEMPLATE_SHAREPOINT_2010_HTTP { }
+asm predefined-policy POLICY_TEMPLATE_SHAREPOINT_2010_HTTPS { }

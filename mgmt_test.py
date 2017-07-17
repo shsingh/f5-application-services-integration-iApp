@@ -3,9 +3,9 @@ import sys
 import os
 import argparse
 from glob import glob
-from src.PayloadGenerator import PayloadGenerator
-from src.AppServicesTools import fix_indents as as_fix_indents
-from src.AppServicesTools import BIPClient
+from src.appservices.PayloadGenerator import PayloadGenerator
+from src.appservices.tools import fix_indents as as_fix_indents
+from src.appservices.tools import BIPClient
 
 
 def build_templates(host):

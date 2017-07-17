@@ -1,0 +1,89 @@
+ltm default-node-monitor {
+    rule none
+}
+ltm dns analytics global-settings { }
+ltm dns cache global-settings { }
+ltm global-settings connection { }
+ltm global-settings general {
+    share-single-mac vmw-compat
+}
+ltm global-settings traffic-control { }
+ltm monitor external custom_external_monitor {
+    app-service /Common/test_monitors.app/test_monitors
+    args argument1
+    defaults-from /Common/external
+    destination *:*
+    interval 5
+    run /Common/arg_example
+    time-until-up 0
+    timeout 16
+}
+ltm monitor http custom_http_monitor {
+    adaptive disabled
+    app-service /Common/test_monitors.app/test_monitors
+    defaults-from /Common/http
+    destination *:*
+    interval 10
+    ip-dscp 0
+    manual-resume enabled
+    recv OK
+    recv-disable none
+    reverse enabled
+    send "GET /%3Bblah HTTP/1.0\r\n\r\n"
+    time-until-up 0
+    timeout 100
+}
+ltm persistence global-settings { }
+ltm pool test_monitors_pool_0 {
+    app-service /Common/test_monitors.app/test_monitors
+    monitor /Common/tcp and /Common/http and custom_http_monitor and custom_external_monitor 
+}
+ltm virtual test_monitors_default_vs_80 {
+    app-service /Common/test_monitors.app/test_monitors
+    destination /Common/172.16.0.100%0:http
+    ip-protocol tcp
+    mask 255.255.255.255
+    pool test_monitors_pool_0
+    profiles {
+        /Common/tcp-lan-optimized {
+            context serverside
+        }
+        /Common/tcp-wan-optimized {
+            context clientside
+        }
+    }
+    source 0.0.0.0/0
+    source-address-translation {
+        type automap
+    }
+    vs-index 6
+}
+asm predefined-policy POLICY_TEMPLATE_ACTIVESYNC_V1_0_V2_0_HTTP { }
+asm predefined-policy POLICY_TEMPLATE_ACTIVESYNC_V1_0_V2_0_HTTPS { }
+asm predefined-policy POLICY_TEMPLATE_LOTUSDOMINO_6_5_HTTP { }
+asm predefined-policy POLICY_TEMPLATE_LOTUSDOMINO_6_5_HTTPS { }
+asm predefined-policy POLICY_TEMPLATE_ORACLE_10G_PORTAL_HTTP { }
+asm predefined-policy POLICY_TEMPLATE_ORACLE_10G_PORTAL_HTTPS { }
+asm predefined-policy POLICY_TEMPLATE_ORACLE_APPLICATIONS_11I_HTTP { }
+asm predefined-policy POLICY_TEMPLATE_ORACLE_APPLICATIONS_11I_HTTPS { }
+asm predefined-policy POLICY_TEMPLATE_OWA_EXCHANGE_2003_HTTP { }
+asm predefined-policy POLICY_TEMPLATE_OWA_EXCHANGE_2003_HTTPS { }
+asm predefined-policy POLICY_TEMPLATE_OWA_EXCHANGE_2003_WITH_ACTIVESYNC_HTTP { }
+asm predefined-policy POLICY_TEMPLATE_OWA_EXCHANGE_2003_WITH_ACTIVESYNC_HTTPS { }
+asm predefined-policy POLICY_TEMPLATE_OWA_EXCHANGE_2007_HTTP { }
+asm predefined-policy POLICY_TEMPLATE_OWA_EXCHANGE_2007_HTTPS { }
+asm predefined-policy POLICY_TEMPLATE_OWA_EXCHANGE_2007_WITH_ACTIVESYNC_HTTP { }
+asm predefined-policy POLICY_TEMPLATE_OWA_EXCHANGE_2007_WITH_ACTIVESYNC_HTTPS { }
+asm predefined-policy POLICY_TEMPLATE_OWA_EXCHANGE_2010_HTTP { }
+asm predefined-policy POLICY_TEMPLATE_OWA_EXCHANGE_2010_HTTPS { }
+asm predefined-policy POLICY_TEMPLATE_PEOPLESOFT_PORTAL_9_HTTP { }
+asm predefined-policy POLICY_TEMPLATE_PEOPLESOFT_PORTAL_9_HTTPS { }
+asm predefined-policy POLICY_TEMPLATE_RAPID_DEPLOYMENT { }
+asm predefined-policy POLICY_TEMPLATE_SAP_NETWEAVER_7_HTTP { }
+asm predefined-policy POLICY_TEMPLATE_SAP_NETWEAVER_7_HTTPS { }
+asm predefined-policy POLICY_TEMPLATE_SHAREPOINT_2003_HTTP { }
+asm predefined-policy POLICY_TEMPLATE_SHAREPOINT_2003_HTTPS { }
+asm predefined-policy POLICY_TEMPLATE_SHAREPOINT_2007_HTTP { }
+asm predefined-policy POLICY_TEMPLATE_SHAREPOINT_2007_HTTPS { }
+asm predefined-policy POLICY_TEMPLATE_SHAREPOINT_2010_HTTP { }
+asm predefined-policy POLICY_TEMPLATE_SHAREPOINT_2010_HTTPS { }

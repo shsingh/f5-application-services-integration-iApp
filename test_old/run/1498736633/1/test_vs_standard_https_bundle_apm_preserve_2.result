@@ -1,0 +1,386 @@
+ltm classification signature-definition { }
+ltm classification signature-update-schedule { }
+ltm classification signature-version { }
+ltm default-node-monitor {
+    rule none
+}
+ltm dns analytics global-settings { }
+ltm dns cache global-settings { }
+ltm global-settings connection { }
+ltm global-settings general {
+    share-single-mac vmw-compat
+}
+ltm global-settings traffic-control { }
+ltm persistence global-settings { }
+ltm pool test_vs_standard_https_bundle_apm_preserve_pool_0 {
+    app-service /Common/test_vs_standard_https_bundle_apm_preserve.app/test_vs_standard_https_bundle_apm_preserve
+    members {
+        /Common/10.0.0.10%0:http {
+            address 10.0.0.10
+            app-service /Common/test_vs_standard_https_bundle_apm_preserve.app/test_vs_standard_https_bundle_apm_preserve
+            session monitor-enabled
+            state down
+        }
+        /Common/10.0.0.11%0:http {
+            address 10.0.0.11
+            app-service /Common/test_vs_standard_https_bundle_apm_preserve.app/test_vs_standard_https_bundle_apm_preserve
+            session user-disabled
+            state down
+        }
+        /Common/10.0.0.12%0:http {
+            address 10.0.0.12
+            app-service /Common/test_vs_standard_https_bundle_apm_preserve.app/test_vs_standard_https_bundle_apm_preserve
+            session user-disabled
+            state down
+        }
+    }
+    monitor /Common/http 
+}
+ltm pool test_vs_standard_https_bundle_apm_preserve_pool_1 {
+    app-service /Common/test_vs_standard_https_bundle_apm_preserve.app/test_vs_standard_https_bundle_apm_preserve
+    members {
+        /Common/10.0.0.13%0:http {
+            address 10.0.0.13
+            app-service /Common/test_vs_standard_https_bundle_apm_preserve.app/test_vs_standard_https_bundle_apm_preserve
+            session monitor-enabled
+            state down
+        }
+        /Common/10.0.0.14%0:http {
+            address 10.0.0.14
+            app-service /Common/test_vs_standard_https_bundle_apm_preserve.app/test_vs_standard_https_bundle_apm_preserve
+            session user-disabled
+            state down
+        }
+        /Common/10.0.0.15%0:http {
+            address 10.0.0.15
+            app-service /Common/test_vs_standard_https_bundle_apm_preserve.app/test_vs_standard_https_bundle_apm_preserve
+            session user-disabled
+            state down
+        }
+    }
+    monitor /Common/http 
+}
+ltm profile client-ssl test_vs_standard_https_bundle_apm_preserve_clientssl {
+    app-service /Common/test_vs_standard_https_bundle_apm_preserve.app/test_vs_standard_https_bundle_apm_preserve
+    cert /Common/default.crt
+    cert-key-chain {
+        default {
+            app-service /Common/test_vs_standard_https_bundle_apm_preserve.app/test_vs_standard_https_bundle_apm_preserve
+            cert /Common/default.crt
+            key /Common/default.key
+        }
+    }
+    chain none
+    inherit-certkeychain false
+    key /Common/default.key
+    passphrase none
+}
+ltm profile http test_vs_standard_https_bundle_apm_preserve_profile_http {
+    app-service /Common/test_vs_standard_https_bundle_apm_preserve.app/test_vs_standard_https_bundle_apm_preserve
+    defaults-from /Common/http
+    insert-xforwarded-for enabled
+}
+ltm tacdb licenseddb /Common/licensed-tacdb {
+    partition none
+}
+ltm virtual test_vs_standard_https_bundle_apm_preserve_default_vs_redirect_80 {
+    app-service /Common/test_vs_standard_https_bundle_apm_preserve.app/test_vs_standard_https_bundle_apm_preserve
+    destination /Common/172.16.0.101%0:http
+    ip-protocol tcp
+    mask 255.255.255.255
+    profiles {
+        /Common/tcp-lan-optimized {
+            context serverside
+        }
+        /Common/tcp-wan-optimized {
+            context clientside
+        }
+        test_vs_standard_https_bundle_apm_preserve_profile_http { }
+    }
+    rules {
+        /Common/_sys_https_redirect
+    }
+    source 0.0.0.0/0
+    translate-address enabled
+    translate-port enabled
+    vs-index 26
+}
+ltm virtual test_vs_standard_https_bundle_apm_preserve_vs {
+    app-service /Common/test_vs_standard_https_bundle_apm_preserve.app/test_vs_standard_https_bundle_apm_preserve
+    description "Standard HTTPS Virtual Server with bundled APM policy"
+    destination /Common/172.16.0.101%0:https
+    fallback-persistence /Common/source_addr
+    ip-protocol tcp
+    mask 255.255.255.255
+    persist {
+        /Common/cookie {
+            default yes
+        }
+    }
+    pool test_vs_standard_https_bundle_apm_preserve_pool_0
+    profiles {
+        /Common/httpcompression { }
+        /Common/oneconnect { }
+        /Common/tcp-lan-optimized {
+            context serverside
+        }
+        /Common/tcp-wan-optimized {
+            context clientside
+        }
+        bundled_apm_policy { }
+        test_vs_standard_https_bundle_apm_preserve_clientssl {
+            context clientside
+        }
+        test_vs_standard_https_bundle_apm_preserve_profile_http { }
+    }
+    source 0.0.0.0/0
+    source-address-translation {
+        type automap
+    }
+    translate-address enabled
+    translate-port enabled
+    vs-index 25
+}
+asm predefined-policy POLICY_TEMPLATE_ACTIVESYNC_V1_0_V2_0_HTTP { }
+asm predefined-policy POLICY_TEMPLATE_ACTIVESYNC_V1_0_V2_0_HTTPS { }
+asm predefined-policy POLICY_TEMPLATE_LOTUSDOMINO_6_5_HTTP { }
+asm predefined-policy POLICY_TEMPLATE_LOTUSDOMINO_6_5_HTTPS { }
+asm predefined-policy POLICY_TEMPLATE_ORACLE_10G_PORTAL_HTTP { }
+asm predefined-policy POLICY_TEMPLATE_ORACLE_10G_PORTAL_HTTPS { }
+asm predefined-policy POLICY_TEMPLATE_ORACLE_APPLICATIONS_11I_HTTP { }
+asm predefined-policy POLICY_TEMPLATE_ORACLE_APPLICATIONS_11I_HTTPS { }
+asm predefined-policy POLICY_TEMPLATE_OWA_EXCHANGE_2003_HTTP { }
+asm predefined-policy POLICY_TEMPLATE_OWA_EXCHANGE_2003_HTTPS { }
+asm predefined-policy POLICY_TEMPLATE_OWA_EXCHANGE_2003_WITH_ACTIVESYNC_HTTP { }
+asm predefined-policy POLICY_TEMPLATE_OWA_EXCHANGE_2003_WITH_ACTIVESYNC_HTTPS { }
+asm predefined-policy POLICY_TEMPLATE_OWA_EXCHANGE_2007_HTTP { }
+asm predefined-policy POLICY_TEMPLATE_OWA_EXCHANGE_2007_HTTPS { }
+asm predefined-policy POLICY_TEMPLATE_OWA_EXCHANGE_2007_WITH_ACTIVESYNC_HTTP { }
+asm predefined-policy POLICY_TEMPLATE_OWA_EXCHANGE_2007_WITH_ACTIVESYNC_HTTPS { }
+asm predefined-policy POLICY_TEMPLATE_OWA_EXCHANGE_2010_HTTP { }
+asm predefined-policy POLICY_TEMPLATE_OWA_EXCHANGE_2010_HTTPS { }
+asm predefined-policy POLICY_TEMPLATE_PEOPLESOFT_PORTAL_9_HTTP { }
+asm predefined-policy POLICY_TEMPLATE_PEOPLESOFT_PORTAL_9_HTTPS { }
+asm predefined-policy POLICY_TEMPLATE_RAPID_DEPLOYMENT { }
+asm predefined-policy POLICY_TEMPLATE_SAP_NETWEAVER_7_HTTP { }
+asm predefined-policy POLICY_TEMPLATE_SAP_NETWEAVER_7_HTTPS { }
+asm predefined-policy POLICY_TEMPLATE_SHAREPOINT_2003_HTTP { }
+asm predefined-policy POLICY_TEMPLATE_SHAREPOINT_2003_HTTPS { }
+asm predefined-policy POLICY_TEMPLATE_SHAREPOINT_2007_HTTP { }
+asm predefined-policy POLICY_TEMPLATE_SHAREPOINT_2007_HTTPS { }
+asm predefined-policy POLICY_TEMPLATE_SHAREPOINT_2010_HTTP { }
+asm predefined-policy POLICY_TEMPLATE_SHAREPOINT_2010_HTTPS { }
+apm aaa http bundled_apm_policy-appsvcs_test_http {
+    app-service /Common/test_vs_standard_https_bundle_apm_preserve.app/test_vs_standard_https_bundle_apm_preserve
+    auth-type basic-ntlm
+    start-uri http://1.1.1.1/login
+}
+apm policy access-policy bundled_apm_policy {
+    app-service /Common/test_vs_standard_https_bundle_apm_preserve.app/test_vs_standard_https_bundle_apm_preserve
+    default-ending bundled_apm_policy_end_deny
+    items {
+        bundled_apm_policy_act_http_auth { }
+        bundled_apm_policy_act_logon_page { }
+        bundled_apm_policy_end_allow { }
+        bundled_apm_policy_end_deny { }
+        bundled_apm_policy_ent { }
+    }
+    start-item bundled_apm_policy_ent
+}
+apm policy agent aaa-http bundled_apm_policy_act_http_auth_ag {
+    app-service /Common/test_vs_standard_https_bundle_apm_preserve.app/test_vs_standard_https_bundle_apm_preserve
+    server bundled_apm_policy-appsvcs_test_http
+}
+apm policy agent ending-allow bundled_apm_policy_end_allow_ag {
+    app-service /Common/test_vs_standard_https_bundle_apm_preserve.app/test_vs_standard_https_bundle_apm_preserve
+}
+apm policy agent ending-deny bundled_apm_policy_end_deny_ag {
+    app-service /Common/test_vs_standard_https_bundle_apm_preserve.app/test_vs_standard_https_bundle_apm_preserve
+    customization-group bundled_apm_policy_end_deny_ag
+}
+apm policy agent logon-page bundled_apm_policy_act_logon_page_ag {
+    app-service /Common/test_vs_standard_https_bundle_apm_preserve.app/test_vs_standard_https_bundle_apm_preserve
+    customization-group bundled_apm_policy_act_logon_page_ag
+}
+apm policy customization-group bundled_apm_policy_act_logon_page_ag {
+    app-service /Common/test_vs_standard_https_bundle_apm_preserve.app/test_vs_standard_https_bundle_apm_preserve
+    checksum SHA1:1714:5e00b4efec9fea43a457946f1ce4d9384a137b67
+    create-time 2017-06-29:04:58:22
+    created-by root
+    last-update-time 2017-06-29:04:58:22
+    mode 33188
+    revision 2
+    size 1714
+    updated-by root
+}
+apm policy customization-group bundled_apm_policy_end_deny_ag {
+    app-service /Common/test_vs_standard_https_bundle_apm_preserve.app/test_vs_standard_https_bundle_apm_preserve
+    checksum SHA1:62:fd61541c1097d460e42c50904684def2794ba70d
+    create-time 2017-06-29:04:58:22
+    created-by root
+    last-update-time 2017-06-29:04:58:22
+    mode 33188
+    revision 2
+    size 62
+    type logout
+    updated-by root
+}
+apm policy customization-group bundled_apm_policy_eps {
+    app-service /Common/test_vs_standard_https_bundle_apm_preserve.app/test_vs_standard_https_bundle_apm_preserve
+    checksum SHA1:62:fd61541c1097d460e42c50904684def2794ba70d
+    create-time 2017-06-29:04:58:22
+    created-by root
+    last-update-time 2017-06-29:04:58:22
+    mode 33188
+    revision 2
+    size 62
+    type eps
+    updated-by root
+}
+apm policy customization-group bundled_apm_policy_errormap {
+    app-service /Common/test_vs_standard_https_bundle_apm_preserve.app/test_vs_standard_https_bundle_apm_preserve
+    checksum SHA1:62:fd61541c1097d460e42c50904684def2794ba70d
+    create-time 2017-06-29:04:58:22
+    created-by root
+    last-update-time 2017-06-29:04:58:22
+    mode 33188
+    revision 2
+    size 62
+    type errormap
+    updated-by root
+}
+apm policy customization-group bundled_apm_policy_frameworkinstallation {
+    app-service /Common/test_vs_standard_https_bundle_apm_preserve.app/test_vs_standard_https_bundle_apm_preserve
+    checksum SHA1:62:fd61541c1097d460e42c50904684def2794ba70d
+    create-time 2017-06-29:04:58:22
+    created-by root
+    last-update-time 2017-06-29:04:58:22
+    mode 33188
+    revision 2
+    size 62
+    type framework-installation
+    updated-by root
+}
+apm policy customization-group bundled_apm_policy_general_ui {
+    app-service /Common/test_vs_standard_https_bundle_apm_preserve.app/test_vs_standard_https_bundle_apm_preserve
+    checksum SHA1:62:fd61541c1097d460e42c50904684def2794ba70d
+    create-time 2017-06-29:04:58:22
+    created-by root
+    last-update-time 2017-06-29:04:58:22
+    mode 33188
+    revision 2
+    size 62
+    type general-ui
+    updated-by root
+}
+apm policy customization-group bundled_apm_policy_logout {
+    app-service /Common/test_vs_standard_https_bundle_apm_preserve.app/test_vs_standard_https_bundle_apm_preserve
+    checksum SHA1:62:fd61541c1097d460e42c50904684def2794ba70d
+    create-time 2017-06-29:04:58:22
+    created-by root
+    last-update-time 2017-06-29:04:58:22
+    mode 33188
+    revision 2
+    size 62
+    type logout
+    updated-by root
+}
+apm policy policy-item bundled_apm_policy_act_http_auth {
+    agents {
+        bundled_apm_policy_act_http_auth_ag {
+            type aaa-http
+        }
+    }
+    app-service /Common/test_vs_standard_https_bundle_apm_preserve.app/test_vs_standard_https_bundle_apm_preserve
+    caption "HTTP Auth"
+    color 1
+    item-type action
+    rules {
+        {
+            caption Successful
+            expression "expr {[mcget {session.http.last.result}] == 1}"
+            next-item bundled_apm_policy_end_allow
+        }
+        {
+            caption fallback
+            next-item bundled_apm_policy_end_deny
+        }
+    }
+}
+apm policy policy-item bundled_apm_policy_act_logon_page {
+    agents {
+        bundled_apm_policy_act_logon_page_ag {
+            type logon-page
+        }
+    }
+    app-service /Common/test_vs_standard_https_bundle_apm_preserve.app/test_vs_standard_https_bundle_apm_preserve
+    caption "Logon Page"
+    color 1
+    item-type action
+    rules {
+        {
+            caption fallback
+            next-item bundled_apm_policy_act_http_auth
+        }
+    }
+}
+apm policy policy-item bundled_apm_policy_end_allow {
+    agents {
+        bundled_apm_policy_end_allow_ag {
+            type ending-allow
+        }
+    }
+    app-service /Common/test_vs_standard_https_bundle_apm_preserve.app/test_vs_standard_https_bundle_apm_preserve
+    caption Allow
+    color 1
+    item-type ending
+}
+apm policy policy-item bundled_apm_policy_end_deny {
+    agents {
+        bundled_apm_policy_end_deny_ag {
+            type ending-deny
+        }
+    }
+    app-service /Common/test_vs_standard_https_bundle_apm_preserve.app/test_vs_standard_https_bundle_apm_preserve
+    caption Deny
+    color 2
+    item-type ending
+}
+apm policy policy-item bundled_apm_policy_ent {
+    app-service /Common/test_vs_standard_https_bundle_apm_preserve.app/test_vs_standard_https_bundle_apm_preserve
+    caption Start
+    color 1
+    rules {
+        {
+            caption fallback
+            next-item bundled_apm_policy_act_logon_page
+        }
+    }
+}
+apm profile access bundled_apm_policy {
+    accept-languages { en }
+    access-policy bundled_apm_policy
+    app-service /Common/test_vs_standard_https_bundle_apm_preserve.app/test_vs_standard_https_bundle_apm_preserve
+    customization-group bundled_apm_policy_logout
+    default-language en
+    domain-cookie none
+    eps-group bundled_apm_policy_eps
+    errormap-group bundled_apm_policy_errormap
+    exchange-profile none
+    framework-installation-group bundled_apm_policy_frameworkinstallation
+    general-ui-group bundled_apm_policy_general_ui
+    generation 1
+    generation-action noop
+    httponly-cookie false
+    log-settings {
+        /Common/default-log-setting
+    }
+    logout-uri-include none
+    logout-uri-timeout 5
+    persistent-cookie false
+    scope profile
+    secure-cookie true
+    sso-name none
+    type all
+    user-identity-method http
+}
