@@ -217,7 +217,7 @@ class PayloadGenerator(object):
             logging.debug("[template_select] selected={}".format(
                 tmpl["template_name"]))
         else:
-            if tmpl["template_name"] not in tmpllist:
+            if tmpl["template_name"] not in tmpl:
                 msg = "iApp template \"{}\"" \
                       " is not installed on BIG-IP".format(
                     tmpl["template_name"])

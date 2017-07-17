@@ -105,7 +105,7 @@ class BIPClient(object):
         return session
 
     @staticmethod
-    def _get_app_services_existence_url(url, name, partition):
+    def _get_app_services_existence_url(url, partition, name):
         return "{0}/~{1}~{2}.app~{2}".format(
             url, partition, name)
 
@@ -163,6 +163,21 @@ class BIPClient(object):
 
         deployed = self.app_services_deployed(payload)
         return deployed
+
+    def remove_app_service(self, partition, name):
+        session = self._get_session()
+        response = session.delete(self._get_app_services_existence_url(
+            self._app_url,
+            partition,
+            name
+        ))
+
+        if response.status_code == requests.codes.ok:
+            logging.info("Application service \"{}\" removed".format(name))
+            return True
+        else:
+            logging.error("Delete failed: {}".format(response.json()))
+            return False
 
     def get_version(self):
         session = self._get_session()

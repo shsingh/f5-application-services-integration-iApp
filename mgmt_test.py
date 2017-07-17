@@ -53,7 +53,7 @@ def get_version(host):
 
     url = bip.deploy_app_service(payload)
 
-    print(url)
+    # bip.remove_app_service(payload['partition'], payload['name'])
 
 
 def get_parser():
