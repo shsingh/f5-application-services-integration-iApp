@@ -53,3 +53,8 @@ def prepare_payloads_functional_test(session_id, host, policy_host):
             'admin'
         )
 
+    app_service_template_name = bip.get_template_name()
+
+    for payload_template in glob(os.path.join(flat_templates_dir, "*.tmpl")):
+        pay_gen.build_bip_payload(payload_template, app_service_template_name)
+

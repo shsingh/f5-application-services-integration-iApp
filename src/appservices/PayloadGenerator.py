@@ -260,9 +260,15 @@ class PayloadGenerator(object):
 
         return tmpl
 
-    def build_payload(self, template, app_name, payload_filename=None):
+    def build_bip_payload(self, flat_payload_template_file,
+                          app_services_template_name):
 
-        template = self.update_app_services_name(template, app_name)
+        template = self.read_template(flat_payload_template_file)
+        app_service_name = os.path.splitext(
+            os.path.basename(flat_payload_template_file))[0]
+
+        template = self.update_app_services_name(
+            template, app_services_template_name)
 
         deploy_payload = {
             "inheritedDevicegroup": template["inheritedDevicegroup"],
@@ -285,12 +291,12 @@ class PayloadGenerator(object):
         deploy_payload["tables"] = template["tables"]
         deploy_payload["lists"] = template["lists"]
 
-        if payload_filename is not None:
-            mk_dir(self._payloads_dir)
-            save_json(
-                os.path.join(self._payloads_dir, payload_filename),
-                deploy_payload
-            )
+        save_json(
+            os.path.join(
+                self._payloads_dir, "{}.json".format(app_service_name)),
+            deploy_payload,
+            logging
+        )
 
         return deploy_payload
 
