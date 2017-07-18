@@ -5,7 +5,9 @@ import argparse
 from glob import glob
 from src.appservices.PayloadGenerator import PayloadGenerator
 from src.appservices.tools import fix_indents as as_fix_indents
-from src.appservices.tools import BIPClient
+from src.appservices.tools import get_timestamp
+from src.appservices.TestTools import prepare_payloads_functional_test
+from src.appservices.BIPClient import BIPClient
 
 
 def build_templates(host):
@@ -31,7 +33,7 @@ def fix_indents(path):
 
 
 def get_version(host):
-    bip = BIPClient(host)
+    # bip = BIPClient(host)
     # print(bip.get_version())
     #
     # result = bip.run_command('tmsh -c \"delete ltm pool all;'
@@ -42,18 +44,22 @@ def get_version(host):
     #     ['/var/tmp/test_config.conf']
     # )
 
-    pay_gen = PayloadGenerator(os.getcwd())
-    tmpl = pay_gen.build_template(
-        "tmp", "test_monitors.tmpl.123456.tmp", "admin", "admin")
+    # pay_gen = PayloadGenerator(os.getcwd())
+    # tmpl = pay_gen.build_template(
+    #     "tmp", "test_monitors.tmpl.123456.tmp", "admin", "admin")
+    #
+    # template_name = bip.get_template_name()
+    #
+    # payload = pay_gen.build_payload(
+    #     tmpl, template_name, 'test_monitors.json')
+    #
+    # url = bip.deploy_app_service(payload)
+    #
+    # # bip.remove_app_service(payload['partition'], payload['name'])
+    timestamp = get_timestamp()
 
-    template_name = bip.get_template_name()
-
-    payload = pay_gen.build_payload(
-        tmpl, template_name, 'test_monitors.json', 'payloads_new')
-
-    url = bip.deploy_app_service(payload)
-
-    # bip.remove_app_service(payload['partition'], payload['name'])
+    prepare_payloads_functional_test(
+        "run_{}".format(timestamp), "10.145.64.120", "10.144.72.137")
 
 
 def get_parser():

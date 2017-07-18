@@ -14,6 +14,7 @@ payloads_back/
 payloads_new/
 venv/
 tmp/
+logs/
 
 .idea/
 .cache

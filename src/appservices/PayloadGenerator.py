@@ -5,6 +5,7 @@ import re
 import random
 import json
 import logging
+import shutil
 from tools import IPv4AddressGenerator
 from tools import IPv6AddressGenerator
 from tools import save_json
@@ -14,19 +15,31 @@ from tools import mk_dir
 class PayloadGenerator(object):
     def __init__(self,
                  base_dir,
-                 template_dir='payload_templates',
-                 payloads_dir='payloads',
-                 tmp_dir='tmp'):
+                 payloads_dir,
+                 tmp_dir,
+                 flat_template_dir,
+                 template_dir='payload_templates'):
+
+        logging.basicConfig(level=logging.DEBUG)
+
         self._base_dir = os.path.abspath(base_dir)
-        self._template_dir = os.path.abspath(template_dir)
         self._payloads_dir = os.path.abspath(payloads_dir)
         self._tmp_dir = os.path.abspath(tmp_dir)
+        self._flat_template_dir = os.path.abspath(flat_template_dir)
+        self._template_dir = os.path.abspath(template_dir)
+
+        mk_dir(self._tmp_dir)
+        mk_dir(self._payloads_dir)
+        mk_dir(self._flat_template_dir)
 
     def get_tmp_dir(self):
         return self._tmp_dir
 
+    def get_payloads_dir(self):
+        return self._payloads_dir
+
     def fill_template(
-            self, abs_template_path, session_id, version, policy_host,
+            self, abs_template_path, version, policy_host,
             server_v4_network, server_v6_network,
             server_first_v4_address, server_first_v6_address,
             pull_v4_network, pull_v6_network,
@@ -43,18 +56,18 @@ class PayloadGenerator(object):
 
         result = [False, "", "Common"]
 
-        tmp_file_name = os.path.basename(abs_template_path)
-
-        mk_dir(self._tmp_dir)
+        tmp_file_name = os.path.splitext(
+            os.path.basename(abs_template_path)
+        )[0]
 
         with open(abs_template_path, 'r') as template:
             with open(os.path.join(
                 self._tmp_dir,
-                "{}.{}.tmp".format(tmp_file_name, session_id)
+                "{}.tmpl".format(tmp_file_name)
             ), "wt") as tmp:
                 for line in template:
                     line = re.sub(
-                        r'\%TEST_NAME\%', tmp_file_name.split('.')[0], line)
+                        r'\%TEST_NAME\%', tmp_file_name, line)
                     vs_ip_match = re.match(
                         r'.*%TEST_VS_IP%.*', line)
                     vs6_ip_match = re.match(
@@ -152,6 +165,7 @@ class PayloadGenerator(object):
 
     @staticmethod
     def read_template(template_path):
+        logging.debug("Loading payload template {}".format(template_path))
         try:
             template_file = open(template_path)
             content = json.load(template_file)
@@ -161,7 +175,7 @@ class PayloadGenerator(object):
             raise error
 
     @staticmethod
-    def validate_template(template):
+    def validate_template(template, tmpl_file_canonical_path):
         required_fields = [
             'name', 'template_name', 'partition', 'username', 'password',
             'inheritedDevicegroup', 'inheritedTrafficGroup', 'deviceGroup',
@@ -169,7 +183,9 @@ class PayloadGenerator(object):
         for field in required_fields:
             if field not in template:
                 msg = "The required key \"{}\" was not found in" \
-                      " the JSON template (or it's parent(s))".format(field)
+                      " the {} (or it's parent(s))".format(
+                        field,
+                        tmpl_file_canonical_path)
                 raise Exception(msg)
 
     @staticmethod
@@ -195,16 +211,35 @@ class PayloadGenerator(object):
 
         return tmpl
 
-    def build_template(self, template_dir, template_file_name,
+    def copy_defaults_file(self, template_dir):
+        shutil.copy(
+            os.path.join(self._template_dir, 'include_defaults.tmpl'),
+            template_dir
+        )
+
+    def build_template(self, template_dir, tmpl_file_canonical_path,
                        username=None, password=None, password_file=None):
+        if 'include_defaults.tmpl' == os.path.basename(
+                tmpl_file_canonical_path):
+            return
+
         tmpl = self.read_template(
-            os.path.join(template_dir, template_file_name))
-        flat_tmpl = self.flatten_template(tmpl['parent'], tmpl, template_dir)
+            os.path.join(template_dir, tmpl_file_canonical_path))
+
+        if 'parent' in tmpl:
+            flat_tmpl = self.flatten_template(
+                tmpl['parent'], tmpl, template_dir)
+        else:
+            flat_tmpl = tmpl
 
         flat_tmpl = self._append_credentials(
             flat_tmpl, username, password, password_file)
 
-        self.validate_template(flat_tmpl)
+        self.validate_template(flat_tmpl, tmpl_file_canonical_path)
+
+        save_json(os.path.join(
+            self._flat_template_dir, os.path.basename(
+                tmpl_file_canonical_path)), flat_tmpl, logging)
 
         return flat_tmpl
 
@@ -225,8 +260,7 @@ class PayloadGenerator(object):
 
         return tmpl
 
-    def build_payload(self, template, app_name,
-                      payload_filename=None, payload_directory=None):
+    def build_payload(self, template, app_name, payload_filename=None):
 
         template = self.update_app_services_name(template, app_name)
 
@@ -251,10 +285,10 @@ class PayloadGenerator(object):
         deploy_payload["tables"] = template["tables"]
         deploy_payload["lists"] = template["lists"]
 
-        if payload_filename is not None and payload_directory is not None:
-            mk_dir(payload_directory)
+        if payload_filename is not None:
+            mk_dir(self._payloads_dir)
             save_json(
-                os.path.join(payload_directory, payload_filename),
+                os.path.join(self._payloads_dir, payload_filename),
                 deploy_payload
             )
 
