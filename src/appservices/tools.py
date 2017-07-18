@@ -21,7 +21,7 @@ def mk_dir(dir_name):
 
 
 def get_timestamp():
-    return str(int(time.time()))
+    return int(time.time())
 
 
 def save_json(filename, json_content, logging):

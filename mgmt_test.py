@@ -1,13 +1,16 @@
 #!/usr/bin/env python
-import sys
-import os
 import argparse
+import json
+import logging
+import os
+import sys
 from glob import glob
+
+from src.appservices.BIPClient import BIPClient
 from src.appservices.PayloadGenerator import PayloadGenerator
+from src.appservices.TestTools import prepare_payloads_functional_test
 from src.appservices.tools import fix_indents as as_fix_indents
 from src.appservices.tools import get_timestamp
-from src.appservices.TestTools import prepare_payloads_functional_test
-from src.appservices.BIPClient import BIPClient
 
 
 def build_templates(host):
@@ -33,33 +36,34 @@ def fix_indents(path):
 
 
 def get_version(host):
-    # bip = BIPClient(host)
-    # print(bip.get_version())
-    #
-    # result = bip.run_command('tmsh -c \"delete ltm pool all;'
-    #                          ' delete ltm node all\"')
-    # print(result)
-    # bip.upload_files(
-    #     ['upload_files/test_config.conf'],
-    #     ['/var/tmp/test_config.conf']
-    # )
+    bip = BIPClient(host, logging.basicConfig(level=logging.DEBUG))
+    print(bip.get_version())
 
-    # pay_gen = PayloadGenerator(os.getcwd())
-    # tmpl = pay_gen.build_template(
-    #     "tmp", "test_monitors.tmpl.123456.tmp", "admin", "admin")
-    #
-    # template_name = bip.get_template_name()
-    #
-    # payload = pay_gen.build_payload(
-    #     tmpl, template_name, 'test_monitors.json')
-    #
-    # url = bip.deploy_app_service(payload)
-    #
-    # # bip.remove_app_service(payload['partition'], payload['name'])
+
+def run_test(host):
+    logging.basicConfig(level=logging.DEBUG)
+    bip_client = BIPClient(host, logging)
     timestamp = get_timestamp()
+    session_id = "manual_{}".format(timestamp)
+    config = {
+        'timestamp': get_timestamp(),
+        'payloads_dir': os.path.abspath(
+            os.path.join("logs", session_id, 'payloads')),
+        'tmp_dir': os.path.abspath(os.path.join("logs", session_id, 'tmp')),
+        'flat_templates_dir': os.path.abspath(os.path.join(
+            "logs", session_id, 'payload_templates')),
+        'host': host,
+        'policy_host': "10.144.72.137"
+    }
+    prepare_payloads_functional_test(config)
 
-    prepare_payloads_functional_test(
-        "run_{}".format(timestamp), "10.145.64.120", "10.144.72.137")
+    for payload_file in sorted(glob(os.path.join(
+            config['payloads_dir'], "*.json"))):
+        with open(payload_file, 'r') as payload_file_handle:
+            payload = json.load(payload_file_handle)
+
+            assert bip_client.deploy_app_service(payload)
+            assert bip_client.remove_app_service(payload)
 
 
 def get_parser():
@@ -70,6 +74,8 @@ def get_parser():
                         help='BIP version',)
     parser.add_argument('-f', '--fix_indents',
                         help="fix indents")
+    parser.add_argument('-r', '--run',
+                        help='Run test')
     return parser
 
 
@@ -87,6 +93,9 @@ def router(parser, argv):
 
     if args.version:
         get_version(args.version)
+
+    if args.run:
+        run_test(args.run)
 
 
 if __name__ == "__main__":

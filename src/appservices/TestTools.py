@@ -1,41 +1,42 @@
 #!/usr/bin/env python
-import errno
-import json
+import logging
 import os
-import time
 from glob import glob
 
-import ipaddress
-
+from BIPClient import BIPClient
 from src.appservices.PayloadGenerator import PayloadGenerator
 
-from BIPClient import BIPClient
 
+def prepare_payloads_functional_test(config):
 
-def prepare_payloads_functional_test(session_id, host, policy_host):
-
-    payloads_dir = os.path.abspath(
-        os.path.join("logs", session_id, 'payloads'))
-    tmp_dir = os.path.abspath(
-        os.path.join("logs", session_id, 'tmp')
+    logging.basicConfig(level=logging.DEBUG)
+    bip = BIPClient(
+        config['host'],
+        logging
     )
-    flat_templates_dir = os.path.abspath(
-        os.path.join("logs", session_id, 'payload_templates')
-    )
+
+    bip.upload_files(
+            ['upload_files/test_config.conf'],
+            ['/var/tmp/test_config.conf']
+        )
+
+    bip.run_command('tmsh -c \"delete ltm pool all;'
+                    ' delete ltm node all\"')
+
+    bip.run_command('tmsh load sys config file /var/tmp/test_config.conf merge')
 
     pay_gen = PayloadGenerator(
         os.getcwd(),
-        payloads_dir,
-        tmp_dir,
-        flat_templates_dir
+        config['payloads_dir'],
+        config['tmp_dir'],
+        config['flat_templates_dir']
     )
 
-    bip = BIPClient(host)
     version = bip.get_version()
 
     for payload_template in glob(os.path.join("payload_templates", "*.tmpl")):
         pay_gen.fill_template(
-            payload_template, version, policy_host,
+            payload_template, version, config['policy_host'],
             u"172.16.0.0/24",
             u"2001:dead:beef:1::/120",
             u"172.16.0.100",
@@ -45,9 +46,9 @@ def prepare_payloads_functional_test(session_id, host, policy_host):
             u"10.0.0.10",
             u"2001:dead:beef:2::10")
 
-    for payload_template in glob(os.path.join(tmp_dir, "*.tmpl")):
+    for payload_template in glob(os.path.join(config['tmp_dir'], "*.tmpl")):
         pay_gen.build_template(
-            tmp_dir,
+            config['tmp_dir'],
             payload_template,
             'admin',
             'admin'
@@ -55,6 +56,7 @@ def prepare_payloads_functional_test(session_id, host, policy_host):
 
     app_service_template_name = bip.get_template_name()
 
-    for payload_template in glob(os.path.join(flat_templates_dir, "*.tmpl")):
+    for payload_template in glob(os.path.join(
+            config['flat_templates_dir'], "*.tmpl")):
         pay_gen.build_bip_payload(payload_template, app_service_template_name)
 

@@ -1,7 +1,5 @@
 #!/usr/bin/env python
 import json
-import logging
-import sys
 import time
 
 import paramiko
@@ -10,7 +8,7 @@ from requests.packages.urllib3.exceptions import InsecureRequestWarning
 
 
 class BIPClient(object):
-    def __init__(self, host, ssh_port=22,
+    def __init__(self, host, logging, ssh_port=22,
                  username='admin', password='admin',
                  ssh_username='root', ssh_password='default'):
 
@@ -20,6 +18,7 @@ class BIPClient(object):
         self._password = password
         self._ssh_username = ssh_username
         self._ssh_password = ssh_password
+        self._logging = logging
 
         self._app_url = "https://{}/mgmt/tm/sys/application/service".format(
             host)
@@ -48,7 +47,7 @@ class BIPClient(object):
             partition, name)
 
     def app_services_deployed(
-            self, payload, no_check=False, max_check=10, wait=6):
+            self, payload, no_check=False, max_check=10, wait=5):
         if no_check:
             return True
 
@@ -58,10 +57,10 @@ class BIPClient(object):
             istat_key)
 
         for check_run in range(max_check):
-            logging.info("checking for deployment completion (%s/%s)".format(
+            self._logging.info("checking for deployment completion ({}/{})".format(
                 check_run, max_check))
             stdout = self.run_command(command)
-            logging.debug("[check_deploy] current_time={} result={}".format(
+            self._logging.debug("[check_deploy] current_time={} result={}".format(
                 current_time, stdout))
 
             if stdout.startswith("FINISHED_"):
@@ -69,6 +68,7 @@ class BIPClient(object):
                 fin_time = int(parts[1])
                 if fin_time > current_time:
                     return True
+
             time.sleep(wait)
 
         return False
@@ -93,22 +93,22 @@ class BIPClient(object):
         if not self.app_services_exists(payload['partition'], payload['name']):
             session.post(self._app_url, data=json.dumps(payload))
 
-        deployed = self.app_services_deployed(payload)
-        return deployed
+        return self.app_services_deployed(payload)
 
-    def remove_app_service(self, partition, name):
+    def remove_app_service(self, payload):
         session = self._get_session()
         response = session.delete(self._get_app_services_existence_url(
             self._app_url,
-            partition,
-            name
+            payload['partition'],
+            payload['name']
         ))
 
         if response.status_code == requests.codes.ok:
-            logging.info("Application service \"{}\" removed".format(name))
+            self._logging.info("Application service \"{}\" removed".format(
+                payload['name']))
             return True
         else:
-            logging.error("Delete failed: {}".format(response.json()))
+            self._logging.error("Delete failed: {}".format(response.json()))
             return False
 
     def get_version(self):
@@ -116,8 +116,9 @@ class BIPClient(object):
         resp = session.get(self._version_url)
 
         if resp.status_code == 401:
-            logging.error("Authentication to {} failed".format(self._host))
-            sys.exit(1)
+            msg = "Authentication to {} failed".format(self._host)
+            self._logging.error(msg)
+            raise Exception(msg)
 
         if resp.status_code == 200:
             for item in resp.json()["items"]:
@@ -140,7 +141,7 @@ class BIPClient(object):
         result = []
         for item in templates["items"]:
             if item["name"].startswith("appsvcs_integration_"):
-                logging.debug(
+                self._logging.debug(
                     "[template_list] found template named {}".format(
                         item["name"]))
                 result.append(item["name"])

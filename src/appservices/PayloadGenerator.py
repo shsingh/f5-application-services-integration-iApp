@@ -20,7 +20,7 @@ class PayloadGenerator(object):
                  flat_template_dir,
                  template_dir='payload_templates'):
 
-        logging.basicConfig(level=logging.DEBUG)
+        # logging.basicConfig(level=logging.DEBUG)
 
         self._base_dir = os.path.abspath(base_dir)
         self._payloads_dir = os.path.abspath(payloads_dir)
