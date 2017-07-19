@@ -3,12 +3,11 @@
 import errno
 import json
 import os
+import shutil
 import time
 from glob import glob
 
 import ipaddress
-
-from BIPClient import BIPClient
 
 
 def mk_dir(dir_name):
@@ -17,6 +16,16 @@ def mk_dir(dir_name):
     except OSError as exception:
         if exception.errno != errno.EEXIST:
             raise
+        pass
+    return os.path.abspath(dir_name)
+
+
+def rm_dir(my_dir):
+    try:
+        shutil.rmtree(
+            os.path.abspath(my_dir)
+        )
+    except OSError:
         pass
 
 

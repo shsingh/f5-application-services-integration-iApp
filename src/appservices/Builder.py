@@ -36,8 +36,8 @@ class AppServicesBuilder:
         'preso': 'presentation_layer.json',
         'impl': 'implementation_layer.tcl',
         'workingdir': os.getcwd(),
-        'tempdir': 'tmp',
-        'bundledir': 'bundled',
+        'tempdir': '',
+        'bundledir': '',
         'outfile': None,
         'docsdir': 'docs',
         'append': "",
@@ -358,16 +358,14 @@ class AppServicesBuilder:
             types = {}
             filenames = []
             field['choices'] = []
-            files = []
 
             for globitem in field["glob"]:
                 if os.sep != "/":
-                    globitem["path"] = globitem["path"].replace("/","\\")
+                    globitem["path"] = globitem["path"].replace("/", "\\")
 
-                files = glob.glob("%s%s%s".format(
-                    self.options["bundledir"],
-                    os.sep,
-                    globitem["path"]))
+                my_path = os.path.join(
+                    self.options["bundledir"], globitem["path"])
+                files = glob.glob(my_path)
 
                 for filename in files:
                     name_parts = filename.split(os.sep)
@@ -398,9 +396,9 @@ class AppServicesBuilder:
         filenames = []
         retstr = ""
 
-        for	globitem in field["glob"]:
+        for globitem in field["glob"]:
             if os.sep != "/":
-                globitem["path"] = globitem["path"].replace("/","\\")
+                globitem["path"] = globitem["path"].replace("/", "\\")
 
             files = glob.glob("%s%s%s" % (self.options["bundledir"], os.sep, globitem["path"]))
             for filename in files:
@@ -421,7 +419,6 @@ class AppServicesBuilder:
         return retstr
 
     def _apl_generate_field(self, field, section, tab):
-        apl_field = ""
         if 'uivisible' not in field.keys():
             field["uivisible"] = True
 
@@ -502,13 +499,16 @@ class AppServicesBuilder:
                 self.options["workingdir"],
                 self.options["tempdir"], 'bundler.build'), "wt")
         print(" Adding iRules (%sirules/*.irule)..." % (self.options["bundledir"]))
-        files = glob.glob(os.path.join(self.options["bundledir"],'irules','*.irule'))
+        files = glob.glob(os.path.join(
+            self.options["bundledir"], 'irules', '*.irule'))
 
         print(" Adding ASM policies (%sasm_policies/*.xml)..." % (self.options["bundledir"]))
-        files += glob.glob(os.path.join(self.options["bundledir"], 'asm_policies','*.xml'))
+        files += glob.glob(os.path.join(
+            self.options["bundledir"], 'asm_policies', '*.xml'))
 
         print(" Adding APM policies (%sapm_policies/*.tar.gz)..." % (self.options["bundledir"]))
-        files += glob.glob(os.path.join(self.options["bundledir"],'apm_policies','*.tar.gz'))
+        files += glob.glob(os.path.join(
+            self.options["bundledir"], 'apm_policies', '*.tar.gz'))
 
         if len(files) == 0:
             print("  no files found")
@@ -549,9 +549,9 @@ class AppServicesBuilder:
 
             data = infile.read()
 
-            if filetype == "irule" and data.endswith('\n') == False:
+            if filetype == "irule" and data.endswith('\n') is False:
                 print "  Adding newline to end of file..."
-                data += '\n';
+                data += '\n'
 
             data = base64.b64encode(data)
 
@@ -583,7 +583,10 @@ class AppServicesBuilder:
 
         self._debug("buildDocVersion options=%s" % self.options)
 
-        ver = self._safe_open(os.path.join(self.options["workingdir"],self.options["docsdir"],'VERSION'), "wt")
+        ver = self._safe_open(
+            os.path.join(self.options["workingdir"],
+                         self.options["docsdir"],
+                         'VERSION'), "wt")
         ver.write(json.dumps(self.buildinfo))
         ver.close()
 
@@ -627,7 +630,7 @@ class AppServicesBuilder:
                 else:
                     field["_apl_text"] = "\t%s.%s \"%s\"\n" % (section["name"], field["name"], field["description"])
 
-                    if ('uivisible' in field.keys() and field["uivisible"] == False):
+                    if 'uivisible' in field.keys() and field["uivisible"] is False:
                         fh.write("optional (\"dont\" == \"show\") {\ntable %s {\n" % field["name"])
                     else:
                         fh.write("\ttable %s {\n" % field["name"])
@@ -635,7 +638,7 @@ class AppServicesBuilder:
                     for table_field in field["fields"]:
                         fh.write(self._apl_generate_field(table_field, "%s.%s" % (section["name"], field["name"]), "\t"))
 
-                    if ('uivisible' in field.keys() and field["uivisible"] == False):
+                    if 'uivisible' in field.keys() and field["uivisible"] is False:
                         fh.write("\t}\n}\n")
                     else:
                         fh.write("\t}\n")

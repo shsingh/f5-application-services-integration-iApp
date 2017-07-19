@@ -16,7 +16,7 @@ def prepare_payloads_functional_test(config):
     )
 
     bip.upload_files(
-            ['upload_files/test_config.conf'],
+            ['resources/test_config.conf'],
             ['/var/tmp/test_config.conf']
         )
 

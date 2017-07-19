@@ -5,6 +5,8 @@ import os
 import sys
 import shutil
 from src.appservices.Builder import AppServicesBuilder
+from src.appservices.tools import mk_dir
+from src.appservices.tools import rm_dir
 
 
 def cli_parser():
@@ -52,31 +54,18 @@ def router(parser, argv):
 
     if args.clean:
         clean()
-    else:
-        build_iapp(args.build_dir)
+
+    if args.build_dir:
+        clean()
+        build_iapp(args.build_dir, args.bundledir)
 
 
 def clean():
     rm_dir('build')
 
 
-def rm_dir(my_dir):
-    try:
-        shutil.rmtree(
-            os.path.abspath(my_dir)
-        )
-    except OSError:
-        pass
+def build_iapp(build_dir, bundle_dir):
 
-
-def mk_dir(my_dir):
-    my_dir = os.path.abspath(my_dir)
-    if not os.path.isdir(my_dir):
-        os.mkdir(my_dir)
-    return my_dir
-
-
-def build_iapp(build_dir):
     build_dir = mk_dir(build_dir)
     tmp_dir = mk_dir('tmp')
     resource_dir = os.path.abspath(os.path.join('src', 'resources'))
@@ -84,14 +73,16 @@ def build_iapp(build_dir):
     builder = AppServicesBuilder(
         build_dir=build_dir,
         resource_dir=resource_dir,
-        tempdir=tmp_dir
+        tempdir=tmp_dir,
+        bundledir=bundle_dir
     )
 
     builder.buildAPL()
     builder.buildTemplate(
         build_dir=build_dir,
         resource_dir=resource_dir,
-        tempdir=tmp_dir)
+        tempdir=tmp_dir,
+        bundledir=bundle_dir)
 
     builder.buildiWfTemplate()
 
@@ -122,7 +113,7 @@ def build_iapp(build_dir):
         'AppSvcs_iApp_Workflows.postman_collection.template')
     builder.buildTemplate(outfile=outfile, roottmpl=roottmpl)
 
-    shutil.rmtree(tmp_dir)
+    # shutil.rmtree(tmp_dir)
 
 if __name__ == '__main__':
     router(cli_parser(), sys.argv)
