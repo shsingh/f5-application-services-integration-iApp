@@ -113,7 +113,7 @@ def build_iapp(build_dir, bundle_dir):
         'AppSvcs_iApp_Workflows.postman_collection.template')
     builder.buildTemplate(outfile=outfile, roottmpl=roottmpl)
 
-    # shutil.rmtree(tmp_dir)
+    shutil.rmtree(tmp_dir)
 
 if __name__ == '__main__':
     router(cli_parser(), sys.argv)

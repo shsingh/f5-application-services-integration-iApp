@@ -1,19 +1,17 @@
 #!/usr/bin/env python
-import logging
+import json
 import os
 from glob import glob
 
-from BIPClient import BIPClient
 from src.appservices.PayloadGenerator import PayloadGenerator
+from src.appservices.exceptions import AppServiceDeploymentException
+from src.appservices.exceptions import AppServiceDeploymentVerificationException
+from src.appservices.exceptions import AppServiceRemovalException
+from src.appservices.exceptions import RESTException
+from src.appservices.tools import get_timestamp
 
 
-def prepare_payloads_functional_test(config):
-
-    logging.basicConfig(level=logging.DEBUG)
-    bip = BIPClient(
-        config['host'],
-        logging
-    )
+def prepare_payloads_functional_test(bip, config):
 
     bip.upload_files(
             ['resources/test_config.conf'],
@@ -60,3 +58,51 @@ def prepare_payloads_functional_test(config):
             config['flat_templates_dir'], "*.tmpl")):
         pay_gen.build_bip_payload(payload_template, app_service_template_name)
 
+
+def get_test_config(host, policy_host, test_method='pytest'):
+    timestamp = get_timestamp()
+    session_id = "{}_{}".format(test_method, timestamp)
+    config = {
+        'timestamp': timestamp,
+        'payloads_dir': os.path.abspath(
+            os.path.join("logs", session_id, 'payloads')),
+        'tmp_dir': os.path.abspath(os.path.join("logs", session_id, 'tmp')),
+        'flat_templates_dir': os.path.abspath(os.path.join(
+            "logs", session_id, 'payload_templates')),
+        'host': host,
+        'policy_host': policy_host,
+        'session_id': session_id
+    }
+    return config
+
+
+def run_functional_tests(bip_client, config):
+
+    for payload_file in sorted(glob(os.path.join(
+            config['payloads_dir'], "*.json"))):
+        with open(payload_file, 'r') as payload_file_handle:
+            payload = json.load(payload_file_handle)
+
+            test_run_log_dir = os.path.abspath(
+                os.path.join("logs", config['session_id'],
+                             'run', '1', payload['name'])
+            )
+
+            try:
+                bip_client.deploy_app_service(payload)
+
+                bip_client.verify_deployment(payload, test_run_log_dir)
+
+                bip_client.remove_app_service(payload)
+            except AppServiceDeploymentException:
+                bip_client.download_logs(test_run_log_dir)
+                raise
+            except RESTException:
+                bip_client.download_logs(test_run_log_dir)
+                raise
+            except AppServiceDeploymentVerificationException:
+                bip_client.download_logs(test_run_log_dir)
+                raise
+            except AppServiceRemovalException:
+                bip_client.download_logs(test_run_log_dir)
+                raise

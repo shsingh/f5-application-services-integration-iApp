@@ -20,13 +20,12 @@ class PayloadGenerator(object):
                  flat_template_dir,
                  template_dir='payload_templates'):
 
-        # logging.basicConfig(level=logging.DEBUG)
-
         self._base_dir = os.path.abspath(base_dir)
         self._payloads_dir = os.path.abspath(payloads_dir)
         self._tmp_dir = os.path.abspath(tmp_dir)
         self._flat_template_dir = os.path.abspath(flat_template_dir)
         self._template_dir = os.path.abspath(template_dir)
+        self._logger = logging.getLogger(__name__)
 
         mk_dir(self._tmp_dir)
         mk_dir(self._payloads_dir)
@@ -163,9 +162,8 @@ class PayloadGenerator(object):
 
         return result
 
-    @staticmethod
-    def read_template(template_path):
-        logging.debug("Loading payload template {}".format(template_path))
+    def read_template(self, template_path):
+        self._logger.debug("Loading payload template {}".format(template_path))
         try:
             template_file = open(template_path)
             content = json.load(template_file)
@@ -188,23 +186,22 @@ class PayloadGenerator(object):
                         tmpl_file_canonical_path)
                 raise Exception(msg)
 
-    @staticmethod
-    def _append_credentials(tmpl, username=None, password=None,
+    def _append_credentials(self, tmpl, username=None, password=None,
                             password_file=None):
         if username is not None:
             if 'username' in tmpl:
-                logging.info("Username found in JSON but specified on CLI,"
+                self._logger.info("Username found in JSON but specified on CLI,"
                              "using CLI value")
             tmpl["username"] = username
 
         if password is not None:
             if 'password' in tmpl:
-                logging.info("Password found in JSON but specified on CLI,"
+                self._logger.info("Password found in JSON but specified on CLI,"
                              "using CLI value")
             tmpl["password"] = password
         if password_file is not None:
             if 'password' in tmpl:
-                logging.info("Password found in JSON but specified in CLI,"
+                self._logger.info("Password found in JSON but specified in CLI,"
                              " using CLI value")
             with open(password_file, 'r') as p_file:
                 tmpl["password"] = p_file.readline().strip()
@@ -239,17 +236,16 @@ class PayloadGenerator(object):
 
         save_json(os.path.join(
             self._flat_template_dir, os.path.basename(
-                tmpl_file_canonical_path)), flat_tmpl, logging)
+                tmpl_file_canonical_path)), flat_tmpl)
 
         return flat_tmpl
 
-    @staticmethod
-    def update_app_services_name(tmpl, name):
-        logging.debug("[template_select] specified={}".format(
+    def update_app_services_name(self, tmpl, name):
+        self._logger.debug("[template_select] specified={}".format(
             tmpl["template_name"]))
         if tmpl["template_name"] == "latest":
             tmpl["template_name"] = name
-            logging.debug("[template_select] selected={}".format(
+            self._logger.debug("[template_select] selected={}".format(
                 tmpl["template_name"]))
         else:
             if tmpl["template_name"] not in tmpl:
@@ -294,14 +290,13 @@ class PayloadGenerator(object):
         save_json(
             os.path.join(
                 self._payloads_dir, "{}.json".format(app_service_name)),
-            deploy_payload,
-            logging
+            deploy_payload
         )
 
         return deploy_payload
 
     def flatten_template(self, parent, child, template_dir):
-        logging.info("processing parent file \"{}\"".format(parent))
+        self._logger.info("processing parent file \"{}\"".format(parent))
 
         parent_dict = self.read_template(
             os.path.join(template_dir, parent))
@@ -315,17 +310,17 @@ class PayloadGenerator(object):
         # Process the child objects 'strings' and 'tables' keys.
         child_strings = {}
         child_tables = {}
-        logging.debug("[{}] starting merge".format(parent))
+        self._logger.debug("[{}] starting merge".format(parent))
         if 'strings' in child:
             for string in child["strings"]:
                 k, v = string.popitem()
-                logging.debug("[{}] child: {}".format(parent, k))
+                self._logger.debug("[{}] child: {}".format(parent, k))
                 child_strings[k] = v
 
         if 'tables' in child:
             i = 0
             for table in child["tables"]:
-                logging.debug("[{}] iapptable {}".format(parent, table["name"]))
+                self._logger.debug("[{}] iapptable {}".format(parent, table["name"]))
                 child_tables[table["name"]] = i
                 i += 1
 
@@ -335,7 +330,7 @@ class PayloadGenerator(object):
                 k, v = string.popitem()
                 if k in child_strings.keys():
                     string[k] = child_strings[k]
-                    logging.debug(
+                    self._logger.debug(
                         "[{}] OVERRIDE: {}: {}".format(parent, k, string[k]))
                 else:
                     string[k] = v
@@ -344,7 +339,7 @@ class PayloadGenerator(object):
             i = 0
             for table in parent_dict["tables"]:
                 if table["name"] in child_tables.keys():
-                    logging.debug(
+                    self._logger.debug(
                         "[{}] OVERRIDE TABLE: {}".format(
                             parent, table["name"]))
                     parent_dict["tables"][i] = child["tables"][child_tables[table["name"]]]
@@ -354,14 +349,14 @@ class PayloadGenerator(object):
             i = 0
             for alist in parent_dict["lists"]:
                 if alist["name"] in child_tables.keys():
-                    logging.debug(
+                    self._logger.debug(
                         "[{}] OVERRIDE LIST: {}".format(parent, alist["name"]))
                     parent_dict["lists"][i] = child["lists"][child_tables[alist["name"]]]
                 i += 1
 
         # Inherit any other top level keys
         for topitem in child.keys():
-            logging.debug("top item={}".format(topitem))
+            self._logger.debug("top item={}".format(topitem))
             if topitem not in ["tables", "strings"]:
                 parent_dict[topitem] = child[topitem]
 

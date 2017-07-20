@@ -1,14 +1,21 @@
 #!/usr/bin/env python
 import json
 import time
+import os
 
 import paramiko
 import requests
+import logging
 from requests.packages.urllib3.exceptions import InsecureRequestWarning
+from src.appservices.tools import mk_dir
+from src.appservices.exceptions import AppServiceDeploymentException
+from src.appservices.exceptions import RESTException
+from src.appservices.exceptions import AppServiceDeploymentVerificationException
+from src.appservices.exceptions import AppServiceRemovalException
 
 
 class BIPClient(object):
-    def __init__(self, host, logging, ssh_port=22,
+    def __init__(self, host, ssh_port=22,
                  username='admin', password='admin',
                  ssh_username='root', ssh_password='default'):
 
@@ -18,7 +25,7 @@ class BIPClient(object):
         self._password = password
         self._ssh_username = ssh_username
         self._ssh_password = ssh_password
-        self._logging = logging
+        self._logger = logging.getLogger(__name__)
 
         self._app_url = "https://{}/mgmt/tm/sys/application/service".format(
             host)
@@ -47,7 +54,7 @@ class BIPClient(object):
             partition, name)
 
     def app_services_deployed(
-            self, payload, no_check=False, max_check=10, wait=5):
+            self, payload, no_check=False, max_check=20, wait=5):
         if no_check:
             return True
 
@@ -57,11 +64,13 @@ class BIPClient(object):
             istat_key)
 
         for check_run in range(max_check):
-            self._logging.info("checking for deployment completion ({}/{})".format(
-                check_run, max_check))
-            stdout = self.run_command(command)
-            self._logging.debug("[check_deploy] current_time={} result={}".format(
-                current_time, stdout))
+            self._logger.info(
+                "checking for deployment completion ({}/{})".format(
+                    check_run, max_check))
+            stdout, _ = self.run_command(command)
+            self._logger.debug(
+                "[check_deploy] current_time={} result={}".format(
+                    current_time, stdout))
 
             if stdout.startswith("FINISHED_"):
                 parts = stdout.split('_')
@@ -71,7 +80,7 @@ class BIPClient(object):
 
             time.sleep(wait)
 
-        return False
+        raise AppServiceDeploymentException(payload['name'], stdout)
 
     def app_services_exists(self, partition, name):
         session = self._get_session()
@@ -83,10 +92,24 @@ class BIPClient(object):
         result = session.get(url)
         if result.status_code == 200:
             return True
-        elif result.status_code == 404:
-            return False
         else:
-            raise Exception(result)
+            raise RESTException(result.json())
+
+    def verify_deployment(self, payload, log_dir):
+        stdout, stderr = self.run_command(
+            "tmsh -c 'cd /{}/{}.app ; list ltm ; list asm ; list apm'".format(
+                payload['partition'], payload['name']))
+
+        mk_dir(log_dir)
+        with open(os.path.join(
+                log_dir, 'deployment_result.txt'), 'w') as log_file:
+            log_file.write("{}\n".format(stderr))
+            log_file.write("{}\n".format("-"*60))
+            log_file.write(stdout)
+
+        if stderr != '':
+            raise AppServiceDeploymentVerificationException(
+                payload['name'], stderr)
 
     def deploy_app_service(self, payload):
         session = self._get_session()
@@ -104,21 +127,18 @@ class BIPClient(object):
         ))
 
         if response.status_code == requests.codes.ok:
-            self._logging.info("Application service \"{}\" removed".format(
+            self._logger.info("Application service \"{}\" removed".format(
                 payload['name']))
             return True
         else:
-            self._logging.error("Delete failed: {}".format(response.json()))
-            return False
+            raise AppServiceRemovalException(payload['name'], response.json())
 
     def get_version(self):
         session = self._get_session()
         resp = session.get(self._version_url)
 
         if resp.status_code == 401:
-            msg = "Authentication to {} failed".format(self._host)
-            self._logging.error(msg)
-            raise Exception(msg)
+            raise RESTException(resp.json())
 
         if resp.status_code == 200:
             for item in resp.json()["items"]:
@@ -141,7 +161,7 @@ class BIPClient(object):
         result = []
         for item in templates["items"]:
             if item["name"].startswith("appsvcs_integration_"):
-                self._logging.debug(
+                self._logger.debug(
                     "[template_list] found template named {}".format(
                         item["name"]))
                 result.append(item["name"])
@@ -149,6 +169,25 @@ class BIPClient(object):
         result.sort()
 
         return result.pop()
+
+    def download_logs(self, log_folder):
+        mk_dir(log_folder)
+        self.download_files([
+            '/var/log/restjavad.0.log',
+            '/var/log/ltm',
+            '/var/log/icrd',
+            '/var/tmp/scriptd.out'
+        ], log_folder)
+
+    def download_files(self, files, log_folder):
+        client = paramiko.Transport((self._host, self._ssh_port))
+        client.connect(username=self._ssh_username, password=self._ssh_password)
+        sftp = paramiko.SFTPClient.from_transport(client)
+        for log_file in files:
+            sftp.get(log_file, os.path.join(
+                log_folder,
+                os.path.basename(log_file)))
+        client.close()
 
     def upload_files(self, local_files, remote_files):
         client = paramiko.Transport((self._host, self._ssh_port))
@@ -166,6 +205,7 @@ class BIPClient(object):
                        compress=True, look_for_keys=False)
         stdin, stdout, stderr = client.exec_command(command)
         out = stdout.read().strip()
+        err = stderr.read().strip()
         stdin.flush()
         client.close()
-        return out
+        return out, err

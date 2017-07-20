@@ -2,12 +2,15 @@
 
 import errno
 import json
+import logging
 import os
 import shutil
 import time
 from glob import glob
 
 import ipaddress
+
+logger = logging.getLogger(__name__)
 
 
 def mk_dir(dir_name):
@@ -33,8 +36,8 @@ def get_timestamp():
     return int(time.time())
 
 
-def save_json(filename, json_content, logging):
-    logging.debug("Saving file: {}".format(filename))
+def save_json(filename, json_content):
+    logger.debug("Saving file: {}".format(filename))
     with open(filename, 'w+') as template:
         json.dump(json_content, template, indent=4, sort_keys=True)
 
