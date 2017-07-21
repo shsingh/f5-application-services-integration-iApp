@@ -1,4 +1,5 @@
 pylint.log
+application_services_integration.log
 
 *.iml
 *.pyc
@@ -9,9 +10,6 @@ docs/_build/*
 test/run/*
 docs/presoref.rst
 docs/VERSION
-payloads/
-payloads_back/
-payloads_new/
 venv/
 tmp/
 logs/

@@ -1,13 +1,13 @@
 #!/usr/bin/env python
 import argparse
 import sys
-import logging
 
 from src.appservices.BIPClient import BIPClient
 from src.appservices.TestTools import get_test_config
 from src.appservices.TestTools import prepare_payloads_functional_test
 from src.appservices.TestTools import run_functional_tests
 from src.appservices.tools import fix_indents as as_fix_indents
+from src.appservices.tools import setup_logging
 
 
 def fix_indents(path):
@@ -36,6 +36,9 @@ def get_parser():
                         help='IP Address of BigIP to be tested')
     parser.add_argument("-b", "--policy_host",
                         help="The host to use for URL based bundled items")
+    parser.add_argument("-l", "--log_cfg_file",
+                        default="logging.yaml",
+                        help="Logging configuration file")
 
     return parser
 
@@ -46,6 +49,8 @@ def router(parser, argv):
         parser.print_help()
         sys.exit(1)
 
+    setup_logging(args.log_cfg_file)
+
     if args.version:
         get_version(args.host)
 
@@ -54,8 +59,5 @@ def router(parser, argv):
 
 
 if __name__ == "__main__":
-    logging.basicConfig(level=logging.DEBUG)
-    logger = logging.getLogger(__name__)
-
     parser = get_parser()
     router(parser, sys.argv)

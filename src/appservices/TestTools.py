@@ -9,6 +9,7 @@ from src.appservices.exceptions import AppServiceDeploymentVerificationException
 from src.appservices.exceptions import AppServiceRemovalException
 from src.appservices.exceptions import RESTException
 from src.appservices.tools import get_timestamp
+import ipaddress
 
 
 def prepare_payloads_functional_test(bip, config):
@@ -85,15 +86,87 @@ def run_functional_tests(bip_client, config):
 
             test_run_log_dir = os.path.abspath(
                 os.path.join("logs", config['session_id'],
-                             'run', '1', payload['name'])
+                             'run', payload['name'])
             )
 
             try:
                 bip_client.deploy_app_service(payload)
 
-                bip_client.verify_deployment(payload, test_run_log_dir)
+                bip_client.verify_deployment_result(payload, test_run_log_dir)
 
                 bip_client.remove_app_service(payload)
+            except AppServiceDeploymentException:
+                bip_client.download_logs(test_run_log_dir)
+                raise
+            except RESTException:
+                bip_client.download_logs(test_run_log_dir)
+                raise
+            except AppServiceDeploymentVerificationException:
+                bip_client.download_logs(test_run_log_dir)
+                raise
+            except AppServiceRemovalException:
+                bip_client.download_logs(test_run_log_dir)
+                raise
+
+
+def update_payload_name(name, run):
+    name_split = name.split("_")
+    try:
+        int(name_split[-1])
+        name_split[-1] = str(run)
+        return "_".join(name_split)
+    except ValueError:
+        return "{}_{}".format(name, run)
+
+
+def strip_payload_name(name):
+    name_split = name.split("_")
+    try:
+        int(name_split[-1])
+        return "_".join(name_split[:-2])
+    except ValueError:
+        return name
+
+
+def run_functional_tests_at_scale(bip_client, config, app_service_count=10):
+
+    for payload_file in sorted(glob(os.path.join(
+            config['payloads_dir'], "*.json"))):
+        with open(payload_file, 'r') as payload_file_handle:
+            payload = json.load(payload_file_handle)
+            if payload["variables"][7]['value'] != "172.16.0.100":
+                continue
+
+            pool_addr = ipaddress.ip_address(u"172.16.0.100")
+
+            test_run_log_dir = os.path.abspath(
+                os.path.join("logs", config['session_id'],
+                             'run', payload['name'])
+            )
+
+            try:
+                for deployment_no in range(app_service_count):
+                    payload['name'] = update_payload_name(
+                        payload['name'], deployment_no)
+                    payload["variables"][7]['value'] = str(
+                        pool_addr+deployment_no)
+
+                    test_run_log_dir = os.path.abspath(
+                        os.path.join(
+                            "logs", config['session_id'], 'run',
+                            strip_payload_name(payload['name']),
+                            str(deployment_no))
+                    )
+
+                    bip_client.deploy_app_service(payload)
+                    bip_client.verify_deployment_result(
+                        payload, test_run_log_dir)
+
+                for deployment_no in range(app_service_count):
+                    payload['name'] = update_payload_name(
+                        payload['name'], deployment_no)
+                    bip_client.remove_app_service(payload)
+
             except AppServiceDeploymentException:
                 bip_client.download_logs(test_run_log_dir)
                 raise

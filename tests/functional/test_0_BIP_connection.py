@@ -4,31 +4,11 @@ import re
 
 import pytest
 
-from src.appservices.BIPClient import BIPClient
-from src.appservices.TestTools import get_test_config
-from src.appservices.TestTools import prepare_payloads_functional_test
-from src.appservices.TestTools import run_functional_tests
 from src.appservices.tools import get_timestamp
 
 
-@pytest.fixture(scope='module')
-def get_config():
-    return get_test_config("10.145.64.120", "10.144.72.137")
-
-
-@pytest.fixture(scope='module')
-def prepare_tests(bip_client, get_config):
-
-    prepare_payloads_functional_test(bip_client, get_config)
-
-
-@pytest.fixture(scope='module')
-def bip_client():
-    return BIPClient("10.145.64.120")
-
-
 @pytest.mark.order(1)
-def test_https_credentials(bip_client):
+def test_https_credentials(setup_logging, bip_client):
     try:
         version = bip_client.get_version()
     except:
@@ -56,8 +36,3 @@ def test_time_delta_less_than_ten_seconds(bip_client):
     local_time = get_timestamp()
 
     assert (local_time - bip_time) < 10
-
-
-@pytest.mark.order(4)
-def test_payloads(get_config, bip_client, prepare_tests):
-    run_functional_tests(bip_client, get_config)

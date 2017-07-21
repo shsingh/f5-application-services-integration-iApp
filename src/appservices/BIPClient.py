@@ -53,7 +53,7 @@ class BIPClient(object):
                "/{0}/{1}.app/{1} string deploy.postdeploy_final".format(
             partition, name)
 
-    def app_services_deployed(
+    def verify_deployment(
             self, payload, no_check=False, max_check=20, wait=5):
         if no_check:
             return True
@@ -65,8 +65,8 @@ class BIPClient(object):
 
         for check_run in range(max_check):
             self._logger.info(
-                "checking for deployment completion ({}/{})".format(
-                    check_run, max_check))
+                "checking for deployment completion ({}/{}) of {}".format(
+                    check_run, max_check, payload['name']))
             stdout, _ = self.run_command(command)
             self._logger.debug(
                 "[check_deploy] current_time={} result={}".format(
@@ -91,11 +91,15 @@ class BIPClient(object):
         )
         result = session.get(url)
         if result.status_code == 200:
+            self._logger.warn(result.json())
             return True
+        elif result.status_code == 404:
+            self._logger.info(result.json())
+            return False
         else:
             raise RESTException(result.json())
 
-    def verify_deployment(self, payload, log_dir):
+    def verify_deployment_result(self, payload, log_dir):
         stdout, stderr = self.run_command(
             "tmsh -c 'cd /{}/{}.app ; list ltm ; list asm ; list apm'".format(
                 payload['partition'], payload['name']))
@@ -113,10 +117,23 @@ class BIPClient(object):
 
     def deploy_app_service(self, payload):
         session = self._get_session()
-        if not self.app_services_exists(payload['partition'], payload['name']):
-            session.post(self._app_url, data=json.dumps(payload))
+        try:
+            if not self.app_services_exists(payload['partition'], payload['name']):
+                result = session.post(self._app_url, data=json.dumps(payload))
+                if result.status_code != 200:
+                    raise RESTException(result.json())
 
-        return self.app_services_deployed(payload)
+        except RESTException as e:
+            self._logger.exception("Deployment of {} failed".format(
+                payload['name']))
+            raise
+
+        try:
+            return self.verify_deployment(payload)
+        except AppServiceDeploymentException as e:
+            self._logger.exception("Deployment verification of"
+                                   " {} failed".format(payload['name']))
+            raise
 
     def remove_app_service(self, payload):
         session = self._get_session()
