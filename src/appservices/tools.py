@@ -37,6 +37,7 @@ def get_timestamp():
 
 
 def setup_logging(logging_cfg_file="logging.yaml", input_logging_level='INFO'):
+    mk_dir("logs")
     if os.path.exists(logging_cfg_file):
         with open(logging_cfg_file, 'rt') as logging_cfg:
             config = yaml.safe_load(logging_cfg.read())

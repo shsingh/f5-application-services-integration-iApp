@@ -37,3 +37,8 @@ def test_time_delta_less_than_ten_seconds(bip_client):
     local_time = get_timestamp()
 
     assert (local_time - bip_time) < 10
+
+
+@pytest.mark.skip(reason="Skipping just for fun of it")
+def skipped_test():
+    pass

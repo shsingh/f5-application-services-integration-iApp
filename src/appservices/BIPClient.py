@@ -54,7 +54,7 @@ class BIPClient(object):
             partition, name)
 
     def verify_deployment(
-            self, payload, no_check=False, max_check=20, wait=5):
+            self, payload, no_check=False, max_check=10, wait=6):
         if no_check:
             return True
 
