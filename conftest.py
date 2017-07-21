@@ -19,23 +19,23 @@ def pytest_addoption(parser):
 
 
 @pytest.fixture(scope='module')
-def host(request):
+def get_host(request):
     return request.config.getoption("--host")
 
 
 @pytest.fixture(scope='module')
-def policy_host(request):
+def get_policy_host(request):
     return request.config.getoption("--policy_host")
 
 
 @pytest.fixture(scope='module')
-def scale_size(request):
+def get_scale_size(request):
     return request.config.getoption("--scale_size")
 
 
 @pytest.fixture(scope='module')
-def get_config(host, policy_host):
-    return get_test_config(host, policy_host)
+def get_config(get_host, get_policy_host):
+    return get_test_config(get_host, get_policy_host)
 
 
 @pytest.fixture(scope='module')
@@ -45,8 +45,8 @@ def prepare_tests(bip_client, get_config):
 
 
 @pytest.fixture(scope='module')
-def bip_client(host):
-    return BIPClient(host)
+def bip_client(get_host):
+    return BIPClient(get_host)
 
 
 @pytest.fixture(scope='module')
