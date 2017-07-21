@@ -24,7 +24,7 @@ def test_https_credentials(setup_logging, bip_client):
 
 @pytest.mark.order(2)
 def test_ssh_credentials(bip_client):
-    stdout = bip_client.run_command("date +%s")
+    stdout, _ = bip_client.run_command("date +%s")
     match = re.match(r'(\d)', stdout)
 
     assert match.group(0)
@@ -32,7 +32,8 @@ def test_ssh_credentials(bip_client):
 
 @pytest.mark.order(3)
 def test_time_delta_less_than_ten_seconds(bip_client):
-    bip_time = int(bip_client.run_command("date +%s"))
+    stdout, _ = bip_client.run_command("date +%s")
+    bip_time = int(stdout)
     local_time = get_timestamp()
 
     assert (local_time - bip_time) < 10
