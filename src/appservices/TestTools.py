@@ -3,13 +3,14 @@ import json
 import os
 from glob import glob
 
+import ipaddress
+
 from src.appservices.PayloadGenerator import PayloadGenerator
 from src.appservices.exceptions import AppServiceDeploymentException
 from src.appservices.exceptions import AppServiceDeploymentVerificationException
 from src.appservices.exceptions import AppServiceRemovalException
 from src.appservices.exceptions import RESTException
 from src.appservices.tools import get_timestamp
-import ipaddress
 
 
 def prepare_payloads_functional_test(bip, config):
@@ -123,7 +124,7 @@ def strip_payload_name(name):
     name_split = name.split("_")
     try:
         int(name_split[-1])
-        return "_".join(name_split[:-2])
+        return "_".join(name_split[:-1])
     except ValueError:
         return name
 
