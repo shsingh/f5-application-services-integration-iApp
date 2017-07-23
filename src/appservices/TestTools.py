@@ -138,6 +138,18 @@ def run_functional_tests_at_scale(bip_client, config, app_service_count=10):
             if payload["variables"][7]['value'] != "172.16.0.100":
                 continue
 
+            if payload['name'] in ['test_vs_standard_https_multi_listeners']:
+                # Skipping payload due to:
+                # {
+                #     "apiError": 3,
+                #     "code": 400,
+                #     "errorStack": [],
+                #     "message": "01070333:3: Virtual Server /Common/test_vs_standard_https_multi_listeners_1.app/test_vs_standard_https_addlisteners_vs_idx_0_445
+                # illegally shares destination address, source address, service port, ip-protocol,
+                #  and vlan with Virtual Server /Common/test_vs_standard_https_multi_listeners_0.app/test_vs_standard_https_addlisteners_vs_idx_0_445."
+                # }
+                continue
+
             pool_addr = ipaddress.ip_address(u"172.16.0.100")
 
             test_run_log_dir = os.path.abspath(
