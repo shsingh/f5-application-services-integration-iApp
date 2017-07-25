@@ -1,9 +1,9 @@
 #!/usr/bin/env python
 import json
+import logging
 import os
+import threading
 from glob import glob
-
-import ipaddress
 
 from src.appservices.PayloadGenerator import PayloadGenerator
 from src.appservices.exceptions import AppServiceDeploymentException
@@ -129,66 +129,36 @@ def strip_payload_name(name):
         return name
 
 
-def run_functional_tests_at_scale(bip_client, config, app_service_count=10):
+def load_payload(payload_dir, filename='test_monitors.json'):
+    with open(os.path.join(payload_dir, filename)) as payload:
+        data = json.load(payload)
+    return data
 
-    for payload_file in sorted(glob(os.path.join(
-            config['payloads_dir'], "*.json"))):
-        with open(payload_file, 'r') as payload_file_handle:
-            payload = json.load(payload_file_handle)
-            if payload["variables"][7]['value'] != "172.16.0.100":
-                continue
 
-            if payload['name'] in ['test_vs_standard_https_multi_listeners']:
-                # Skipping payload due to:
-                # {
-                #     "apiError": 3,
-                #     "code": 400,
-                #     "errorStack": [],
-                #     "message": "01070333:3: Virtual Server /Common/test_vs_standard_https_multi_listeners_1.app/test_vs_standard_https_addlisteners_vs_idx_0_445
-                # illegally shares destination address, source address, service port, ip-protocol,
-                #  and vlan with Virtual Server /Common/test_vs_standard_https_multi_listeners_0.app/test_vs_standard_https_addlisteners_vs_idx_0_445."
-                # }
-                continue
+class IappWorker(threading.Thread):
+    def __init__(self, bip_client, payload, log_dir, results, thread_no):
+        threading.Thread.__init__(self)
+        self.bip_client = bip_client
+        self.payload = payload
+        self.log_dir = log_dir
+        self.results = results
+        self.thread_no = thread_no
+        self.logger = logging.getLogger(__name__)
 
-            pool_addr = ipaddress.ip_address(u"172.16.0.100")
+    def run(self):
+        try:
+            self.bip_client.deploy_app_service(self.payload)
+            self.results[self.thread_no] = {
+                'result': True,
+                'msg': ''
+            }
 
-            test_run_log_dir = os.path.abspath(
-                os.path.join("logs", config['session_id'],
-                             'run', payload['name'])
-            )
+        except (RESTException, AppServiceDeploymentException) as ex:
+            self.bip_client.download_logs(self.log_dir)
+            self.results[self.thread_no] = {
+                'result': False,
+                'msg': ex
+            }
 
-            try:
-                for deployment_no in range(app_service_count):
-                    payload['name'] = update_payload_name(
-                        payload['name'], deployment_no)
-                    payload["variables"][7]['value'] = str(
-                        pool_addr+deployment_no)
-
-                    test_run_log_dir = os.path.abspath(
-                        os.path.join(
-                            "logs", config['session_id'], 'run',
-                            strip_payload_name(payload['name']),
-                            str(deployment_no))
-                    )
-
-                    bip_client.deploy_app_service(payload)
-                    bip_client.verify_deployment_result(
-                        payload, test_run_log_dir)
-
-                for deployment_no in range(app_service_count):
-                    payload['name'] = update_payload_name(
-                        payload['name'], deployment_no)
-                    bip_client.remove_app_service(payload)
-
-            except AppServiceDeploymentException:
-                bip_client.download_logs(test_run_log_dir)
-                raise
-            except RESTException:
-                bip_client.download_logs(test_run_log_dir)
-                raise
-            except AppServiceDeploymentVerificationException:
-                bip_client.download_logs(test_run_log_dir)
-                raise
-            except AppServiceRemovalException:
-                bip_client.download_logs(test_run_log_dir)
-                raise
+        finally:
+            return self.results

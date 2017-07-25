@@ -1,17 +1,18 @@
 #!/usr/bin/env python
 import json
-import time
+import logging
 import os
+import time
 
 import paramiko
 import requests
-import logging
 from requests.packages.urllib3.exceptions import InsecureRequestWarning
-from src.appservices.tools import mk_dir
+
 from src.appservices.exceptions import AppServiceDeploymentException
-from src.appservices.exceptions import RESTException
 from src.appservices.exceptions import AppServiceDeploymentVerificationException
 from src.appservices.exceptions import AppServiceRemovalException
+from src.appservices.exceptions import RESTException
+from src.appservices.tools import mk_dir
 
 
 class BIPClient(object):
@@ -118,19 +119,20 @@ class BIPClient(object):
     def deploy_app_service(self, payload):
         session = self._get_session()
         try:
-            if not self.app_services_exists(payload['partition'], payload['name']):
+            if not self.app_services_exists(
+                    payload['partition'], payload['name']):
                 result = session.post(self._app_url, data=json.dumps(payload))
                 if result.status_code != 200:
                     raise RESTException(result.json())
 
-        except RESTException as e:
+        except RESTException:
             self._logger.exception("Deployment of {} failed".format(
                 payload['name']))
             raise
 
         try:
             return self.verify_deployment(payload)
-        except AppServiceDeploymentException as e:
+        except AppServiceDeploymentException:
             self._logger.exception("Deployment verification of"
                                    " {} failed".format(payload['name']))
             raise
@@ -187,14 +189,16 @@ class BIPClient(object):
 
         return result.pop()
 
-    def download_logs(self, log_folder):
+    def download_logs(self, log_folder, bip_log_files=None):
+        if bip_log_files is None:
+            bip_log_files = [
+                '/var/log/restjavad.0.log',
+                '/var/log/ltm',
+                '/var/log/icrd',
+                '/var/tmp/scriptd.out'
+            ]
         mk_dir(log_folder)
-        self.download_files([
-            '/var/log/restjavad.0.log',
-            '/var/log/ltm',
-            '/var/log/icrd',
-            '/var/tmp/scriptd.out'
-        ], log_folder)
+        self.download_files(bip_log_files, log_folder)
 
     def download_files(self, files, log_folder):
         client = paramiko.Transport((self._host, self._ssh_port))

@@ -29,11 +29,6 @@ def get_policy_host(request):
 
 
 @pytest.fixture(scope='module')
-def get_scale_size(request):
-    return request.config.getoption("--scale_size")
-
-
-@pytest.fixture(scope='module')
 def get_config(get_host, get_policy_host):
     return get_test_config(get_host, get_policy_host)
 
