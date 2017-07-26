@@ -129,6 +129,10 @@ def strip_payload_name(name):
         return name
 
 
+def get_payload_list(payload_dir):
+    return sorted(glob(os.path.join(payload_dir, "*.json")))
+
+
 def load_payload(payload_dir, filename='test_monitors.json'):
     with open(os.path.join(payload_dir, filename)) as payload:
         data = json.load(payload)
