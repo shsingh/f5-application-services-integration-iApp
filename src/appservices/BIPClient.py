@@ -2,6 +2,7 @@
 import json
 import logging
 import os
+import re
 import time
 
 import paramiko
@@ -199,6 +200,18 @@ class BIPClient(object):
             ]
         mk_dir(log_folder)
         self.download_files(bip_log_files, log_folder)
+
+    def download_qkview(self, log_folder):
+        result, error = self.run_command("qkview -c")
+        # for some reason qkview outputs this data on stderr
+        # error = "Gathering System Diagnostics: Please wait ... " \
+        #         "Diagnostic information has been saved in: " \
+        #         "/var/tmp/test-BIGIP-11.6.1_1.example.com.qkview" \
+        #         "Please send this file to F5 support."
+        pattern = re.compile("([a-zA-Z0-9\.\-_/]+\.qkview)")
+        file_path = pattern.findall(error)
+        self.download_files(file_path, log_folder)
+        return os.path.basename(file_path[0])
 
     def download_files(self, files, log_folder):
         client = paramiko.Transport((self._host, self._ssh_port))

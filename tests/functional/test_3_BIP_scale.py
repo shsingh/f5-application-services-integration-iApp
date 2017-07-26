@@ -78,6 +78,7 @@ def test_functional_tests_at_scale(
                         AppServiceDeploymentVerificationException) as ex:
                     test_results[strip_payload_name(payload['name'])]['deployment_exception'] = str(ex)
                     bip_client.download_logs(test_run_log_dir)
+                    bip_client.download_qkview(test_run_log_dir)
                     break
 
             for removal_no in range(deployment_no + 1):

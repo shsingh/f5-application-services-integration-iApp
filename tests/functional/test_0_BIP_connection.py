@@ -1,10 +1,12 @@
 #!/usr/bin/env python
 
+import os
 import re
 
 import pytest
 
 from src.appservices.tools import get_timestamp
+from src.appservices.tools import mk_dir
 
 
 @pytest.mark.order(1)
@@ -42,3 +44,11 @@ def test_time_delta_less_than_ten_seconds(bip_client):
 @pytest.mark.skip(reason="Skipping just for fun of it")
 def skipped_test():
     pass
+
+
+@pytest.mark.order(4)
+def test_download_reference_qkview(get_config, bip_client):
+    log_dir = os.path.join("logs", get_config['session_id'], 'run')
+    mk_dir(log_dir)
+    filename = bip_client.download_qkview(log_dir)
+    assert os.path.isfile(os.path.join(log_dir, filename))
