@@ -584,9 +584,8 @@ class AppServicesBuilder:
         self._debug("buildDocVersion options=%s" % self.options)
 
         ver = self._safe_open(
-            os.path.join(self.options["workingdir"],
-                         self.options["docsdir"],
-                         'VERSION'), "wt")
+            os.path.join(self.options["workingdir"], 'VERSION'), "wt")
+
         ver.write(json.dumps(self.buildinfo))
         ver.close()
 
@@ -601,7 +600,6 @@ class AppServicesBuilder:
         self.buildDocVersion(**kwargs)
 
         fh = self._safe_open(os.path.join(self.options["workingdir"],
-                                          self.options["docsdir"],
                                           'presoref.rst'), "wt")
         fh.write("Presentation Layer Reference\n")
         fh.write("============================\n\n")

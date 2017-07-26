@@ -19,14 +19,10 @@ def cli_parser():
     parser.add_argument("-b", "--bundledir",
                         default="bundled",
                         help="The directory to use for bundled resources")
-    parser.add_argument("-D", "--debug",
+    parser.add_argument("-d", "--docs",
                         default=False,
                         action="store_true",
-                        help="Enable debug output")
-    parser.add_argument("-nd", "--nodocs",
-                        default=False,
-                        action="store_true",
-                        help="Do not build the documentation")
+                        help="Build the documentation")
     parser.add_argument("-o", "--outfile",
                         help="The name of the output file")
     parser.add_argument("-p", "--preso",
@@ -57,14 +53,21 @@ def router(parser, argv):
 
     if args.build_dir:
         clean()
-        build_iapp(args.build_dir, args.bundledir)
+        build_iapp(args.build_dir, args.bundledir, args.master_template)
+
+    if args.docs:
+        build_documentation()
 
 
 def clean():
     rm_dir('build')
 
 
-def build_iapp(build_dir, bundle_dir):
+def build_documentation():
+    os.system("cd docs && make clean && make html && cd ..")
+
+
+def build_iapp(build_dir, bundle_dir, master_template):
 
     build_dir = mk_dir(build_dir)
     tmp_dir = mk_dir('tmp')
@@ -74,7 +77,8 @@ def build_iapp(build_dir, bundle_dir):
         build_dir=build_dir,
         resource_dir=resource_dir,
         tempdir=tmp_dir,
-        bundledir=bundle_dir
+        bundledir=bundle_dir,
+        roottmpl=master_template
     )
 
     builder.buildAPL()
@@ -82,7 +86,8 @@ def build_iapp(build_dir, bundle_dir):
         build_dir=build_dir,
         resource_dir=resource_dir,
         tempdir=tmp_dir,
-        bundledir=bundle_dir)
+        bundledir=bundle_dir,
+        roottmpl=master_template)
 
     builder.buildiWfTemplate()
 
