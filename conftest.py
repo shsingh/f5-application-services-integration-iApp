@@ -35,8 +35,8 @@ def get_config(get_host, get_policy_host):
 
 @pytest.fixture(scope='module')
 def prepare_tests(bip_client, get_config):
-
-    prepare_payloads_functional_test(bip_client, get_config)
+    return prepare_payloads_functional_test(
+        bip_client, get_config)
 
 
 @pytest.fixture(scope='module')
