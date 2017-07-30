@@ -5,7 +5,6 @@ from src.appservices.TestTools import update_payload_name
 from src.appservices.TestTools import get_payload_list
 from src.appservices.TestTools import get_test_config
 from src.appservices.TestTools import build_application_service_payloads
-from src.appservices.TestTools import check_dependency
 
 
 def test_get_payload_generation():
@@ -23,8 +22,6 @@ def test_get_payload_generation():
     # I can not wait for the day
     #  when we remove this 'payload dependency mechanism'
     assert len(dependants.keys()) == 10
-
-    #assert check_dependency('test_pools', dependants)
 
 
 def test_update_payload_name_and_strip_payload_name():
