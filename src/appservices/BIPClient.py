@@ -4,6 +4,7 @@ import logging
 import os
 import re
 import time
+import traceback
 
 import paramiko
 import requests
@@ -29,12 +30,15 @@ class BIPClient(object):
         self._ssh_password = ssh_password
         self._logger = logging.getLogger(__name__)
 
-        self._app_url = "https://{}/mgmt/tm/sys/application/service".format(
+        self._url_app = "https://{}/mgmt/tm/sys/application/service".format(
             host)
-        self._version_url = "https://{}/mgmt/tm/sys/software/volume?" \
+        self._url_version = "https://{}/mgmt/tm/sys/software/volume?" \
                             "$select=active,version".format(host)
-        self._app_template_url = "https://{}/mgmt/tm/sys/application/" \
-                                 "template?$select=name".format(host)
+        self._url_template = "https://{}/" \
+                             "mgmt/tm/sys/application/template".format(host)
+        self._url_app_template = "{}?$select=name".format(self._url_template)
+        self._url_save_cfg = "https://{}/mgmt/tm/sys/config".format(host)
+        self._url_cli_script = "https://{}/mgmt/tm/cli/script".format(host)
 
     def _get_session(self):
         requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
@@ -45,15 +49,85 @@ class BIPClient(object):
         return session
 
     @staticmethod
-    def _get_app_services_existence_url(url, partition, name):
-        return "{0}/~{1}~{2}.app~{2}".format(
-            url, partition, name)
-
-    @staticmethod
     def _get_istat_key(partition, name):
         return "sys.application.service " \
                "/{0}/{1}.app/{1} string deploy.postdeploy_final".format(
             partition, name)
+
+    def _url_app_service_exists(self, partition, name):
+        return "{0}/~{1}~{2}.app~{2}".format(
+            self._url_app, partition, name)
+
+    def _url_template_exits(self, name):
+        return "{}/{}".format(self._url_template, name)
+
+    def _url_definition(self, name):
+        return "{}/actions/definition".format(
+            self._url_template_exits(name))
+
+    def _url_cli_exists(self, name):
+        return "{}/{}".format(self._url_cli_script, name)
+
+    def handle_response(self, response):
+        if response.status_code == 200:
+            # self._logger.debug(response.json())
+            return True
+        elif response.status_code == 404:
+            self._logger.warn(response.json())
+            return False
+        elif response.status_code == 401:
+            self._logger.error("Login/Password incorrect")
+            return False
+
+        raise RESTException(response.json())
+
+    def cli_script_exists(self, name):
+        session = self._get_session()
+        return self.handle_response(
+            session.get(self._url_cli_exists(name))
+        )
+
+    def deploy_cli_script(self, payload):
+        session = self._get_session()
+        return self.handle_response(
+            session.post(self._url_cli_script, data=json.dumps(payload))
+        )
+
+    def update_cli_script(self, name, payload):
+        session = self._get_session()
+        return self.handle_response(
+            session.put(self._url_cli_exists(name), data=json.dumps(payload))
+        )
+
+    def check_if_template_exists(self, name):
+        session = self._get_session()
+        return self.handle_response(
+            session.get(self._url_template_exits(name))
+        )
+
+    def deploy_template(self, payload):
+        session = self._get_session()
+        return self.handle_response(
+            session.post(self._url_template, data=json.dumps(payload))
+        )
+
+    def update_template(self, name, payload):
+        session = self._get_session()
+        return self.handle_response(
+            session.put(
+                self._url_template_exits(name),
+                data=json.dumps(payload)
+            )
+        )
+
+    def update_template_definition(self, name, payload):
+        session = self._get_session()
+        return self.handle_response(
+            session.put(
+                self._url_definition(name),
+                data=json.dumps(payload)
+            )
+        )
 
     def verify_deployment(
             self, payload, no_check=False, max_check=10, wait=6):
@@ -78,28 +152,31 @@ class BIPClient(object):
                 parts = stdout.split('_')
                 fin_time = int(parts[1])
                 if fin_time > current_time:
+                    self._logger.info(
+                        "BigIP returned expected timestamp "
+                        "for deployment of {}".format(payload['name']))
                     return True
 
             time.sleep(wait)
 
         raise AppServiceDeploymentException(payload['name'], stdout)
 
+    def save_config(self):
+        payload = {"command": "save"}
+        session = self._get_session()
+        return self.handle_response(
+            session.post(self._url_save_cfg, data=json.dumps(payload))
+        )
+
     def app_services_exists(self, partition, name):
         session = self._get_session()
-        url = self._get_app_services_existence_url(
-            self._app_url,
+        url = self._url_app_service_exists(
             partition,
             name
         )
-        result = session.get(url)
-        if result.status_code == 200:
-            self._logger.warn(result.json())
-            return True
-        elif result.status_code == 404:
-            self._logger.info(result.json())
-            return False
-        else:
-            raise RESTException(result.json())
+        return self.handle_response(
+            session.get(url)
+        )
 
     def verify_deployment_result(self, payload, log_dir):
         stdout, stderr = self.run_command(
@@ -117,14 +194,35 @@ class BIPClient(object):
             raise AppServiceDeploymentVerificationException(
                 payload['name'], stderr)
 
+        return True
+
     def deploy_app_service(self, payload):
         session = self._get_session()
         try:
             if not self.app_services_exists(
                     payload['partition'], payload['name']):
-                result = session.post(self._app_url, data=json.dumps(payload))
-                if result.status_code != 200:
-                    raise RESTException(result.json())
+                self.handle_response(
+                    session.post(self._url_app, data=json.dumps(payload))
+                )
+            else:
+                # OMG! hacking payload for redeploy
+                try:
+                    del payload["inheritedDevicegroup"]
+                    del payload["inheritedTrafficGroup"]
+                    del payload["deviceGroup"]
+                    del payload["trafficGroup"]
+                    payload["execute-action"] = "definition"
+                except KeyError as ex:
+                    self._logger.exception(ex)
+
+                self.handle_response(
+                    session.put(
+                        self._url_app_service_exists(
+                            payload['partition'],
+                            payload['name']),
+                        data=json.dumps(payload)
+                    )
+                )
 
         except RESTException:
             self._logger.exception("Deployment of {} failed".format(
@@ -140,10 +238,10 @@ class BIPClient(object):
 
     def remove_app_service(self, payload):
         session = self._get_session()
-        response = session.delete(self._get_app_services_existence_url(
-            self._app_url,
-            payload['partition'],
-            payload['name']
+        response = session.delete(
+            self._url_app_service_exists(
+                payload['partition'],
+                payload['name']
         ))
 
         if response.status_code == requests.codes.ok:
@@ -155,7 +253,7 @@ class BIPClient(object):
 
     def get_version(self):
         session = self._get_session()
-        resp = session.get(self._version_url)
+        resp = session.get(self._url_version)
 
         if resp.status_code == 401:
             raise RESTException(resp.json())
@@ -175,7 +273,7 @@ class BIPClient(object):
 
     def get_template_name(self):
         session = self._get_session()
-        resp = session.get(self._app_template_url)
+        resp = session.get(self._url_app_template)
         templates = resp.json()
 
         result = []
@@ -188,7 +286,12 @@ class BIPClient(object):
 
         result.sort()
 
-        return result.pop()
+        try:
+            return result.pop()
+        except IndexError as ex:
+            self._logger.exception(ex)
+            self._logger.error("App Services template"
+                               " was not installed on {}".format(self._host))
 
     def download_logs(self, log_folder, bip_log_files=None):
         if bip_log_files is None:

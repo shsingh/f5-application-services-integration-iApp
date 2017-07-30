@@ -1,15 +1,16 @@
 #!/usr/bin/env python
 
-import os
-import re
-import random
 import json
 import logging
+import os
+import random
+import re
 import shutil
-from tools import IPv4AddressGenerator
-from tools import IPv6AddressGenerator
-from tools import save_json
-from tools import mk_dir
+
+from src.appservices.IPAddressGenerator import IPv4AddressGenerator
+from src.appservices.IPAddressGenerator import IPv6AddressGenerator
+from src.appservices.tools import mk_dir
+from src.appservices.tools import save_json
 
 
 class PayloadGenerator(object):
@@ -188,6 +189,11 @@ class PayloadGenerator(object):
 
     def _append_credentials(self, tmpl, username=None, password=None,
                             password_file=None):
+        # Let's keep this as a dummy function for now...
+        # for 'backwards compatibility' but remove it as soon as possible
+        # there is no need to keep credentials in the
+        # payloads or payload templates.
+
         if username is not None:
             if 'username' in tmpl:
                 self._logger.info("Username found in JSON but specified on CLI,"
@@ -239,6 +245,15 @@ class PayloadGenerator(object):
                 tmpl_file_canonical_path)), flat_tmpl)
 
         return flat_tmpl
+
+    def check_delete_override(self, template_dir, tmpl_file_canonical_path):
+        tmpl = self.read_template(
+            os.path.join(template_dir, tmpl_file_canonical_path))
+
+        if 'test_delete_override' in tmpl:
+            return True
+
+        return False
 
     def update_app_services_name(self, tmpl, name):
         self._logger.debug("[template_select] specified={}".format(

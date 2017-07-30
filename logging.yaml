@@ -25,6 +25,12 @@ loggers:
     src:
         level: DEBUG
         handlers: [console, file_handler]
+    tests:
+        level: DEBUG
+        handlers: [console, file_handler]
+    __main__:
+        level: DEBUG
+        handlers: [console, file_handler]
     paramiko:
         level: INFO
         handlers: [console, file_handler]

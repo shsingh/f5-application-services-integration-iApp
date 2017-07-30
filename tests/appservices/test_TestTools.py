@@ -1,31 +1,30 @@
 #!/usr/bin/env python
 
-from src.appservices import tools
 from src.appservices.TestTools import strip_payload_name
 from src.appservices.TestTools import update_payload_name
+from src.appservices.TestTools import get_payload_list
+from src.appservices.TestTools import get_test_config
+from src.appservices.TestTools import build_application_service_payloads
+from src.appservices.TestTools import check_dependency
 
 
-def test_ip_v4_address_generator():
-    addr_gen = tools.IPv4AddressGenerator(u"10.0.0.0/24", u'10.0.0.10')
-    assert str(addr_gen.get_next()) == "10.0.0.10"
-    assert str(addr_gen.get_next()) == "10.0.0.11"
-    assert str(addr_gen.get_next()) == "10.0.0.12"
+def test_get_payload_generation():
+    config = get_test_config(
+        "192.168.0.1", "192.168.0.2", start=0, end=5)
+    dependants = build_application_service_payloads(config, {
+        'version': "123",
+        'major': "123",
+        'minor': "123"
+    })
+    payloads = get_payload_list(config)
 
-    assert str(addr_gen.get_last()) == "10.0.0.254"
-    assert str(addr_gen.get_last()) == "10.0.0.253"
-    assert str(addr_gen.get_last()) == "10.0.0.252"
+    assert len(payloads) == 5
 
-    assert str(addr_gen.get_network_address()) == "10.0.0.0"
+    # I can not wait for the day
+    #  when we remove this 'payload dependency mechanism'
+    assert len(dependants.keys()) == 10
 
-
-def test_ip_v6_address_generator():
-    addr_gen = tools.IPv6AddressGenerator(u"2001:dead:beef:2::/120",
-                                       u"2001:dead:beef:2::10")
-    assert str(addr_gen.get_next()) == "2001:dead:beef:2::10"
-    assert str(addr_gen.get_next()) == "2001:dead:beef:2::11"
-    assert str(addr_gen.get_next()) == "2001:dead:beef:2::12"
-
-    assert str(addr_gen.get_network_address()) == "2001:dead:beef:2::"
+    #assert check_dependency('test_pools', dependants)
 
 
 def test_update_payload_name_and_strip_payload_name():

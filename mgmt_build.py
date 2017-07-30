@@ -4,9 +4,10 @@ import argparse
 import os
 import sys
 import shutil
-from src.appservices.Builder import AppServicesBuilder
+from src.appservices.AppServicesBuilder import AppServicesBuilder
 from src.appservices.tools import mk_dir
 from src.appservices.tools import rm_dir
+from src.appservices.tools import setup_logging
 
 
 def cli_parser():
@@ -37,37 +38,40 @@ def cli_parser():
                         help="The root directory of source tree")
     parser.add_argument("-c", "--clean",
                         action="store_true",
-                        help="Clean build")
+                        help="Clear build directory")
 
     return parser
 
 
 def router(parser, argv):
+
     args = parser.parse_args()
-    if len(argv) < 1:
-        parser.print_help()
-        sys.exit(1)
+    setup_logging()
 
     if args.clean:
-        clean()
+        clean(args.build_dir)
 
-    if args.build_dir:
-        clean()
-        build_iapp(args.build_dir, args.bundledir, args.master_template)
+    if args.build_dir and not args.clean and not args.docs:
+        clean(args.build_dir)
+        if len(args.append) > 0:
+            print("Appending \"{}\" to template name".format(args.append))
+
+        build_iapp(args.build_dir, args.bundledir,
+                   args.master_template, args.append, args.outfile, args.preso)
 
     if args.docs:
         build_documentation()
 
 
-def clean():
-    rm_dir('build')
+def clean(build):
+    rm_dir(build)
 
 
 def build_documentation():
     os.system("cd docs && make clean && make html && cd ..")
 
 
-def build_iapp(build_dir, bundle_dir, master_template):
+def build_iapp(build_dir, bundle_dir, master_template, append, outfile, preso):
 
     build_dir = mk_dir(build_dir)
     tmp_dir = mk_dir('tmp')
@@ -78,7 +82,10 @@ def build_iapp(build_dir, bundle_dir, master_template):
         resource_dir=resource_dir,
         tempdir=tmp_dir,
         bundledir=bundle_dir,
-        roottmpl=master_template
+        roottmpl=master_template,
+        append=append,
+        outfile=outfile,
+        preso=preso
     )
 
     builder.buildAPL()
@@ -87,7 +94,10 @@ def build_iapp(build_dir, bundle_dir, master_template):
         resource_dir=resource_dir,
         tempdir=tmp_dir,
         bundledir=bundle_dir,
-        roottmpl=master_template)
+        roottmpl=master_template,
+        append=append,
+        outfile=outfile,
+        preso=preso)
 
     builder.buildiWfTemplate()
 

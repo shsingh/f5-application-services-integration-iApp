@@ -20,7 +20,7 @@ import os
 import json
 import sys
 sys.path.insert(0, os.path.abspath('../'))
-from src.appservices.Builder import AppServicesBuilder
+from src.appservices.AppServicesBuilder import AppServicesBuilder
 from src.appservices.tools import mk_dir
 
 on_rtd = os.environ.get('READTHEDOCS', None) == 'True'
