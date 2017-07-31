@@ -33,7 +33,7 @@ def test_functional_tests_at_scale(
     log_dir = os.path.join("logs", get_config['session_id'], 'run')
     mk_dir(log_dir)
 
-    for payload_file in get_payload_list(get_config['payloads_dir']):
+    for payload_file in get_payload_list(get_config):
 
         payload = load_payload(get_config['payloads_dir'], payload_file)
 
