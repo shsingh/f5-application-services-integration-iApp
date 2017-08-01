@@ -28,7 +28,7 @@ def test_https_credentials(setup_logging, bip_client):
     try:
         version = bip_client.get_version()
     except:
-        pytest.fail("Incorrect https credentials")
+        pytest.fail("Check credentials and/or host IP Address")
 
     assert 'version' in version
     assert version['version'] != ''
