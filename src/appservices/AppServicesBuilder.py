@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # Copyright (c) 2017 F5 Networks, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");

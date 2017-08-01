@@ -1,4 +1,18 @@
 #!/usr/bin/env python
+# Copyright (c) 2017 F5 Networks, Inc.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+#     Unless required by applicable law or agreed to in writing, software
+#     distributed under the License is distributed on an "AS IS" BASIS,
+#     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#     See the License for the specific language governing permissions and
+#     limitations under the License.
+#
 import json
 import logging
 import os
@@ -10,6 +24,7 @@ from src.appservices.exceptions import AppServiceDeploymentException
 from src.appservices.exceptions import AppServiceDeploymentVerificationException
 from src.appservices.exceptions import AppServiceRemovalException
 from src.appservices.exceptions import RESTException
+from src.appservices.exceptions import ParameterMissingException
 from src.appservices.tools import get_timestamp
 
 
@@ -37,7 +52,7 @@ def build_application_service_payloads(
         config['flat_templates_dir']
     )
 
-    for payload_template in glob(os.path.join("payload_templates", "*.tmpl")):
+    for payload_template in glob(os.path.join("payload_templates", "*.ptmpl")):
         pay_gen.fill_template(
             payload_template, version, config['policy_host'],
             config['vs_subnet'],
@@ -90,6 +105,12 @@ def get_test_config(
         member_v6_first_address="2001:dead:beef:2::10",
         test_method='pytest', timestamp=None):
 
+    if host is None or host == "":
+        raise ParameterMissingException('host')
+
+    if policy_host is None or policy_host == "":
+        raise ParameterMissingException('policy_host')
+
     if timestamp is None:
         timestamp = get_timestamp()
 
@@ -110,14 +131,14 @@ def get_test_config(
         'ignore': ignore,
         'start': start,
         'end': end,
-        'vs_subnet': unicode(vs_subnet),
-        'vs_first_address': unicode(vs_first_address),
-        'vs_v6_subnet': unicode(vs_v6_subnet),
-        'vs_v6_first_address': unicode(vs_v6_first_address),
-        'member_subnet': unicode(member_subnet),
-        'member_first_address': unicode(member_first_address),
-        'member_v6_subnet': unicode(member_v6_subnet),
-        'member_v6_first_address': unicode(member_v6_first_address)
+        'vs_subnet': vs_subnet,
+        'vs_first_address': vs_first_address,
+        'vs_v6_subnet': vs_v6_subnet,
+        'vs_v6_first_address': vs_v6_first_address,
+        'member_subnet': member_subnet,
+        'member_first_address': member_first_address,
+        'member_v6_subnet': member_v6_subnet,
+        'member_v6_first_address': member_v6_first_address
     }
     return config
 
@@ -166,6 +187,8 @@ def run_legacy_functional_tests(bip_client, config, delete_overrides):
                     AppServiceDeploymentVerificationException,
                     AppServiceRemovalException) as ex:
                 logger.exception(ex)
+                bip_client.download_logs(test_run_log_dir)
+                bip_client.download_qkview(test_run_log_dir)
                 if run+1 == config['retries']:
                     raise
 
