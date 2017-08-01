@@ -13,7 +13,9 @@ from src.appservices.tools import setup_logging
 
 
 def cli_parser():
-    parser = argparse.ArgumentParser(description='Script to import an iApp template to a BIG-IP device')
+    parser = argparse.ArgumentParser(
+        description='BIG-IP REST client that automates the process of uploading'
+                    ' the Application Service template.')
     parser.add_argument("host",
                         help="The IP/Hostname in <host>[:<port>] format of the BIG-IP device")
     parser.add_argument("name",
@@ -142,10 +144,11 @@ def check_if_template_exists(host, username, password, template_name):
 
 
 def router(parser, argv):
-    args = parser.parse_args()
     if len(argv) < 2:
         parser.print_help()
         sys.exit(1)
+
+    args = parser.parse_args()
 
     setup_logging()
 

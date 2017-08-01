@@ -88,9 +88,11 @@ def get_test_config(
         member_first_address="10.0.0.10",
         member_v6_subnet="2001:dead:beef:2::/120",
         member_v6_first_address="2001:dead:beef:2::10",
-        test_method='pytest'):
+        test_method='pytest', timestamp=None):
 
-    timestamp = get_timestamp()
+    if timestamp is None:
+        timestamp = get_timestamp()
+
     session_id = "{}_{}".format(test_method, timestamp)
     config = {
         'timestamp': timestamp,
