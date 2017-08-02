@@ -18,7 +18,7 @@ import logging
 import os
 import re
 import time
-import traceback
+import getpass
 
 import paramiko
 import requests
@@ -29,6 +29,7 @@ from src.appservices.exceptions import AppServiceDeploymentVerificationException
 from src.appservices.exceptions import AppServiceRemovalException
 from src.appservices.exceptions import RESTException
 from src.appservices.tools import mk_dir
+from paramiko.ssh_exception import PasswordRequiredException
 
 
 class BIPClient(object):
@@ -42,6 +43,7 @@ class BIPClient(object):
         self._password = password
         self._ssh_username = ssh_username
         self._ssh_password = ssh_password
+        self._ssh_key_password = None
         self._logger = logging.getLogger(__name__)
 
         self._url_app = "https://{}/mgmt/tm/sys/application/service".format(
@@ -328,6 +330,24 @@ class BIPClient(object):
         file_path = pattern.findall(error)
         self.download_files(file_path, log_folder)
         return os.path.basename(file_path[0])
+
+    def get_private_key(self):
+        file_path = os.path.join(os.path.expanduser("~"), ".ssh/id_rsa")
+
+        try:
+            return paramiko.RSAKey.from_private_key_file(file_path)
+        except PasswordRequiredException as ex:
+            self._logger.error(ex)
+
+            self._logger.warn("Your ssh key is encrypted, please enter the decryption password")
+
+            if not self._ssh_key_password:
+                self._ssh_key_password = getpass.getpass()
+
+            return paramiko.RSAKey.from_private_key_file(file_path, self._ssh_key_password)
+
+        except IOError:
+            return
 
     def download_files(self, files, log_folder):
         client = paramiko.Transport((self._host, self._ssh_port))

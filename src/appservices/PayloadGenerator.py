@@ -46,6 +46,8 @@ class PayloadGenerator(object):
         mk_dir(self._payloads_dir)
         mk_dir(self._flat_template_dir)
 
+        self.copy_defaults_file(self._tmp_dir)
+
     def get_tmp_dir(self):
         return self._tmp_dir
 
@@ -71,8 +73,9 @@ class PayloadGenerator(object):
         result = [False, "", "Common"]
 
         tmp_file_name = os.path.splitext(
-            os.path.basename(abs_template_path)
-        )[0]
+            os.path.splitext(
+                os.path.basename(abs_template_path)
+            )[0])[0]
 
         with open(abs_template_path, 'r') as template:
             with open(os.path.join(
@@ -230,8 +233,8 @@ class PayloadGenerator(object):
 
     def copy_defaults_file(self, template_dir):
         shutil.copy(
-            os.path.join(self._template_dir, 'include_defaults.tmpl'),
-            template_dir
+            os.path.join(self._template_dir, 'include_defaults.template.json'),
+            os.path.join(template_dir, 'include_defaults.tmpl')
         )
 
     def build_template(self, template_dir, tmpl_file_canonical_path,

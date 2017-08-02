@@ -37,7 +37,7 @@ BIG-IP
 +-------------------------------------------------------+------------------+---------------------------------------------------------+
 | Test Case                                             | Success Criteria | Scope  Summary                                          |
 +=======================================================+==================+=========================================================+
-| test_monitors.ptmpl_                                   | - HTTP 200       | LTM Virtual Server, Monitor & Pool creation.  Monitor   |
+| test_monitors.template.json_                          | - HTTP 200       | LTM Virtual Server, Monitor & Pool creation.  Monitor   |
 |                                                       | - Deployment_    | types:                                                  |
 |                                                       |                  |                                                         |
 |                                                       |                  | - TCP default                                           |
@@ -45,12 +45,12 @@ BIG-IP
 |                                                       |                  | - HTTP custom inline (ASO encapsulated)                 |
 |                                                       |                  | - HTTP pre-existing by ref                              |
 +-------------------------------------------------------+------------------+-------------------+-------------------------------------+
-| test_monitors_noindex.ptmpl_                           | - HTTP 200       | LTM Virtual Server, Monitor & Pool creation.  Monitor   |
+| test_monitors_noindex.template.json_                  | - HTTP 200       | LTM Virtual Server, Monitor & Pool creation.  Monitor   |
 |                                                       | - Deployment_    | purposely omits Index.  Monitor types:                  |
 |                                                       |                  |                                                         |
 |                                                       |                  | - TCP default                                           |
 +-------------------------------------------------------+------------------+---------------------------------------------------------+
-| test_pools.ptmpl_                                      | - HTTP 200       | LTM Virtual Server, Monitor, Pool & Pool Member         |
+| test_pools.template.json_                             | - HTTP 200       | LTM Virtual Server, Monitor, Pool & Pool Member         |
 |                                                       | - Deployment_    | creation.                                               |
 |                                                       |                  |                                                         |
 |                                                       |                  | Virtual Server:                                         |
@@ -72,231 +72,231 @@ BIG-IP
 |                                                       |                  | - Explicit-named round robin w/ 2 members: many         |
 |                                                       |                  |   duplicates and AdvOptions employed                    |
 +-------------------------------------------------------+------------------+-------------------+-------------------------------------+
-| test_pools_2.ptmpl_                                    | - HTTP 200       | coming soon                                             |
+| test_pools_2.template.json_                           | - HTTP 200       | coming soon                                             |
 |                                                       | - Deployment_    |                                                         |
 +-------------------------------------------------------+------------------+---------------------------------------------------------+
-| test_pools_3.ptmpl_                                    | - HTTP 200       | coming soon                                             |
+| test_pools_3.template.json_                           | - HTTP 200       | coming soon                                             |
 |                                                       | - Deployment_    |                                                         |
 +-------------------------------------------------------+------------------+---------------------------------------------------------+
-| test_pools_4.ptmpl_                                    | - HTTP 200       | coming soon                                             |
+| test_pools_4.template.json_                           | - HTTP 200       | coming soon                                             |
 |                                                       | - Deployment_    |                                                         |
 +-------------------------------------------------------+------------------+---------------------------------------------------------+
-| test_pools_fixup.ptmpl_                                | - HTTP 200       | coming soon                                             |
+| test_pools_fixup.template.json_                       | - HTTP 200       | coming soon                                             |
 |                                                       | - Deployment_    |                                                         |
 +-------------------------------------------------------+------------------+---------------------------------------------------------+
-| test_pools_fixup_2.ptmpl_                              | - HTTP 200       | coming soon                                             |
+| test_pools_fixup_2.template.json_                     | - HTTP 200       | coming soon                                             |
 |                                                       | - Deployment_    |                                                         |
 +-------------------------------------------------------+------------------+---------------------------------------------------------+
-| test_pools_fixup_3.ptmpl_                              | - HTTP 200       | coming soon                                             |
+| test_pools_fixup_3.template.json_                     | - HTTP 200       | coming soon                                             |
 |                                                       | - Deployment_    |                                                         |
 +-------------------------------------------------------+------------------+---------------------------------------------------------+
-| test_pools_fixup_4.ptmpl_                              | - HTTP 200       | coming soon                                             |
+| test_pools_fixup_4.template.json_                     | - HTTP 200       | coming soon                                             |
 |                                                       | - Deployment_    |                                                         |
 +-------------------------------------------------------+------------------+---------------------------------------------------------+
-| test_pools_noindex.ptmpl_                              | - HTTP 200       | coming soon                                             |
+| test_pools_noindex.template.json_                     | - HTTP 200       | coming soon                                             |
 |                                                       | - Deployment_    |                                                         |
 +-------------------------------------------------------+------------------+---------------------------------------------------------+
-| test_vs_fasthttp_tcp.ptmpl_                            | - HTTP 200       | coming soon                                             |
+| test_vs_fasthttp_tcp.template.json_                   | - HTTP 200       | coming soon                                             |
 |                                                       | - Deployment_    |                                                         |
 +-------------------------------------------------------+------------------+---------------------------------------------------------+
-| test_vs_fastl4_tcp.ptmpl_                              | - HTTP 200       | coming soon                                             |
+| test_vs_fastl4_tcp.template.json_                     | - HTTP 200       | coming soon                                             |
 |                                                       | - Deployment_    |                                                         |
 +-------------------------------------------------------+------------------+---------------------------------------------------------+
-| test_vs_fastl4_udp.ptmpl_                              | - HTTP 200       | coming soon                                             |
+| test_vs_fastl4_udp.template.json_                     | - HTTP 200       | coming soon                                             |
 |                                                       | - Deployment_    |                                                         |
 +-------------------------------------------------------+------------------+---------------------------------------------------------+
-| test_vs_ipforward.ptmpl_                               | - HTTP 200       | coming soon                                             |
+| test_vs_ipforward.template.json_                      | - HTTP 200       | coming soon                                             |
 |                                                       | - Deployment_    |                                                         |
 +-------------------------------------------------------+------------------+---------------------------------------------------------+
-| test_vs_ipforward_emptypool.ptmpl_                     | - HTTP 200       | coming soon                                             |
+| test_vs_ipforward_emptypool.template.json_            | - HTTP 200       | coming soon                                             |
 |                                                       | - Deployment_    |                                                         |
 +-------------------------------------------------------+------------------+---------------------------------------------------------+
-| test_vs_ipother.ptmpl_                                 | - HTTP 200       | coming soon                                             |
+| test_vs_ipother.template.json_                        | - HTTP 200       | coming soon                                             |
 |                                                       | - Deployment_    |                                                         |
 +-------------------------------------------------------+------------------+---------------------------------------------------------+
-| test_vs_sctp.ptmpl_                                    | - HTTP 200       | coming soon                                             |
+| test_vs_sctp.template.json_                           | - HTTP 200       | coming soon                                             |
 |                                                       | - Deployment_    |                                                         |
 +-------------------------------------------------------+------------------+---------------------------------------------------------+
-| test_vs_standard_http.ptmpl_                           | - HTTP 200       | coming soon                                             |
+| test_vs_standard_http.template.json_                  | - HTTP 200       | coming soon                                             |
 |                                                       | - Deployment_    |                                                         |
 +-------------------------------------------------------+------------------+---------------------------------------------------------+
-| test_vs_standard_http_afm.ptmpl_                       | - HTTP 200       | coming soon                                             |
+| test_vs_standard_http_afm.template.json_              | - HTTP 200       | coming soon                                             |
 |                                                       | - Deployment_    |                                                         |
 +-------------------------------------------------------+------------------+---------------------------------------------------------+
-| test_vs_standard_http_autoxff.ptmpl_                   | - HTTP 200       | coming soon                                             |
+| test_vs_standard_http_autoxff.template.json_          | - HTTP 200       | coming soon                                             |
 |                                                       | - Deployment_    |                                                         |
 +-------------------------------------------------------+------------------+---------------------------------------------------------+
-| test_vs_standard_http_bundle_irule.ptmpl_              | - HTTP 200       | coming soon                                             |
+| test_vs_standard_http_bundle_irule.template.json_     | - HTTP 200       | coming soon                                             |
 |                                                       | - Deployment_    |                                                         |
 +-------------------------------------------------------+------------------+---------------------------------------------------------+
-| test_vs_standard_http_ipv6.ptmpl_                      | - HTTP 200       | coming soon                                             |
+| test_vs_standard_http_ipv6.template.json_             | - HTTP 200       | coming soon                                             |
 |                                                       | - Deployment_    |                                                         |
 +-------------------------------------------------------+------------------+---------------------------------------------------------+
-| test_vs_standard_http_options.ptmpl_                   | - HTTP 200       | coming soon                                             |
+| test_vs_standard_http_options.template.json_          | - HTTP 200       | coming soon                                             |
 |                                                       | - Deployment_    |                                                         |
 +-------------------------------------------------------+------------------+---------------------------------------------------------+
-| test_vs_standard_http_options_2.ptmpl_                 | - HTTP 200       | coming soon                                             |
+| test_vs_standard_http_options_2.template.json_        | - HTTP 200       | coming soon                                             |
 |                                                       | - Deployment_    |                                                         |
 +-------------------------------------------------------+------------------+---------------------------------------------------------+
-| test_vs_standard_https.ptmpl_                          | - HTTP 200       | coming soon                                             |
+| test_vs_standard_https.template.json_                 | - HTTP 200       | coming soon                                             |
 |                                                       | - Deployment_    |                                                         |
 +-------------------------------------------------------+------------------+---------------------------------------------------------+
-| test_vs_standard_https_bundle_all_preserve.ptmpl_      | - HTTP 200       | coming soon                                             |
+| test_vs_standard_https_bundle_all_preserve.template.json_      | - HTTP 200       | coming soon                                             |
 |                                                       | - Deployment_    |                                                         |
 +-------------------------------------------------------+------------------+---------------------------------------------------------+
-| test_vs_standard_https_bundle_all_preserve_2.ptmpl_    | - HTTP 200       | coming soon                                             |
+| test_vs_standard_https_bundle_all_preserve_2.template.json_    | - HTTP 200       | coming soon                                             |
 |                                                       | - Deployment_    |                                                         |
 +-------------------------------------------------------+------------------+---------------------------------------------------------+
-| test_vs_standard_https_bundle_all_redeploy.ptmpl_      | - HTTP 200       | coming soon                                             |
+| test_vs_standard_https_bundle_all_redeploy.template.json_      | - HTTP 200       | coming soon                                             |
 |                                                       | - Deployment_    |                                                         |
 +-------------------------------------------------------+------------------+---------------------------------------------------------+
-| test_vs_standard_https_bundle_all_redeploy_2.ptmpl_    | - HTTP 200       | coming soon                                             |
+| test_vs_standard_https_bundle_all_redeploy_2.template.json_    | - HTTP 200       | coming soon                                             |
 |                                                       | - Deployment_    |                                                         |
 +-------------------------------------------------------+------------------+---------------------------------------------------------+
-| test_vs_standard_https_bundle_all_url.ptmpl_           | - HTTP 200       | coming soon                                             |
+| test_vs_standard_https_bundle_all_url.template.json_           | - HTTP 200       | coming soon                                             |
 |                                                       | - Deployment_    |                                                         |
 +-------------------------------------------------------+------------------+---------------------------------------------------------+
-| test_vs_standard_https_bundle_apm_preserve.ptmpl_      | - HTTP 200       | coming soon                                             |
+| test_vs_standard_https_bundle_apm_preserve.template.json_      | - HTTP 200       | coming soon                                             |
 |                                                       | - Deployment_    |                                                         |
 +-------------------------------------------------------+------------------+---------------------------------------------------------+
-| test_vs_standard_https_bundle_apm_preserve_2.ptmpl_    | - HTTP 200       | coming soon                                             |
+| test_vs_standard_https_bundle_apm_preserve_2.template.json_    | - HTTP 200       | coming soon                                             |
 |                                                       | - Deployment_    |                                                         |
 +-------------------------------------------------------+------------------+---------------------------------------------------------+
-| test_vs_standard_https_bundle_apm_redeploy.ptmpl_      | - HTTP 200       | coming soon                                             |
+| test_vs_standard_https_bundle_apm_redeploy.template.json_      | - HTTP 200       | coming soon                                             |
 |                                                       | - Deployment_    |                                                         |
 +-------------------------------------------------------+------------------+---------------------------------------------------------+
-| test_vs_standard_https_bundle_apm_redeploy_2.ptmpl_    | - HTTP 200       | coming soon                                             |
+| test_vs_standard_https_bundle_apm_redeploy_2.template.json_    | - HTTP 200       | coming soon                                             |
 |                                                       | - Deployment_    |                                                         |
 +-------------------------------------------------------+------------------+---------------------------------------------------------+
-| test_vs_standard_https_bundle_asm_preserve.ptmpl_      | - HTTP 200       | coming soon                                             |
+| test_vs_standard_https_bundle_asm_preserve.template.json_      | - HTTP 200       | coming soon                                             |
 |                                                       | - Deployment_    |                                                         |
 +-------------------------------------------------------+------------------+---------------------------------------------------------+
-| test_vs_standard_https_bundle_asm_preserve_2.ptmpl_    | - HTTP 200       | coming soon                                             |
+| test_vs_standard_https_bundle_asm_preserve_2.template.json_    | - HTTP 200       | coming soon                                             |
 |                                                       | - Deployment_    |                                                         |
 +-------------------------------------------------------+------------------+---------------------------------------------------------+
-| test_vs_standard_https_bundle_asm_redeploy.ptmpl_      | - HTTP 200       | coming soon                                             |
+| test_vs_standard_https_bundle_asm_redeploy.template.json_      | - HTTP 200       | coming soon                                             |
 |                                                       | - Deployment_    |                                                         |
 +-------------------------------------------------------+------------------+---------------------------------------------------------+
-| test_vs_standard_https_bundle_asm_redeploy_2.ptmpl_    | - HTTP 200       | coming soon                                             |
+| test_vs_standard_https_bundle_asm_redeploy_2.template.json_    | - HTTP 200       | coming soon                                             |
 |                                                       | - Deployment_    |                                                         |
 +-------------------------------------------------------+------------------+---------------------------------------------------------+
-| test_vs_standard_https_create.ptmpl_                   | - HTTP 200       | coming soon                                             |
+| test_vs_standard_https_create.template.json_                   | - HTTP 200       | coming soon                                             |
 |                                                       | - Deployment_    |                                                         |
 +-------------------------------------------------------+------------------+---------------------------------------------------------+
-| test_vs_standard_https_create_url.ptmpl_               | - HTTP 200       | coming soon                                             |
+| test_vs_standard_https_create_url.template.json_               | - HTTP 200       | coming soon                                             |
 |                                                       | - Deployment_    |                                                         |
 +-------------------------------------------------------+------------------+---------------------------------------------------------+
-| test_vs_standard_https_create_url_partition.ptmpl_     | - HTTP 200       | coming soon                                             |
+| test_vs_standard_https_create_url_partition.template.json_     | - HTTP 200       | coming soon                                             |
 |                                                       | - Deployment_    |                                                         |
 +-------------------------------------------------------+------------------+---------------------------------------------------------+
-| test_vs_standard_https_features.ptmpl_                 | - HTTP 200       | coming soon                                             |
+| test_vs_standard_https_features.template.json_                 | - HTTP 200       | coming soon                                             |
 |                                                       | - Deployment_    |                                                         |
 +-------------------------------------------------------+------------------+---------------------------------------------------------+
-| test_vs_standard_https_l7policy.ptmpl_                 | - HTTP 200       | coming soon                                             |
+| test_vs_standard_https_l7policy.template.json_                 | - HTTP 200       | coming soon                                             |
 |                                                       | - Deployment_    |                                                         |
 +-------------------------------------------------------+------------------+---------------------------------------------------------+
-| test_vs_standard_https_multi_listeners.ptmpl_          | - HTTP 200       | coming soon                                             |
+| test_vs_standard_https_multi_listeners.template.json_          | - HTTP 200       | coming soon                                             |
 |                                                       | - Deployment_    |                                                         |
 +-------------------------------------------------------+------------------+---------------------------------------------------------+
-| test_vs_standard_https_serverssl.ptmpl_                | - HTTP 200       | coming soon                                             |
+| test_vs_standard_https_serverssl.template.json_                | - HTTP 200       | coming soon                                             |
 |                                                       | - Deployment_    |                                                         |
 +-------------------------------------------------------+------------------+---------------------------------------------------------+
-| test_vs_standard_https_serverssl_create.ptmpl_         | - HTTP 200       | coming soon                                             |
+| test_vs_standard_https_serverssl_create.template.json_         | - HTTP 200       | coming soon                                             |
 |                                                       | - Deployment_    |                                                         |
 +-------------------------------------------------------+------------------+---------------------------------------------------------+
-| test_vs_standard_tcp.ptmpl_                            | - HTTP 200       | coming soon                                             |
+| test_vs_standard_tcp.template.json_                            | - HTTP 200       | coming soon                                             |
 |                                                       | - Deployment_    |                                                         |
 +-------------------------------------------------------+------------------+---------------------------------------------------------+
-| test_vs_standard_tcp_afm.ptmpl_                        | - HTTP 200       | coming soon                                             |
+| test_vs_standard_tcp_afm.template.json_                        | - HTTP 200       | coming soon                                             |
 |                                                       | - Deployment_    |                                                         |
 +-------------------------------------------------------+------------------+---------------------------------------------------------+
-| test_vs_standard_tcp_options.ptmpl_                    | - HTTP 200       | coming soon                                             |
+| test_vs_standard_tcp_options.template.json_                    | - HTTP 200       | coming soon                                             |
 |                                                       | - Deployment_    |                                                         |
 +-------------------------------------------------------+------------------+---------------------------------------------------------+
-| test_vs_standard_tcp_rd_auto.ptmpl_                    | - HTTP 200       | coming soon                                             |
+| test_vs_standard_tcp_rd_auto.template.json_                    | - HTTP 200       | coming soon                                             |
 |                                                       | - Deployment_    |                                                         |
 +-------------------------------------------------------+------------------+---------------------------------------------------------+
-| test_vs_standard_tcp_rd_nonauto.ptmpl_                 | - HTTP 200       | coming soon                                             |
+| test_vs_standard_tcp_rd_nonauto.template.json_                 | - HTTP 200       | coming soon                                             |
 |                                                       | - Deployment_    |                                                         |
 +-------------------------------------------------------+------------------+---------------------------------------------------------+
-| test_vs_standard_tcp_routeadv_all.ptmpl_               | - HTTP 200       | coming soon                                             |
+| test_vs_standard_tcp_routeadv_all.template.json_               | - HTTP 200       | coming soon                                             |
 |                                                       | - Deployment_    |                                                         |
 +-------------------------------------------------------+------------------+---------------------------------------------------------+
-| test_vs_standard_tcp_routeadv_always.ptmpl_            | - HTTP 200       | coming soon                                             |
+| test_vs_standard_tcp_routeadv_always.template.json_            | - HTTP 200       | coming soon                                             |
 |                                                       | - Deployment_    |                                                         |
 +-------------------------------------------------------+------------------+---------------------------------------------------------+
-| test_vs_standard_tcp_routeadv_any.ptmpl_               | - HTTP 200       | coming soon                                             |
+| test_vs_standard_tcp_routeadv_any.template.json_               | - HTTP 200       | coming soon                                             |
 |                                                       | - Deployment_    |                                                         |
 +-------------------------------------------------------+------------------+---------------------------------------------------------+
-| test_vs_standard_tcp_virt_addr_options.ptmpl_          | - HTTP 200       | coming soon                                             |
+| test_vs_standard_tcp_virt_addr_options.template.json_          | - HTTP 200       | coming soon                                             |
 |                                                       | - Deployment_    |                                                         |
 +-------------------------------------------------------+------------------+---------------------------------------------------------+
-| test_vs_standard_udp.ptmpl_                            | - HTTP 200       | coming soon                                             |
+| test_vs_standard_udp.template.json_                            | - HTTP 200       | coming soon                                             |
 |                                                       | - Deployment_    |                                                         |
 +-------------------------------------------------------+------------------+---------------------------------------------------------+
-| test_vs_standard_udp_afm.ptmpl_                        | - HTTP 200       | coming soon                                             |
+| test_vs_standard_udp_afm.template.json_                        | - HTTP 200       | coming soon                                             |
 |                                                       | - Deployment_    |                                                         |
 +-------------------------------------------------------+------------------+---------------------------------------------------------+
 
 .. _Deployment: https://devcentral.f5.com/wiki/iApp.AppSvcsiApp_execflow.ashx#determining-success-failure-of-deployment
-.. _test_monitors.ptmpl: test_monitors.ptmpl
-.. _test_monitors_noindex.ptmpl: test_monitors_noindex.ptmpl
-.. _test_pools.ptmpl: test_pools.ptmpl
-.. _test_pools_2.ptmpl: test_pools_2.ptmpl
-.. _test_pools_3.ptmpl: test_pools_3.ptmpl
-.. _test_pools_4.ptmpl: test_pools_4.ptmpl
-.. _test_pools_fixup.ptmpl: test_pools_fixup.ptmpl
-.. _test_pools_fixup_2.ptmpl: test_pools_fixup_2.ptmpl
-.. _test_pools_fixup_3.ptmpl: test_pools_fixup_3.ptmpl
-.. _test_pools_fixup_4.ptmpl: test_pools_fixup_4.ptmpl
-.. _test_pools_noindex.ptmpl: test_pools_noindex.ptmpl
-.. _test_vs_fasthttp_tcp.ptmpl: test_vs_fasthttp_tcp.ptmpl
-.. _test_vs_fastl4_tcp.ptmpl: test_vs_fastl4_tcp.ptmpl
-.. _test_vs_fastl4_udp.ptmpl: test_vs_fastl4_udp.ptmpl
-.. _test_vs_ipforward.ptmpl: test_vs_ipforward.ptmpl
-.. _test_vs_ipforward_emptypool.ptmpl: test_vs_ipforward_emptypool.ptmpl
-.. _test_vs_ipother.ptmpl: test_vs_ipother.ptmpl
-.. _test_vs_sctp.ptmpl: test_vs_sctp.ptmpl
-.. _test_vs_standard_http.ptmpl: test_vs_standard_http.ptmpl
-.. _test_vs_standard_http_afm.ptmpl: test_vs_standard_http_afm.ptmpl
-.. _test_vs_standard_http_autoxff.ptmpl: test_vs_standard_http_autoxff.ptmpl
-.. _test_vs_standard_http_bundle_irule.ptmpl: test_vs_standard_http_bundle_irule.ptmpl
-.. _test_vs_standard_http_ipv6.ptmpl: test_vs_standard_http_ipv6.ptmpl
-.. _test_vs_standard_http_options.ptmpl: test_vs_standard_http_options.ptmpl
-.. _test_vs_standard_http_options_2.ptmpl: test_vs_standard_http_options_2.ptmpl
-.. _test_vs_standard_https.ptmpl: test_vs_standard_https.ptmpl
-.. _test_vs_standard_https_bundle_all_preserve.ptmpl: test_vs_standard_https_bundle_all_preserve.ptmpl
-.. _test_vs_standard_https_bundle_all_preserve_2.ptmpl: test_vs_standard_https_bundle_all_preserve_2.ptmpl
-.. _test_vs_standard_https_bundle_all_redeploy.ptmpl: test_vs_standard_https_bundle_all_redeploy.ptmpl
-.. _test_vs_standard_https_bundle_all_redeploy_2.ptmpl: test_vs_standard_https_bundle_all_redeploy_2.ptmpl
-.. _test_vs_standard_https_bundle_all_url.ptmpl: test_vs_standard_https_bundle_all_url.ptmpl
-.. _test_vs_standard_https_bundle_apm_preserve.ptmpl: test_vs_standard_https_bundle_apm_preserve.ptmpl
-.. _test_vs_standard_https_bundle_apm_preserve_2.ptmpl: test_vs_standard_https_bundle_apm_preserve_2.ptmpl
-.. _test_vs_standard_https_bundle_apm_redeploy.ptmpl: test_vs_standard_https_bundle_apm_redeploy.ptmpl
-.. _test_vs_standard_https_bundle_apm_redeploy_2.ptmpl: test_vs_standard_https_bundle_apm_redeploy_2.ptmpl
-.. _test_vs_standard_https_bundle_asm_preserve.ptmpl: test_vs_standard_https_bundle_asm_preserve.ptmpl
-.. _test_vs_standard_https_bundle_asm_preserve_2.ptmpl: test_vs_standard_https_bundle_asm_preserve_2.ptmpl
-.. _test_vs_standard_https_bundle_asm_redeploy.ptmpl: test_vs_standard_https_bundle_asm_redeploy.ptmpl
-.. _test_vs_standard_https_bundle_asm_redeploy_2.ptmpl: test_vs_standard_https_bundle_asm_redeploy_2.ptmpl
-.. _test_vs_standard_https_create.ptmpl: test_vs_standard_https_create.ptmpl
-.. _test_vs_standard_https_create_url.ptmpl: test_vs_standard_https_create_url.ptmpl
-.. _test_vs_standard_https_create_url_partition.ptmpl: test_vs_standard_https_create_url_partition.ptmpl
-.. _test_vs_standard_https_features.ptmpl: test_vs_standard_https_features.ptmpl
-.. _test_vs_standard_https_l7policy.ptmpl: test_vs_standard_https_l7policy.ptmpl
-.. _test_vs_standard_https_multi_listeners.ptmpl: test_vs_standard_https_multi_listeners.ptmpl
-.. _test_vs_standard_https_serverssl.ptmpl: test_vs_standard_https_serverssl.ptmpl
-.. _test_vs_standard_https_serverssl_create.ptmpl: test_vs_standard_https_serverssl_create.ptmpl
-.. _test_vs_standard_tcp.ptmpl: test_vs_standard_tcp.ptmpl
-.. _test_vs_standard_tcp_afm.ptmpl: test_vs_standard_tcp_afm.ptmpl
-.. _test_vs_standard_tcp_options.ptmpl: test_vs_standard_tcp_options.ptmpl
-.. _test_vs_standard_tcp_rd_auto.ptmpl: test_vs_standard_tcp_rd_auto.ptmpl
-.. _test_vs_standard_tcp_rd_nonauto.ptmpl: test_vs_standard_tcp_rd_nonauto.ptmpl
-.. _test_vs_standard_tcp_routeadv_all.ptmpl: test_vs_standard_tcp_routeadv_all.ptmpl
-.. _test_vs_standard_tcp_routeadv_always.ptmpl: test_vs_standard_tcp_routeadv_always.ptmpl
-.. _test_vs_standard_tcp_routeadv_any.ptmpl: test_vs_standard_tcp_routeadv_any.ptmpl
-.. _test_vs_standard_tcp_virt_addr_options.ptmpl: test_vs_standard_tcp_virt_addr_options.ptmpl
-.. _test_vs_standard_udp.ptmpl: test_vs_standard_udp.ptmpl
-.. _test_vs_standard_udp_afm.ptmpl: test_vs_standard_udp_afm.ptmpl
+.. _test_monitors.template.json: test_monitors.template.json
+.. _test_monitors_noindex.template.json: test_monitors_noindex.template.json
+.. _test_pools.template.json: test_pools.template.json
+.. _test_pools_2.template.json: test_pools_2.template.json
+.. _test_pools_3.template.json: test_pools_3.template.json
+.. _test_pools_4.template.json: test_pools_4.template.json
+.. _test_pools_fixup.template.json: test_pools_fixup.template.json
+.. _test_pools_fixup_2.template.json: test_pools_fixup_2.template.json
+.. _test_pools_fixup_3.template.json: test_pools_fixup_3.template.json
+.. _test_pools_fixup_4.template.json: test_pools_fixup_4.template.json
+.. _test_pools_noindex.template.json: test_pools_noindex.template.json
+.. _test_vs_fasthttp_tcp.template.json: test_vs_fasthttp_tcp.template.json
+.. _test_vs_fastl4_tcp.template.json: test_vs_fastl4_tcp.template.json
+.. _test_vs_fastl4_udp.template.json: test_vs_fastl4_udp.template.json
+.. _test_vs_ipforward.template.json: test_vs_ipforward.template.json
+.. _test_vs_ipforward_emptypool.template.json: test_vs_ipforward_emptypool.template.json
+.. _test_vs_ipother.template.json: test_vs_ipother.template.json
+.. _test_vs_sctp.template.json: test_vs_sctp.template.json
+.. _test_vs_standard_http.template.json: test_vs_standard_http.template.json
+.. _test_vs_standard_http_afm.template.json: test_vs_standard_http_afm.template.json
+.. _test_vs_standard_http_autoxff.template.json: test_vs_standard_http_autoxff.template.json
+.. _test_vs_standard_http_bundle_irule.template.json: test_vs_standard_http_bundle_irule.template.json
+.. _test_vs_standard_http_ipv6.template.json: test_vs_standard_http_ipv6.template.json
+.. _test_vs_standard_http_options.template.json: test_vs_standard_http_options.template.json
+.. _test_vs_standard_http_options_2.template.json: test_vs_standard_http_options_2.template.json
+.. _test_vs_standard_https.template.json: test_vs_standard_https.template.json
+.. _test_vs_standard_https_bundle_all_preserve.template.json: test_vs_standard_https_bundle_all_preserve.template.json
+.. _test_vs_standard_https_bundle_all_preserve_2.template.json: test_vs_standard_https_bundle_all_preserve_2.template.json
+.. _test_vs_standard_https_bundle_all_redeploy.template.json: test_vs_standard_https_bundle_all_redeploy.template.json
+.. _test_vs_standard_https_bundle_all_redeploy_2.template.json: test_vs_standard_https_bundle_all_redeploy_2.template.json
+.. _test_vs_standard_https_bundle_all_url.template.json: test_vs_standard_https_bundle_all_url.template.json
+.. _test_vs_standard_https_bundle_apm_preserve.template.json: test_vs_standard_https_bundle_apm_preserve.template.json
+.. _test_vs_standard_https_bundle_apm_preserve_2.template.json: test_vs_standard_https_bundle_apm_preserve_2.template.json
+.. _test_vs_standard_https_bundle_apm_redeploy.template.json: test_vs_standard_https_bundle_apm_redeploy.template.json
+.. _test_vs_standard_https_bundle_apm_redeploy_2.template.json: test_vs_standard_https_bundle_apm_redeploy_2.template.json
+.. _test_vs_standard_https_bundle_asm_preserve.template.json: test_vs_standard_https_bundle_asm_preserve.template.json
+.. _test_vs_standard_https_bundle_asm_preserve_2.template.json: test_vs_standard_https_bundle_asm_preserve_2.template.json
+.. _test_vs_standard_https_bundle_asm_redeploy.template.json: test_vs_standard_https_bundle_asm_redeploy.template.json
+.. _test_vs_standard_https_bundle_asm_redeploy_2.template.json: test_vs_standard_https_bundle_asm_redeploy_2.template.json
+.. _test_vs_standard_https_create.template.json: test_vs_standard_https_create.template.json
+.. _test_vs_standard_https_create_url.template.json: test_vs_standard_https_create_url.template.json
+.. _test_vs_standard_https_create_url_partition.template.json: test_vs_standard_https_create_url_partition.template.json
+.. _test_vs_standard_https_features.template.json: test_vs_standard_https_features.template.json
+.. _test_vs_standard_https_l7policy.template.json: test_vs_standard_https_l7policy.template.json
+.. _test_vs_standard_https_multi_listeners.template.json: test_vs_standard_https_multi_listeners.template.json
+.. _test_vs_standard_https_serverssl.template.json: test_vs_standard_https_serverssl.template.json
+.. _test_vs_standard_https_serverssl_create.template.json: test_vs_standard_https_serverssl_create.template.json
+.. _test_vs_standard_tcp.template.json: test_vs_standard_tcp.template.json
+.. _test_vs_standard_tcp_afm.template.json: test_vs_standard_tcp_afm.template.json
+.. _test_vs_standard_tcp_options.template.json: test_vs_standard_tcp_options.template.json
+.. _test_vs_standard_tcp_rd_auto.template.json: test_vs_standard_tcp_rd_auto.template.json
+.. _test_vs_standard_tcp_rd_nonauto.template.json: test_vs_standard_tcp_rd_nonauto.template.json
+.. _test_vs_standard_tcp_routeadv_all.template.json: test_vs_standard_tcp_routeadv_all.template.json
+.. _test_vs_standard_tcp_routeadv_always.template.json: test_vs_standard_tcp_routeadv_always.template.json
+.. _test_vs_standard_tcp_routeadv_any.template.json: test_vs_standard_tcp_routeadv_any.template.json
+.. _test_vs_standard_tcp_virt_addr_options.template.json: test_vs_standard_tcp_virt_addr_options.template.json
+.. _test_vs_standard_udp.template.json: test_vs_standard_udp.template.json
+.. _test_vs_standard_udp_afm.template.json: test_vs_standard_udp_afm.template.json
 
 
 iWorkflow

@@ -52,7 +52,7 @@ def build_application_service_payloads(
         config['flat_templates_dir']
     )
 
-    for payload_template in glob(os.path.join("payload_templates", "*.ptmpl")):
+    for payload_template in glob(os.path.join("payload_templates", "*.template.json")):
         pay_gen.fill_template(
             payload_template, version, config['policy_host'],
             config['vs_subnet'],
