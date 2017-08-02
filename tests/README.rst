@@ -58,20 +58,22 @@ The test script currently requires unix-style utilities (scp/ssh). Linux and Mac
     pip install -r requirements.txt
 
 3. Build the template using the command ``mgmt_build.py -b resources/bundled.test/``
-4. Upload the template using the command ``mgmt_template.py -o -a build/iapp.apl -i build/iapp.tcl -u BIG_IP_USERNAME -p BIG_IP_PASSWORD IP_ADDRESS_OF_BIG_IP $(basename -s .tmpl build/appsvcs_integration_\*)``
-5. Untar ``PROJECT_ROOT/resources/remote_url_files.tar.gz`` to the root of a webserver. This server will be later referred to as the *policy host*
+4. Upload the template using the command ``mgmt_template.py -o -a build/iapp.apl -i build/iapp.tcl -u BIG_IP_USERNAME -p BIG_IP_PASSWORD IP_ADDRESS_OF_BIG_IP $(basename -s .tmpl build/appsvcs_integration_*)``
+5. Untar ``PROJECT_ROOT/resources/remote_url_files.tar.gz`` to the root of a webserver. This server will be later referred to as the **policy host**
 6. Run the tests
 
 .. code-block:: bash
 
     pytest -x --policy_host=IP_ADDRESS_OF_POLICY_HOST_SERVER --host=IP_ADDRESS_OF_BIG_IP --scale_size=NUMBER_OF_IAPPS_DEPLOYED_DURING_SCALE_RUN
 
-    example:
+example:
+
+.. code-block:: bash
 
     pytest -x --policy_host=10.0.0.1 --host=10.0.0.2 --scale_size=20
 
 7. Monitor the tests run by running ``tail -f PROJECT_ROOT/logs/application_services_integration.log``
-8. In case of failure the runner will download a \*.qkview and other logs into ``PROJECT_ROOT/logs/\*\*`` folder
+8. In case of failure the runner will download a \*.qkview and other logs into ``PROJECT_ROOT/logs/**`` folder
 
 
 If you are running our functional tests you will need a real BIG-IP® to run them against, but you can get one of those pretty easily in
