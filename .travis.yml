@@ -3,6 +3,6 @@ language: python
 python:
 - '2.7'
 install:
-    - pip install -r requirements.docs.txt
+    - pip install -r requirements.txt
 script:
-- python ./build.py -x 
+- python ./mgmt_build.py

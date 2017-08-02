@@ -1,17 +1,19 @@
-appsvcs_integration_v*.*.tmpl
-appsvcs_integration_v*.*.apl
-appsvcs_integration_v*.*.tcl
-iWorkflow_appsvcs_integration_v*.*.json
-BIGIP_appsvcs_integration_v*.*.json
-AppSvcs_iApp_Workflows.postman_collection.json
-*.iml
+pylint.log
 
-parts/*
+*.iml
+*.pyc
+*.tmp
+
+build/*
 docs/_build/*
+test/run/*
 docs/presoref.rst
 docs/VERSION
-test/run/*
+venv/
+tmp/
+logs/
 
 .idea/
+.cache
+src/.cache
 
-src/*.pyc
