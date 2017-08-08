@@ -16,18 +16,22 @@
 
 import argparse
 import logging
-import sys
 import os
+import sys
+from glob import glob
 
 from src.appservices.BIPClient import BIPClient
+from src.appservices.TestTools import get_payload_basename
 from src.appservices.TestTools import get_test_config
 from src.appservices.TestTools import load_payload
+from src.appservices.TestTools import payload_is_build_in
 from src.appservices.TestTools import prepare_payloads_functional_test
 from src.appservices.exceptions import AppServiceDeploymentException
 from src.appservices.exceptions import AppServiceDeploymentVerificationException
 from src.appservices.exceptions import AppServiceRemovalException
 from src.appservices.exceptions import RESTException
 from src.appservices.tools import setup_logging
+from src.appservices.TestTools import get_payload_dependencies
 
 
 def cli_parser():
@@ -35,13 +39,17 @@ def cli_parser():
         description='This script uses the F5 BIG-IP iControl REST API'
                     ' to create a specific instance of an iApp deployment.')
 
-    parser.add_argument("host",
+    parser.add_argument("-H", "--host",
                         help="The IP/Hostname in <host>[:<port>]"
                              " format of the BIG-IP device")
-    parser.add_argument("payload",
+    parser.add_argument("-P", "--payload",
                         help="The Application Services configuration payload")
     parser.add_argument("-X", "--remove",
                         help="Remove application Service",
+                        action="store_true")
+
+    parser.add_argument("-l", "--list",
+                        help="List default Application Services templates",
                         action="store_true")
 
     parser.add_argument("-u", "--username",
@@ -86,10 +94,19 @@ def router(parser, argv):
 
     setup_logging()
 
-    if not args.remove:
+    if not args.remove and args.host and args.payload:
         upload_application_service(
             args.host, args.username, args.password, args.ssh_username,
             args.ssh_password, args.payload)
+
+    if args.list:
+        list_available_payload_templates()
+
+
+def list_available_payload_templates():
+    for index, payload_template in enumerate(sorted(
+            glob(os.path.join("payload_templates", "*.template.json")))):
+        print("{}\t{}".format(index, os.path.basename(payload_template)))
 
 
 def upload_application_service(
@@ -110,20 +127,17 @@ def upload_application_service(
         # ))
 
 
-def payload_is_build_in(payload_file):
-    payload_file_name = os.path.splitext(os.path.basename(payload_file))[0]
-    return os.path.isfile(
-        os.path.join(
-            os.path.abspath('payload_templates'),
-            os.path.abspath("{}.tmpl".format(payload_file_name))
-        )
-    )
+def load_build_in_payload(host, bip, payload_template_file):
+    config = get_test_config(host, "127.0.0.1", test_method="manual",
+                             timestamp=__name__)
+
+    dependants = prepare_payloads_functional_test(bip, config)
+    payload_basename = get_payload_basename(payload_template_file)
+    payload_dependencies = get_payload_dependencies(
+        dependants, payload_basename)
 
 
-def load_build_in_payload(host, bip, payload_file):
-    config = get_test_config(host, "", test_method="manual", timestamp=__name__)
-
-    prepare_payloads_functional_test(bip, config)
+    payload_file = "{}.json".format(payload_basename)
 
     return bip, load_payload(config['payloads_dir'], payload_file)
 

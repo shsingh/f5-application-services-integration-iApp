@@ -152,7 +152,7 @@ class BIPClient(object):
 
         current_time = int(time.time())
         istat_key = self._get_istat_key(payload['partition'], payload['name'])
-        command = 'tmsh run cli script appsvcs_get_istat \"{}\"'.format(
+        command = 'istats get \"{}\"'.format(
             istat_key)
 
         for check_run in range(max_check):

@@ -41,11 +41,7 @@ def test_license(setup_logging):
     logger = logging.getLogger(__name__)
     matches = []
 
-    for root, _, filenames in os.walk('src'):
-        for filename in fnmatch.filter(filenames, '*.py'):
-            matches.append(os.path.join(root, filename))
-
-    for root, _, filenames in os.walk('tests'):
+    for root, _, filenames in os.walk('./'):
         for filename in fnmatch.filter(filenames, '*.py'):
             matches.append(os.path.join(root, filename))
 

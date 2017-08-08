@@ -14,17 +14,49 @@
 #     limitations under the License.
 #
 
-from src.appservices.TestTools import strip_payload_name
-from src.appservices.TestTools import update_payload_name
+from src.appservices.TestTools import build_application_service_payloads
 from src.appservices.TestTools import get_payload_list
 from src.appservices.TestTools import get_test_config
-from src.appservices.TestTools import build_application_service_payloads
+from src.appservices.TestTools import strip_payload_name
+from src.appservices.TestTools import update_payload_name
+from src.appservices.TestTools import payload_is_build_in
+from src.appservices.TestTools import get_payload_basename
+from src.appservices.TestTools import get_payload_dependencies
+
+
+def test_dependant_payloads():
+    config = get_test_config(
+        "192.168.0.1", "192.168.0.2", timestamp='unit_test')
+
+    dependants = build_application_service_payloads(config, {
+        'version': "123",
+        'major': "123",
+        'minor': "123"
+    })
+
+    # I can not wait for the day
+    #  when we remove this 'payload dependency mechanism'
+    assert len(dependants.keys()) >= 8
+
+    assert get_payload_dependencies(dependants, 'test_pools') == [
+        {'delete_override': True, 'name': 'test_pools'},
+        {'delete_override': True, 'name': 'test_pools_2'},
+        {'delete_override': True, 'name': 'test_pools_3'},
+        {'delete_override': False, 'name': 'test_pools_4'},
+        {'delete_override': False, 'name': 'test_pools_noindex'}]
+
+    assert get_payload_dependencies(dependants, 'test_pools_3') == [
+        {'delete_override': True, 'name': 'test_pools_3'},
+        {'delete_override': False, 'name': 'test_pools_4'},
+        {'delete_override': False, 'name': 'test_pools_noindex'}]
+
+    assert get_payload_dependencies(dependants, 'test_vs_sctp') == []
 
 
 def test_get_payload_generation():
     config = get_test_config(
-        "192.168.0.1", "192.168.0.2", start=0, end=5)
-    dependants = build_application_service_payloads(config, {
+        "192.168.0.1", "192.168.0.2", start=0, end=5, timestamp='unit_test')
+    build_application_service_payloads(config, {
         'version': "123",
         'major': "123",
         'minor': "123"
@@ -33,9 +65,13 @@ def test_get_payload_generation():
 
     assert len(payloads) == 5
 
-    # I can not wait for the day
-    #  when we remove this 'payload dependency mechanism'
-    assert len(dependants.keys()) == 10
+
+def test_payload_template_basename():
+    assert get_payload_basename('test_pools.template.json') == 'test_pools'
+
+
+def test_build_in_payload():
+    assert payload_is_build_in('test_pools.template.json')
 
 
 def test_update_payload_name_and_strip_payload_name():

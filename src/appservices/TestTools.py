@@ -52,7 +52,8 @@ def build_application_service_payloads(
         config['flat_templates_dir']
     )
 
-    for payload_template in glob(os.path.join("payload_templates", "*.template.json")):
+    for payload_template in glob(
+            os.path.join("payload_templates", "*.template.json")):
         pay_gen.fill_template(
             payload_template, version, config['policy_host'],
             config['vs_subnet'],
@@ -64,7 +65,6 @@ def build_application_service_payloads(
             config['member_first_address'],
             config['member_v6_first_address'])
 
-    delete_overrides = {}
     for payload_template in glob(os.path.join(config['tmp_dir'], "*.tmpl")):
         pay_gen.build_template(
             config['tmp_dir'],
@@ -72,18 +72,12 @@ def build_application_service_payloads(
             'admin',
             'admin'
         )
-        # this is where payload dependencies are resolved
-        # can we please remove this and make the payloads independent ?
-        template_name = os.path.splitext(os.path.basename(payload_template))[0]
-
-        if pay_gen.check_delete_override(config['tmp_dir'], payload_template):
-            delete_overrides[template_name] = True
 
     for payload_template in glob(os.path.join(
             config['flat_templates_dir'], "*.tmpl")):
         pay_gen.build_bip_payload(payload_template, tcl_template_name)
 
-    return delete_overrides
+    return pay_gen.find_dependent_payloads(config)
 
 
 def prepare_payloads_functional_test(bip, config):
@@ -191,6 +185,34 @@ def run_legacy_functional_tests(bip_client, config, delete_overrides):
                 bip_client.download_qkview(test_run_log_dir)
                 if run+1 == config['retries']:
                     raise
+
+
+def get_payload_dependencies(dependants, payload_name):
+    for key, value in dependants.iteritems():
+        if payload_name == key:
+            return value
+        for element in value:
+            if element['name'] == payload_name:
+                return value[value.index(element):]
+
+    return []
+
+
+def get_payload_basename(name):
+    return os.path.splitext(
+        os.path.splitext(os.path.basename(name))[0]
+    )[0]
+
+
+def payload_is_build_in(payload_file):
+    payload_file_name = get_payload_basename(payload_file)
+
+    return os.path.isfile(
+        os.path.join(
+            os.path.abspath('payload_templates'),
+            "{}.template.json".format(payload_file_name)
+        )
+    )
 
 
 def update_payload_name(name, run):

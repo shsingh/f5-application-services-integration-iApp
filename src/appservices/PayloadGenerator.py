@@ -20,6 +20,7 @@ import os
 import random
 import re
 import shutil
+from glob import glob
 
 from src.appservices.IPAddressGenerator import IPv4AddressGenerator
 from src.appservices.IPAddressGenerator import IPv6AddressGenerator
@@ -263,14 +264,52 @@ class PayloadGenerator(object):
 
         return flat_tmpl
 
-    def check_delete_override(self, template_dir, tmpl_file_canonical_path):
-        tmpl = self.read_template(
-            os.path.join(template_dir, tmpl_file_canonical_path))
-
-        if 'test_delete_override' in tmpl:
+    @staticmethod
+    def check_delete_override(json_template):
+        if 'test_delete_override' in json_template:
             return True
 
         return False
+
+    @staticmethod
+    def get_basename(name):
+        return os.path.splitext(os.path.basename(name))[0]
+
+    def find_dependent_payloads(self, config):
+        # Hopefully we will be able to remove it someday.
+        # If we really need payloads to depend on each other, or
+        # in other words, we would need to be able to send packets of payloads.
+        # Good way of solving this would be to keep a separate 'package' file.
+        # Inside that file list of names of payloads could be defined.
+        payload_templates = sorted(glob(
+            os.path.join(config['tmp_dir'], "*.tmpl")))
+
+        dependants = {}
+        for index, payload_template in enumerate(payload_templates):
+            template_name = self.get_basename(payload_template)
+
+            json_template = self.read_template(payload_template)
+
+            if 'test_parent' in json_template:
+                delete_override = {
+                    'name': template_name,
+                    'delete_override': self.check_delete_override(json_template)
+                }
+                if json_template['test_parent'] in dependants:
+                    dependants[json_template['test_parent']].append(
+                        delete_override)
+                else:
+                    parent_name = payload_templates[index-1]
+                    parent_template = self.read_template(parent_name)
+                    parent = {
+                        'name': self.get_basename(parent_name),
+                        'delete_override': self.check_delete_override(
+                            parent_template)
+                    }
+                    dependants[json_template['test_parent']] = [
+                        parent, delete_override]
+
+        return dependants
 
     def update_app_services_name(self, tmpl, name):
         self._logger.debug("[template_select] specified={}".format(
