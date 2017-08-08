@@ -20,11 +20,12 @@ import logging
 from src.appservices.TestTools import run_legacy_functional_tests
 
 
-# @pytest.mark.skip(reason="Skipping in order to focus on scale")
+@pytest.mark.skipif(pytest.config.getoption('--scale_run'),
+                    reason="Skipping to focus on the scale run")
 def test_functional_tests(get_config, bip_client, prepare_tests, setup_logging):
     try:
         run_legacy_functional_tests(bip_client, get_config, prepare_tests)
     except Exception as ex:
-        logger = logging.getLoggger(__name__)
+        logger = logging.getLogger(__name__)
         logger.exception(ex)
         pytest.fail("Exception raised, test failed")

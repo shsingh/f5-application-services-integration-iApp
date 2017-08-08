@@ -30,6 +30,10 @@ def pytest_addoption(parser):
     parser.addoption("--scale_size", action='store',
                      help="Size of scale test",
                      default=20, type=int)
+    parser.addoption("--scale_run", action="store_true",
+                     help="Run only scale test")
+    parser.addoption("--scale_fail_fast", action="store_true",
+                     help="Run scale till first error")
 
 
 @pytest.fixture(scope='module')

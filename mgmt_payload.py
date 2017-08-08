@@ -19,11 +19,14 @@ import logging
 import os
 import sys
 from glob import glob
+from pprint import pprint
 
 from src.appservices.BIPClient import BIPClient
-from src.appservices.TestTools import get_payload_basename
+from src.appservices.TestTools import get_payload_dependencies
+from src.appservices.TestTools import get_payload_template_basename
 from src.appservices.TestTools import get_test_config
 from src.appservices.TestTools import load_payload
+from src.appservices.TestTools import load_payloads
 from src.appservices.TestTools import payload_is_build_in
 from src.appservices.TestTools import prepare_payloads_functional_test
 from src.appservices.exceptions import AppServiceDeploymentException
@@ -31,7 +34,6 @@ from src.appservices.exceptions import AppServiceDeploymentVerificationException
 from src.appservices.exceptions import AppServiceRemovalException
 from src.appservices.exceptions import RESTException
 from src.appservices.tools import setup_logging
-from src.appservices.TestTools import get_payload_dependencies
 
 
 def cli_parser():
@@ -117,14 +119,26 @@ def upload_application_service(
 
     if payload_is_build_in(payload_file):
         bip, payload = load_build_in_payload(host, bip, payload_file)
-        print("build_in: {}".format(payload_file))
-        # upload_payload(bip, payload)
+        upload_payload(bip, payload)
     else:
-        print("free: {}".format(payload_file))
-        # upload_payload(bip, load_payload(
-        #     os.path.dirname(payload_file),
-        #     os.path.basename(payload_file)
-        # ))
+        upload_payload(bip, load_payload(
+            os.path.dirname(payload_file),
+            os.path.basename(payload_file)
+        ))
+
+
+def yes_no_prompt(question):
+    yes = set(['yes', 'y', 'ye', ''])
+    no = set(['no', 'n'])
+
+    while True:
+        choice = raw_input(question).lower()
+        if choice in yes:
+            return True
+        elif choice in no:
+            return False
+        else:
+            print("Please respond with 'yes' or 'no'\n")
 
 
 def load_build_in_payload(host, bip, payload_template_file):
@@ -132,28 +146,37 @@ def load_build_in_payload(host, bip, payload_template_file):
                              timestamp=__name__)
 
     dependants = prepare_payloads_functional_test(bip, config)
-    payload_basename = get_payload_basename(payload_template_file)
+    payload_basename = get_payload_template_basename(payload_template_file)
     payload_dependencies = get_payload_dependencies(
         dependants, payload_basename)
 
+    if len(payload_dependencies) > 0:
+        print('Due to a bug in BIP,'
+              ' following payloads depend on the one you choose:')
+        pprint(payload_dependencies)
+        if yes_no_prompt("Deploy all y/n?"):
+            return bip, load_payloads(config, payload_dependencies)
 
     payload_file = "{}.json".format(payload_basename)
 
-    return bip, load_payload(config['payloads_dir'], payload_file)
+    return bip, load_payload(config, payload_file)
 
 
-def upload_payload(bip, payload):
+def upload_payload(bip, payloads):
 
     logger = logging.getLogger(__name__)
+    if not isinstance(payloads, (list, tuple)):
+        payloads = [payloads]
 
-    try:
-        bip.deploy_app_service(payload)
-    except (AppServiceDeploymentException,
-            RESTException,
-            AppServiceDeploymentVerificationException,
-            AppServiceRemovalException) as ex:
-        logger.exception(ex)
-        sys.exit(1)
+    for payload in payloads:
+        try:
+            bip.deploy_app_service(payload)
+        except (AppServiceDeploymentException,
+                RESTException,
+                AppServiceDeploymentVerificationException,
+                AppServiceRemovalException) as ex:
+            logger.exception(ex)
+            sys.exit(1)
 
 
 if __name__ == '__main__':

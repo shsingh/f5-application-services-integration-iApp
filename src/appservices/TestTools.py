@@ -137,13 +137,16 @@ def get_test_config(
     return config
 
 
-def run_legacy_functional_tests(bip_client, config, delete_overrides):
+def run_legacy_functional_tests(bip_client, config, dependants):
     logger = logging.getLogger(__name__)
 
     for payload_file in get_payload_list(config):
 
-        payload = load_payload(config['payloads_dir'], payload_file)
-        payload_file_name = os.path.splitext(os.path.basename(payload_file))[0]
+        payload = load_payload(config, payload_file)
+        payload_basename = get_payload_basename(payload_file)
+
+        payload_dependencies = get_payload_dependencies(
+            dependants, payload_basename)
 
         test_run_log_dir = os.path.abspath(
             os.path.join("logs", config['session_id'],
@@ -153,24 +156,25 @@ def run_legacy_functional_tests(bip_client, config, delete_overrides):
         for run in range(config['retries']):
             try:
                 logger.info('{}/{} Deploying: {}'.format(
-                    run, config['retries'], payload_file_name))
+                    run, config['retries'], payload_basename))
 
                 app_deployed = bip_client.deploy_app_service(payload)
 
                 logger.info('{}/{} Verifying deployment of: {}'.format(
-                    run, config['retries'], payload_file_name))
+                    run, config['retries'], payload_basename))
 
                 deployment_verified = bip_client.verify_deployment_result(
                     payload, test_run_log_dir)
 
-                if payload_file_name in delete_overrides:
+                if check_delete_override(
+                        payload_dependencies, payload_basename):
                     logger.info("Skipping removal of {},"
                                 " due to 'test_delete_override'"
                                 " flag set in payload template".format(
-                                    payload_file_name))
+                                    payload_basename))
                 else:
                     logger.info("{}/{} Removing payload {}".format(
-                        run, config['retries'], payload_file_name))
+                        run, config['retries'], payload_basename))
                     bip_client.remove_app_service(payload)
 
                 if app_deployed and deployment_verified:
@@ -198,38 +202,50 @@ def get_payload_dependencies(dependants, payload_name):
     return []
 
 
-def get_payload_basename(name):
+def check_delete_override(dependencies, payload_name):
+    for dependency in dependencies:
+        if dependency['name'] == payload_name:
+            return dependency['delete_override']
+
+    return False
+
+
+def get_payload_template_basename(name):
     return os.path.splitext(
-        os.path.splitext(os.path.basename(name))[0]
+        get_payload_basename(name)
     )[0]
 
 
+def get_payload_basename(name):
+    return os.path.splitext(os.path.basename(name))[0]
+
+
 def payload_is_build_in(payload_file):
-    payload_file_name = get_payload_basename(payload_file)
+    payload_template_basename = get_payload_template_basename(payload_file)
 
     return os.path.isfile(
         os.path.join(
             os.path.abspath('payload_templates'),
-            "{}.template.json".format(payload_file_name)
+            "{}.template.json".format(payload_template_basename)
         )
     )
 
 
 def update_payload_name(name, run):
-    name_split = name.split("_")
+    name_split = name.split("__")
     try:
         int(name_split[-1])
         name_split[-1] = str(run)
-        return "_".join(name_split)
+        return "__".join(name_split)
     except ValueError:
-        return "{}_{}".format(name, run)
+        return "{}__{}".format(name, run)
 
 
 def strip_payload_name(name):
-    name_split = name.split("_")
+    name_split = name.split("__")
     try:
         int(name_split[-1])
-        return "_".join(name_split[:-1])
+        return "__".join(name_split[:-1])
     except ValueError:
         return name
 
@@ -239,8 +255,17 @@ def get_payload_list(config):
     return payloads[config['start']:config['end']]
 
 
-def load_payload(payload_dir, filename='test_monitors.json'):
-    with open(os.path.join(payload_dir, filename)) as payload:
+def load_payloads(config, dependencies):
+    payloads = []
+    for dependency in dependencies:
+        payloads.append(load_payload(
+            config, "{}.json".format(dependency['name'])))
+
+    return payloads
+
+
+def load_payload(config, filename='test_monitors.json'):
+    with open(os.path.join(config['payloads_dir'], filename)) as payload:
         data = json.load(payload)
     return data
 

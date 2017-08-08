@@ -25,6 +25,7 @@ from src.appservices.TestTools import load_payload
 from src.appservices.TestTools import update_payload_name
 
 
+# @pytest.mark.skipif(pytest.config.getoption('--scale_run'))
 @pytest.mark.skip(reason="Skipping because it's not ready")
 def test_replicate_mcpd_bug(
         get_config, get_host, prepare_tests, thread_count=5):

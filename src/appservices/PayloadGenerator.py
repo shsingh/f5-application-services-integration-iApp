@@ -293,6 +293,7 @@ class PayloadGenerator(object):
             if 'test_parent' in json_template:
                 delete_override = {
                     'name': template_name,
+                    'parent': False,
                     'delete_override': self.check_delete_override(json_template)
                 }
                 if json_template['test_parent'] in dependants:
@@ -303,6 +304,7 @@ class PayloadGenerator(object):
                     parent_template = self.read_template(parent_name)
                     parent = {
                         'name': self.get_basename(parent_name),
+                        'parent': True,
                         'delete_override': self.check_delete_override(
                             parent_template)
                     }

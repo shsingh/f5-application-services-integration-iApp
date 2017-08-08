@@ -20,8 +20,9 @@ from src.appservices.TestTools import get_test_config
 from src.appservices.TestTools import strip_payload_name
 from src.appservices.TestTools import update_payload_name
 from src.appservices.TestTools import payload_is_build_in
-from src.appservices.TestTools import get_payload_basename
+from src.appservices.TestTools import get_payload_template_basename
 from src.appservices.TestTools import get_payload_dependencies
+from src.appservices.TestTools import check_delete_override
 
 
 def test_dependant_payloads():
@@ -39,18 +40,82 @@ def test_dependant_payloads():
     assert len(dependants.keys()) >= 8
 
     assert get_payload_dependencies(dependants, 'test_pools') == [
-        {'delete_override': True, 'name': 'test_pools'},
-        {'delete_override': True, 'name': 'test_pools_2'},
-        {'delete_override': True, 'name': 'test_pools_3'},
-        {'delete_override': False, 'name': 'test_pools_4'},
-        {'delete_override': False, 'name': 'test_pools_noindex'}]
+        {
+            'delete_override': True,
+            'name': 'test_pools',
+            'parent': True
+        },
+        {
+            'delete_override': True,
+            'name': 'test_pools_2',
+            'parent': False
+        },
+        {
+            'delete_override': True,
+            'name': 'test_pools_3',
+            'parent': False
+        },
+        {
+            'delete_override': False,
+            'name': 'test_pools_4',
+            'parent': False
+        },
+        {
+            'delete_override': False,
+            'name': 'test_pools_noindex',
+            'parent': False
+        }]
 
     assert get_payload_dependencies(dependants, 'test_pools_3') == [
-        {'delete_override': True, 'name': 'test_pools_3'},
-        {'delete_override': False, 'name': 'test_pools_4'},
-        {'delete_override': False, 'name': 'test_pools_noindex'}]
+        {
+            'delete_override': True,
+            'name': 'test_pools_3',
+            'parent': False
+        },
+        {
+            'delete_override': False,
+            'name': 'test_pools_4',
+            'parent': False
+        },
+        {
+            'delete_override': False,
+            'name': 'test_pools_noindex',
+            'parent': False
+        }]
+
+    assert get_payload_dependencies(dependants, 'test_pools_noindex') == [
+        {
+            'delete_override': False,
+            'name': 'test_pools_noindex',
+            'parent': False
+        }]
+
+    assert get_payload_dependencies(
+        dependants, 'test_vs_standard_https_bundle_all_preserve') == [
+        {
+            'delete_override': True,
+            'parent': True,
+            'name': 'test_vs_standard_https_bundle_all_preserve'
+        },
+        {
+            'delete_override': False,
+            'parent': False,
+            'name': 'test_vs_standard_https_bundle_all_preserve_2'
+        }]
 
     assert get_payload_dependencies(dependants, 'test_vs_sctp') == []
+
+    assert check_delete_override(
+        get_payload_dependencies(dependants, 'test_vs_sctp'),
+        'test_vs_sctp') is False
+
+    assert check_delete_override(
+        get_payload_dependencies(dependants, 'test_pools'),
+        'test_pools_3') is True
+
+    assert check_delete_override(
+        get_payload_dependencies(dependants, 'test_pools'),
+        'test_pools_4') is False
 
 
 def test_get_payload_generation():
@@ -67,7 +132,7 @@ def test_get_payload_generation():
 
 
 def test_payload_template_basename():
-    assert get_payload_basename('test_pools.template.json') == 'test_pools'
+    assert get_payload_template_basename('test_pools.template.json') == 'test_pools'
 
 
 def test_build_in_payload():
@@ -135,11 +200,11 @@ def test_update_payload_name_and_strip_payload_name():
         'test_vs_standard_tcp_virt_addr_options',
         'test_vs_standard_udp_afm',
         'test_vs_standard_udp',
-        'test_without_vs__Name']
+        'test_without_vs_Name']
 
     for payload_name in payload_names:
-        assert update_payload_name(payload_name, 7) == "{}_{}".format(
+        assert update_payload_name(payload_name, 7) == "{}__{}".format(
             strip_payload_name(payload_name), 7)
 
-        assert update_payload_name(payload_name, 13) == "{}_{}".format(
+        assert update_payload_name(payload_name, 13) == "{}__{}".format(
             strip_payload_name(payload_name), 13)
