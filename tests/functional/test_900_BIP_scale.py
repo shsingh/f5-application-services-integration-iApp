@@ -23,7 +23,7 @@ import pytest
 
 from src.appservices.TestTools import get_payload_basename
 from src.appservices.TestTools import get_payload_dependencies
-from src.appservices.TestTools import get_payload_list
+from src.appservices.TestTools import get_payload_files
 from src.appservices.TestTools import load_payload
 from src.appservices.TestTools import strip_payload_name
 from src.appservices.TestTools import update_payload_name
@@ -162,7 +162,7 @@ def test_functional_tests_at_scale(
     log_dir = os.path.join("logs", get_config['session_id'], 'run')
     mk_dir(log_dir)
 
-    for payload_file in get_payload_list(get_config):
+    for payload_file in get_payload_files(get_config):
 
         payload = load_payload(get_config, payload_file)
 

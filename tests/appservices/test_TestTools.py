@@ -15,7 +15,7 @@
 #
 
 from src.appservices.TestTools import build_application_service_payloads
-from src.appservices.TestTools import get_payload_list
+from src.appservices.TestTools import get_payload_files
 from src.appservices.TestTools import get_test_config
 from src.appservices.TestTools import strip_payload_name
 from src.appservices.TestTools import update_payload_name
@@ -126,7 +126,7 @@ def test_get_payload_generation():
         'major': "123",
         'minor': "123"
     })
-    payloads = get_payload_list(config)
+    payloads = get_payload_files(config)
 
     assert len(payloads) == 5
 

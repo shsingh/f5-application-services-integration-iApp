@@ -137,10 +137,52 @@ def get_test_config(
     return config
 
 
+def handle_configuration_payload(config, bip, payload_basename, payload,
+                                 test_run_log_dir, payload_dependencies):
+    logger = logging.getLogger(__name__)
+
+    for run in range(config['retries']):
+        try:
+            logger.info('{}/{} Deploying: {}'.format(
+                run, config['retries'], payload_basename))
+
+            app_deployed = bip.deploy_app_service(payload)
+
+            logger.info('{}/{} Verifying deployment of: {}'.format(
+                run, config['retries'], payload_basename))
+
+            deployment_verified = bip.verify_deployment_result(
+                payload, test_run_log_dir)
+
+            if check_delete_override(
+                    payload_dependencies, payload_basename):
+                logger.info("Skipping removal of {},"
+                            " due to 'test_delete_override'"
+                            " flag set in payload template".format(
+                    payload_basename))
+            else:
+                logger.info("{}/{} Removing payload {}".format(
+                    run, config['retries'], payload_basename))
+                bip.remove_app_service(payload)
+
+            if app_deployed and deployment_verified:
+                break
+
+        except (AppServiceDeploymentException,
+                RESTException,
+                AppServiceDeploymentVerificationException,
+                AppServiceRemovalException) as ex:
+            logger.exception(ex)
+            bip.download_logs(test_run_log_dir)
+            bip.download_qkview(test_run_log_dir)
+            if run+1 == config['retries']:
+                raise
+
+
 def run_legacy_functional_tests(bip_client, config, dependants):
     logger = logging.getLogger(__name__)
 
-    for payload_file in get_payload_list(config):
+    for payload_file in get_payload_files(config):
 
         payload = load_payload(config, payload_file)
         payload_basename = get_payload_basename(payload_file)
@@ -153,42 +195,9 @@ def run_legacy_functional_tests(bip_client, config, dependants):
                          'run', payload['name'])
         )
 
-        for run in range(config['retries']):
-            try:
-                logger.info('{}/{} Deploying: {}'.format(
-                    run, config['retries'], payload_basename))
-
-                app_deployed = bip_client.deploy_app_service(payload)
-
-                logger.info('{}/{} Verifying deployment of: {}'.format(
-                    run, config['retries'], payload_basename))
-
-                deployment_verified = bip_client.verify_deployment_result(
-                    payload, test_run_log_dir)
-
-                if check_delete_override(
-                        payload_dependencies, payload_basename):
-                    logger.info("Skipping removal of {},"
-                                " due to 'test_delete_override'"
-                                " flag set in payload template".format(
-                                    payload_basename))
-                else:
-                    logger.info("{}/{} Removing payload {}".format(
-                        run, config['retries'], payload_basename))
-                    bip_client.remove_app_service(payload)
-
-                if app_deployed and deployment_verified:
-                    break
-
-            except (AppServiceDeploymentException,
-                    RESTException,
-                    AppServiceDeploymentVerificationException,
-                    AppServiceRemovalException) as ex:
-                logger.exception(ex)
-                bip_client.download_logs(test_run_log_dir)
-                bip_client.download_qkview(test_run_log_dir)
-                if run+1 == config['retries']:
-                    raise
+        logger.debug('Testing payload {}'.format(payload_basename))
+        handle_configuration_payload(config, bip_client, payload_basename, payload,
+                                     test_run_log_dir, payload_dependencies)
 
 
 def get_payload_dependencies(dependants, payload_name):
@@ -250,7 +259,7 @@ def strip_payload_name(name):
         return name
 
 
-def get_payload_list(config):
+def get_payload_files(config):
     payloads = sorted(glob(os.path.join(config['payloads_dir'], "*.json")))
     return payloads[config['start']:config['end']]
 
