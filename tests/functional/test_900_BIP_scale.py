@@ -145,6 +145,8 @@ def dependent_scale(config, payload_dependencies, first_pool_addr, bip_client,
         deployment_no, payload, bip_client, test_results, fail_fast)
 
 
+@pytest.mark.skipif(pytest.config.getoption('--scale_skip'),
+                    reason="It can take up to 10 hours to complete")
 def test_functional_tests_at_scale(
         get_config, bip_client, prepare_tests, get_scale_size, setup_logging,
         get_scale_fail_fast):
@@ -172,12 +174,11 @@ def test_functional_tests_at_scale(
         if len(payload_dependencies) > 0 and payload_dependencies[0]['parent']:
             logger.info("Handling dependant scale for {}".format(
                 payload_basename))
-            dependent_scale(get_config, payload_dependencies,first_pool_addr,
+            dependent_scale(get_config, payload_dependencies, first_pool_addr,
                             bip_client, test_results, log_dir, get_scale_size,
                             get_scale_fail_fast)
 
-        elif len(get_payload_dependencies(
-                prepare_tests, payload_basename)) == 0:
+        elif len(payload_dependencies) == 0:
             logger.info("Handling independent scale for {}".format(
                 payload_basename))
             test_results = independent_scale(
