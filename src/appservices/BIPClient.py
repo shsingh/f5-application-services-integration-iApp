@@ -35,7 +35,7 @@ from paramiko.ssh_exception import PasswordRequiredException
 class BIPClient(object):
     def __init__(self, host, ssh_port=22,
                  username='admin', password='admin',
-                 ssh_username='root', ssh_password='default'):
+                 ssh_username='root', ssh_password='default', logger=None):
 
         self._host = host
         self._ssh_port = ssh_port
@@ -44,7 +44,11 @@ class BIPClient(object):
         self._ssh_username = ssh_username
         self._ssh_password = ssh_password
         self._ssh_key_password = None
-        self._logger = logging.getLogger(__name__)
+
+        if logger is None:
+            self._logger = logging.getLogger(__name__)
+        else:
+            self._logger = logger
 
         self._url_app = "https://{}/mgmt/tm/sys/application/service".format(
             host)

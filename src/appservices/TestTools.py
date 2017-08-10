@@ -277,32 +277,3 @@ def load_payload(config, filename='test_monitors.json'):
     with open(os.path.join(config['payloads_dir'], filename)) as payload:
         data = json.load(payload)
     return data
-
-
-class IappWorker(threading.Thread):
-    def __init__(self, bip_client, payload, log_dir, results, thread_no):
-        threading.Thread.__init__(self)
-        self.bip_client = bip_client
-        self.payload = payload
-        self.log_dir = log_dir
-        self.results = results
-        self.thread_no = thread_no
-        self.logger = logging.getLogger(__name__)
-
-    def run(self):
-        try:
-            self.bip_client.deploy_app_service(self.payload)
-            self.results[self.thread_no] = {
-                'result': True,
-                'msg': ''
-            }
-
-        except (RESTException, AppServiceDeploymentException) as ex:
-            self.bip_client.download_logs(self.log_dir)
-            self.results[self.thread_no] = {
-                'result': False,
-                'msg': ex
-            }
-
-        finally:
-            return self.results
