@@ -14,6 +14,7 @@
 #     limitations under the License.
 #
 import json
+import logging
 
 
 class AppServiceDeploymentException(Exception):
@@ -51,8 +52,17 @@ class ParameterMissingException(Exception):
 
 
 class RESTException(Exception):
-    def __init__(self, rest_json):
-        msg = "REST interface said:\n{}".format(
-            json.dumps(rest_json, indent=4, sort_keys=True))
+    def __init__(self, response):
+        try:
+            msg = "REST interface said:\n{}".format(
+                json.dumps(response.json(), indent=4, sort_keys=True))
+        except ValueError:
+            msg = "REST interface did NOT return a valid JSON"
+            logger = logging.getLogger(__name__)
+            logger.error(msg)
 
         super(RESTException, self).__init__(msg)
+        self._response = response
+
+    def get_response(self):
+        return self._response

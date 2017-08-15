@@ -13,23 +13,22 @@
 #     See the License for the specific language governing permissions and
 #     limitations under the License.
 #
+import getpass
 import json
 import logging
 import os
 import re
 import time
-import getpass
 
 import paramiko
 import requests
+from paramiko.ssh_exception import PasswordRequiredException
 from requests.packages.urllib3.exceptions import InsecureRequestWarning
 
 from src.appservices.exceptions import AppServiceDeploymentException
 from src.appservices.exceptions import AppServiceDeploymentVerificationException
-from src.appservices.exceptions import AppServiceRemovalException
 from src.appservices.exceptions import RESTException
 from src.appservices.tools import mk_dir
-from paramiko.ssh_exception import PasswordRequiredException
 
 
 class BIPClient(object):
@@ -99,7 +98,7 @@ class BIPClient(object):
             self._logger.error("Login/Password incorrect")
             return False
 
-        raise RESTException(response.json())
+        raise RESTException(response)
 
     def cli_script_exists(self, name):
         session = self._get_session()
@@ -258,26 +257,25 @@ class BIPClient(object):
 
     def remove_app_service(self, payload):
         session = self._get_session()
-        response = session.delete(
-            self._url_app_service_exists(
-                payload['partition'],
-                payload['name']))
 
-        if response.status_code == 200:
+        result = self.handle_response(
+            session.delete(
+                self._url_app_service_exists(
+                    payload['partition'],
+                    payload['name']))
+        )
+
+        if result:
             self._logger.info("Application service \"{}\" removed".format(
                 payload['name']))
-            return True
-        else:
-            raise AppServiceRemovalException(payload['name'], response.json())
+
+        return result
 
     def get_version(self):
         session = self._get_session()
         resp = session.get(self._url_version)
 
-        if resp.status_code == 401:
-            raise RESTException(resp.json())
-
-        if resp.status_code == 200:
+        if self.handle_response(session.get(self._url_version)):
             for item in resp.json()["items"]:
                 if 'active' in item.keys() and item["active"]:
                     version = item["version"]
@@ -321,9 +319,11 @@ class BIPClient(object):
                 '/var/tmp/scriptd.out'
             ]
         mk_dir(log_folder)
+        self._logger.debug("Downloading logs")
         self.download_files(bip_log_files, log_folder)
 
     def download_qkview(self, log_folder):
+        self._logger.debug("Generating qkview")
         result, error = self.run_command("qkview -c")
         # for some reason qkview outputs this data on stderr
         # error = "Gathering System Diagnostics: Please wait ... " \
@@ -332,6 +332,7 @@ class BIPClient(object):
         #         "Please send this file to F5 support."
         pattern = re.compile("([a-zA-Z0-9\.\-_/]+\.qkview)")
         file_path = pattern.findall(error)
+        self._logger.debug("Downloading qkview")
         self.download_files(file_path, log_folder)
         return os.path.basename(file_path[0])
 
