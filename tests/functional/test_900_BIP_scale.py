@@ -107,7 +107,7 @@ def dependent_scale(config, payload_dependencies, first_pool_addr, bip_client,
     logger = logging.getLogger(__name__)
 
     for deployment_no in range(scale_size):
-        for dependency in payload_dependencies:
+        for index, dependency in enumerate(payload_dependencies):
 
             payload = load_payload(config, "{}.json".format(dependency['name']))
             logger.info('dependent_scale {}'.format(dependency['name']))
@@ -141,7 +141,8 @@ def dependent_scale(config, payload_dependencies, first_pool_addr, bip_client,
 
                 break
 
-            if not dependency['delete_override']:
+            if not dependency['delete_override'] and (index+1) < len(
+                    payload_dependencies):
                 test_results = remove_application_service(
                     deployment_no, payload, bip_client, test_results, fail_fast)
 
