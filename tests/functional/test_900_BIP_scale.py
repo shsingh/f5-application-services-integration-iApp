@@ -56,7 +56,8 @@ def remove_application_service(
         try:
             bip_client.remove_app_service(payload)
         except AppServiceRemovalException as ex:
-            test_results[strip_payload_name(payload['name'])]['removal_exception'] = str(ex)
+            test_results[strip_payload_name(payload['name'])].setdefault(
+                'removal_exception',[]).append((removal_no, str(ex)))
             logger.exception(ex)
             if fail_fast:
                 raise
@@ -85,11 +86,13 @@ def independent_scale(payload, first_pool_addr, log_dir, bip_client,
             bip_client.deploy_app_service(payload)
             bip_client.verify_deployment_result(
                 payload, test_run_log_dir)
-            test_results[strip_payload_name(payload['name'])]['completed'] = deployment_no + 1
+            test_results[strip_payload_name(
+                payload['name'])]['completed'] = deployment_no + 1
 
         except (AppServiceDeploymentException, RESTException,
                 AppServiceDeploymentVerificationException) as ex:
-            test_results[strip_payload_name(payload['name'])]['deployment_exception'] = str(ex)
+            test_results[strip_payload_name(payload['name'])].setdefault(
+                'deployment_exception', []).append((deployment_no, str(ex)))
             logger.exception(ex)
             bip_client.download_logs(test_run_log_dir)
             bip_client.download_qkview(test_run_log_dir)
@@ -128,11 +131,13 @@ def dependent_scale(config, payload_dependencies, first_pool_addr, bip_client,
                 bip_client.deploy_app_service(payload)
                 bip_client.verify_deployment_result(
                     payload, test_run_log_dir)
-                test_results[strip_payload_name(payload['name'])]['completed'] = deployment_no + 1
+                test_results[strip_payload_name(
+                    payload['name'])]['completed'] = deployment_no + 1
 
             except (AppServiceDeploymentException, RESTException,
                     AppServiceDeploymentVerificationException) as ex:
-                test_results[strip_payload_name(payload['name'])]['deployment_exception'] = str(ex)
+                test_results[strip_payload_name(payload['name'])].setdefault(
+                    'deployment_exception', []).append((deployment_no, str(ex)))
                 logger.exception(ex)
                 bip_client.download_logs(test_run_log_dir)
                 bip_client.download_qkview(test_run_log_dir)
@@ -186,7 +191,7 @@ def test_functional_tests_at_scale(
         elif len(payload_dependencies) == 0:
             logger.info("Handling independent scale for {}".format(
                 payload_basename))
-            test_results = independent_scale(
+            independent_scale(
                 payload, first_pool_addr, log_dir, bip_client, test_results,
                 get_scale_size, get_scale_fail_fast)
 
