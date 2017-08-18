@@ -47,8 +47,7 @@ def cli_parser():
     parser.add_argument("-P", "--payload",
                         help="The Application Services configuration payload")
     parser.add_argument("-X", "--remove",
-                        help="Remove application Service",
-                        action="store_true")
+                        help="Remove application Service")
 
     parser.add_argument("-l", "--list",
                         help="List default Application Services templates",
@@ -104,11 +103,39 @@ def router(parser, argv):
     if args.list:
         list_available_payload_templates()
 
+    if args.remove and args.host:
+        remove_application_service(
+            args.host, args.username, args.password, args.ssh_username,
+            args.ssh_password, args.remove
+        )
+
 
 def list_available_payload_templates():
     for index, payload_template in enumerate(sorted(
             glob(os.path.join("payload_templates", "*.template.json")))):
         print("{}\t{}".format(index, os.path.basename(payload_template)))
+
+
+def remove_application_service(
+        host, username, password, ssh_username, ssh_password, payload_file):
+    bip_client = BIPClient(
+        host, username=username, password=password,
+        ssh_username=ssh_username, ssh_password=ssh_password)
+
+    try:
+        if payload_is_build_in(payload_file):
+            bip_client, payload = load_build_in_payload(
+                host, bip_client, payload_file)
+            bip_client.remove_app_service(payload)
+        else:
+            bip_client.remove_app_service(load_payload(
+                os.path.dirname(payload_file),
+                os.path.basename(payload_file)
+            ))
+
+    except RESTException as error:
+        logger.exception(error)
+        sys.exit(1)
 
 
 def upload_application_service(

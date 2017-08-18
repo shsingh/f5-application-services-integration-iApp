@@ -58,6 +58,7 @@ class BIPClient(object):
         self._url_app_template = "{}?$select=name".format(self._url_template)
         self._url_save_cfg = "https://{}/mgmt/tm/sys/config".format(host)
         self._url_cli_script = "https://{}/mgmt/tm/cli/script".format(host)
+        self._url_pool = "https://{}/mgmt/tm/ltm/pool".format(host)
 
     def _get_session(self):
         requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
@@ -89,13 +90,17 @@ class BIPClient(object):
 
     def handle_response(self, response):
         if response.status_code == 200:
-            # self._logger.debug(response.json())
-            return True
-        elif response.status_code == 404:
-            self._logger.warn(response.json())
-            return False
+            try:
+                return response.json()
+            except ValueError:
+                return True
+
         elif response.status_code == 401:
             self._logger.error("Login/Password incorrect")
+            return False
+
+        elif response.status_code == 404:
+            self._logger.warn(response.json())
             return False
 
         raise RESTException(response)
@@ -147,6 +152,26 @@ class BIPClient(object):
                 data=json.dumps(payload)
             )
         )
+
+    def get_items(self, url):
+        session = self._get_session()
+        response = self.handle_response(session.get(url))
+        if 'items' in response:
+            return response['items']
+
+        return []
+
+    def get_pools(self):
+        return self.get_items(self._url_pool)
+
+    def remove_pool(self, url):
+        session = self._get_session()
+        return self.handle_response(
+            session.delete(url.replace('localhost', self._host))
+        )
+
+    def get_pool_members(self, url):
+        return self.get_items(url.replace('localhost', self._host))
 
     def verify_deployment(
             self, payload, no_check=False, max_check=10, wait=6):

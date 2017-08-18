@@ -41,12 +41,12 @@ def get_scale_size(request):
 
 
 @pytest.fixture(scope='module')
-def get_scale_fail_fast(request):
-    return request.config.getoption("--scale_fail_fast")
+def get_scale_long_run(request):
+    return request.config.getoption("--scale_long_run")
 
 
 def remove_application_service(
-        deployment_no, payload, bip_client, test_results, fail_fast):
+        deployment_no, payload, bip_client, test_results, scale_long_run):
 
     logger = logging.getLogger(__name__)
 
@@ -55,18 +55,18 @@ def remove_application_service(
             payload['name'], removal_no)
         try:
             bip_client.remove_app_service(payload)
-        except AppServiceRemovalException as ex:
+        except RESTException as error:
             test_results[strip_payload_name(payload['name'])].setdefault(
-                'removal_exception',[]).append((removal_no, str(ex)))
-            logger.exception(ex)
-            if fail_fast:
+                'removal_exception', []).append((removal_no, str(error)))
+            logger.exception(error)
+            if not scale_long_run:
                 raise
 
     return test_results
 
 
 def independent_scale(payload, first_pool_addr, log_dir, bip_client,
-                      test_results, scale_size, fail_fast):
+                      test_results, scale_size, scale_long_run):
     logger = logging.getLogger(__name__)
 
     for deployment_no in range(scale_size):
@@ -96,17 +96,15 @@ def independent_scale(payload, first_pool_addr, log_dir, bip_client,
             logger.exception(ex)
             bip_client.download_logs(test_run_log_dir)
             bip_client.download_qkview(test_run_log_dir)
-            if fail_fast:
+            if not scale_long_run:
                 raise
 
-            break
-
     return remove_application_service(
-        deployment_no, payload, bip_client, test_results, fail_fast)
+        deployment_no, payload, bip_client, test_results, scale_long_run)
 
 
 def dependent_scale(config, payload_dependencies, first_pool_addr, bip_client,
-                    test_results, log_dir, scale_size, fail_fast):
+                    test_results, log_dir, scale_size, scale_long_run):
     logger = logging.getLogger(__name__)
 
     for deployment_no in range(scale_size):
@@ -141,25 +139,24 @@ def dependent_scale(config, payload_dependencies, first_pool_addr, bip_client,
                 logger.exception(ex)
                 bip_client.download_logs(test_run_log_dir)
                 bip_client.download_qkview(test_run_log_dir)
-                if fail_fast:
+                if not scale_long_run:
                     raise
-
-                break
 
             if not dependency['delete_override'] and (index+1) < len(
                     payload_dependencies):
                 test_results = remove_application_service(
-                    deployment_no, payload, bip_client, test_results, fail_fast)
+                    deployment_no, payload, bip_client, test_results,
+                    scale_long_run)
 
     return remove_application_service(
-        deployment_no, payload, bip_client, test_results, fail_fast)
+        deployment_no, payload, bip_client, test_results, scale_long_run)
 
 
-@pytest.mark.skipif(pytest.config.getoption('--scale_skip'),
+@pytest.mark.skipif(not pytest.config.getoption('--scale_run'),
                     reason="It can take up to 10 hours to complete")
 def test_functional_tests_at_scale(
         get_config, bip_client, prepare_tests, get_scale_size, setup_logging,
-        get_scale_fail_fast):
+        get_scale_long_run):
 
     test_results = {}
 
@@ -170,10 +167,20 @@ def test_functional_tests_at_scale(
 
     for payload_file in get_payload_files(get_config):
 
+        payload_basename = get_payload_basename(payload_file)
+        if payload_basename in [
+            'test_vs_standard_https_multi_listeners.json',
+            'test_vs_standard_http_ipv6.json'
+        ]:
+            logger.warn('Skipping payload {}\n'
+                        'Additional modifications are required\n'
+                        'to run them at scale.\n'.format(payload_basename))
+            # ToDo: add required modifications
+            continue
+
         payload = load_payload(get_config, payload_file)
 
         first_pool_addr = ipaddress.ip_address(u"172.16.0.100")
-        payload_basename = get_payload_basename(payload_file)
         payload_dependencies = get_payload_dependencies(
             prepare_tests, payload_basename)
 
@@ -186,14 +193,14 @@ def test_functional_tests_at_scale(
                 payload_basename))
             dependent_scale(get_config, payload_dependencies, first_pool_addr,
                             bip_client, test_results, log_dir, get_scale_size,
-                            get_scale_fail_fast)
+                            get_scale_long_run)
 
         elif len(payload_dependencies) == 0:
             logger.info("Handling independent scale for {}".format(
                 payload_basename))
             independent_scale(
                 payload, first_pool_addr, log_dir, bip_client, test_results,
-                get_scale_size, get_scale_fail_fast)
+                get_scale_size, get_scale_long_run)
 
     print(json.dumps(test_results, indent=4, sort_keys=True))
 
