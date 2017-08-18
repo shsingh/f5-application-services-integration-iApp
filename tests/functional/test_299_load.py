@@ -208,9 +208,8 @@ def download_logs(host, logger, payload_count, result_queue):
                          "downloading logs...".format(result))
             bip_client.download_logs(result['log_dir'])
             bip_client.download_qkview(result['log_dir'])
-            pytest.fail(
-                "Exception in result_queue, test failed: {}".format(result))
-            break
+
+            return result
 
 
 @pytest.mark.skipif(pytest.config.getoption('--scale_run'),
@@ -225,12 +224,16 @@ def test_iStat_response(get_config, get_host, prepare_tests, setup_logging,
         threads.append(iStatWorker(
             payload_queue, result_queue, logger, get_host, threads))
 
-    download_logs(get_host, logger, payload_count, result_queue)
+    result = download_logs(get_host, logger, payload_count, result_queue)
 
     for thread in threads:
         thread.join()
 
     cleanup(logger, payload_count, payload, get_host, base_log_dir)
+
+    if 'error' in result:
+        pytest.fail(
+            "Exception in result_queue, test failed: {}".format(result))
 
 
 @pytest.mark.skipif(pytest.config.getoption('--scale_run'),
@@ -245,9 +248,13 @@ def test_kill_control_plane(get_config, get_host, prepare_tests, setup_logging,
         threads.append(REST_killer(
             payload_queue, result_queue, logger, get_host, threads))
 
-    download_logs(get_host, logger, payload_count, result_queue)
+    result = download_logs(get_host, logger, payload_count, result_queue)
 
     for thread in threads:
         thread.join()
 
     cleanup(logger, payload_count, payload, get_host, base_log_dir)
+
+    if 'error' in result:
+        pytest.fail(
+            "Exception in result_queue, test failed: {}".format(result))

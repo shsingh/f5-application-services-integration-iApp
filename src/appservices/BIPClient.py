@@ -245,9 +245,11 @@ class BIPClient(object):
         try:
             if not self.app_services_exists(
                     payload['partition'], payload['name']):
-                self.handle_response(
-                    session.post(self._url_app, data=json.dumps(payload))
-                )
+                response = session.post(self._url_app, data=json.dumps(payload))
+                if response.status_code >= 400:
+                    raise RESTException(response)
+
+                self.handle_response(response)
             else:
                 # OMG! hacking payload for redeploy
                 try:
