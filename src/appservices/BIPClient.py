@@ -32,6 +32,10 @@ from src.appservices.tools import mk_dir
 
 
 class BIPClient(object):
+    """
+    ToDo Rewrite this, use:
+    https://github.com/F5Networks/f5-common-python
+    """
     def __init__(self, host, ssh_port=22,
                  username='admin', password='admin',
                  ssh_username='root', ssh_password='default', logger=None):
@@ -165,13 +169,34 @@ class BIPClient(object):
     def get_nodes(self):
         return self.get_items(self._url_nodes)
 
+    def rest_delete(self, url):
+        session = self._get_session()
+        return self.handle_response(
+            session.delete(url.replace('localhost', self._host))
+        )
+
     def get_pools(self):
         return self.get_items(self._url_pool)
 
     def remove_pool(self, url):
+        self.rest_delete(url)
+
+    def create_pool(self, name="pool-of-dismay", members=None):
+
+        if members is None:
+            members = [{
+                'name': 'just-a-box:443',
+                "address": "10.0.0.1"
+            }]
+
+        payload = {
+            'name': name,
+            'members': members
+        }
+
         session = self._get_session()
         return self.handle_response(
-            session.delete(url.replace('localhost', self._host))
+            session.post(self._url_pool, json=payload)
         )
 
     def get_pool_members(self, url):

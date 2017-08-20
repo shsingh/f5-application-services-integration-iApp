@@ -15,126 +15,64 @@
 #
 
 import logging
-import os
 
 import pytest
 
-from src.appservices.TestTools import deploy_application_service
-from src.appservices.TestTools import get_payload_dependencies
-from src.appservices.TestTools import load_payload
-from src.appservices.exceptions import AppServiceDeploymentException
-from src.appservices.exceptions import AppServiceDeploymentVerificationException
-from src.appservices.exceptions import RESTException
 
-
-def append_result(results, expected, value, name):
-    results.append(
-        {
-            'expected': expected,
-            'value': len(value),
-            'status': expected == len(value),
-            'name': name
-        })
-
-    return results
-
-
-def check_resources(bip_client):
-    """
-    Initial Configuration done by
-     'prepare_tests' fixture,
-      which calls TestTools.prepare_payloads_functional_test
-     creates:
-     1 pool
-     4 pool members
-     22 nodes
-    """
-    results = []
-    pools = bip_client.get_pools()
-
-    results = append_result(results, 1, pools, 'pools')
-
-    members_reference = pools[0]['membersReference']['link']
-
-    results = append_result(
-        results, 4, bip_client.get_pool_members(members_reference),
-        'pool_members')
-
-    results = append_result(results, 44, ['d']*44, 'nodes')
-
-    error = next(result for result in results if result.get("status") is False)
-
-    return all(result['status'] is True for result in results), error
-
-
-# @pytest.mark.skipif(pytest.config.getoption('--scale_run'),
-#                     reason="Skipping to focus on the scale run")
-@pytest.mark.skip("Incorrect assumptions")
-def test_orphaned_pool_members(bip_client, setup_logging, get_config, prepare_tests):
+@pytest.mark.skipif(pytest.config.getoption('--scale_run'),
+                    reason="Skipping to focus on the scale run")
+def test_orphaned_pool_members(bip_client, setup_logging, get_config):
     """
     BUG:
-    Nodes created by the iApp are not removed with the iApp
+    Pool is created with a pool member
+    Pool is removed, node is orphaned.
 
     Expectation:
-    After Application Service is removed, all its constructs are removed as well.
-    There is no need to send yet another Application Service or another payload,
-    to clean up orphaned resources.
+    After removal of a pool, all its pool members are also removed
 
-    Legacy payload dependency mechanism was introduced to hide a bug in the iApp.
-    If an iApp creates nodes, one would expect that all those nodes would be
-    removed once the iApp is removed.
-    This is not the case.
+    Legacy payload dependency mechanism was implemented in the iApp test runner
+    to hide a bug in BigIP REST.
+    If an iApp creates pool with members and afterwards this iApp is deleted.
+    One would expect for the created pool and pool members to be removed as well
     """
     logger = logging.getLogger(__name__)
-    tested_payload = 'test_pools.json'
 
-    status, error = check_resources(bip_client)
-    if not status:
-        logger.error('Precondition failed,'
-                     ' there is already an invalid number of:'
-                     ' {}, expected {}, got {}'.format(
-                        error['name'], error['expected'], error['value']))
+    box_name = "just-a-box:443"
 
-    payload = load_payload(get_config, tested_payload)
+    members = [{
+        "name": box_name,
+        "address": "10.0.0.1"
+    }]
 
-    test_run_log_dir = os.path.abspath(
-        os.path.join("logs", get_config['session_id'],
-                     'run', payload['name'])
-    )
+    pool_of_dismay = 'pool_of_dismay'
 
-    try:
-        logger.debug("Deploying {}".format(payload['name']))
-        assert bip_client.deploy_app_service(payload)
+    bip_client.create_pool(pool_of_dismay, members)
 
-        logger.debug("Verifying deployment of {}".format(
-            payload['name']))
-        assert bip_client.verify_deployment_result(payload, test_run_log_dir)
+    pool_ok = False
+    pool_link = ''
+    pools = bip_client.get_pools()
+    for pool in pools:
+        if pool['name'] == pool_of_dismay:
+            pool_link = pool['selfLink']
+            pool_members_url = pool['membersReference']['link']
+            members = bip_client.get_pool_members(pool_members_url)
+            for member in members:
+                print(member)
+                if member['name'] == box_name:
+                    pool_ok = True
+                    break
 
-    except (AppServiceDeploymentException,
-            AppServiceDeploymentVerificationException,
-            RESTException) as error:
-        pytest.fail(error)
+    assert pool_ok
+    logger.debug("Pool successively created")
 
-    try:
-        logger.debug("Removing {}".format(payload['name']))
-        bip_client.remove_app_service(payload)
-    except RESTException as error:
-        pytest.fail(error)
+    bip_client.remove_pool(pool_link)
 
-    status, error = check_resources(bip_client)
-    if not status:
-        payload_dependencies = get_payload_dependencies(
-            prepare_tests, tested_payload.split(".")[0])
-        for dependency in payload_dependencies:
-            deploy_application_service(
-                bip_client, get_config, prepare_tests, "{}.json".format(
-                    dependency['name']))
-        try:
-            logger.debug("Removing {}".format(payload['name']))
-            bip_client.remove_app_service(payload)
-        except RESTException as error:
-            pytest.fail(error)
+    nodes = bip_client.get_nodes()
+    for node in nodes:
+        if node['name'] == 'just-a-box':
 
-        pytest.fail("Test failed, iApp did not clean up {}."
-                    "Expected {}, got {}".format(
-                        error['name'], error['expected'], error['value']))
+            node_url = node['selfLink']
+
+            bip_client.rest_delete(node_url)
+            pytest.fail("Node {} was not removed after removal of a pool"
+                        " that created it".format(node_url))
