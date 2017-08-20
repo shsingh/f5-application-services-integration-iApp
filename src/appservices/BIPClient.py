@@ -59,6 +59,7 @@ class BIPClient(object):
         self._url_save_cfg = "https://{}/mgmt/tm/sys/config".format(host)
         self._url_cli_script = "https://{}/mgmt/tm/cli/script".format(host)
         self._url_pool = "https://{}/mgmt/tm/ltm/pool".format(host)
+        self._url_nodes = "https://{}/mgmt/tm/ltm/node".format(host)
 
     def _get_session(self):
         requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
@@ -160,6 +161,9 @@ class BIPClient(object):
             return response['items']
 
         return []
+
+    def get_nodes(self):
+        return self.get_items(self._url_nodes)
 
     def get_pools(self):
         return self.get_items(self._url_pool)

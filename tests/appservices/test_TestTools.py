@@ -23,6 +23,7 @@ from src.appservices.TestTools import payload_is_build_in
 from src.appservices.TestTools import get_payload_template_basename
 from src.appservices.TestTools import get_payload_dependencies
 from src.appservices.TestTools import check_delete_override
+from src.appservices.TestTools import get_payload_basename
 
 
 def test_dependant_payloads():
@@ -129,6 +130,10 @@ def test_get_payload_generation():
     payloads = get_payload_files(config)
 
     assert len(payloads) == 5
+
+    payload_base_name = get_payload_basename(payloads[0])
+
+    assert payload_base_name == 'test_monitors'
 
 
 def test_payload_template_basename():

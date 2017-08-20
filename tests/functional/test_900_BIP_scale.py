@@ -169,8 +169,8 @@ def test_functional_tests_at_scale(
 
         payload_basename = get_payload_basename(payload_file)
         if payload_basename in [
-            'test_vs_standard_https_multi_listeners.json',
-            'test_vs_standard_http_ipv6.json'
+            'test_vs_standard_https_multi_listeners',
+            'test_vs_standard_http_ipv6'
         ]:
             logger.warn('Skipping payload {}\n'
                         'Additional modifications are required\n'

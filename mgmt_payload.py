@@ -118,6 +118,7 @@ def list_available_payload_templates():
 
 def remove_application_service(
         host, username, password, ssh_username, ssh_password, payload_file):
+    logger = logging.getLogger(__name__)
     bip_client = BIPClient(
         host, username=username, password=password,
         ssh_username=ssh_username, ssh_password=ssh_password)
@@ -146,9 +147,9 @@ def upload_application_service(
 
     if payload_is_build_in(payload_file):
         bip, payload = load_build_in_payload(host, bip, payload_file)
-        upload_payload(bip, payload)
+        upload_payloads(bip, payload)
     else:
-        upload_payload(bip, load_payload(
+        upload_payloads(bip, load_payload(
             os.path.dirname(payload_file),
             os.path.basename(payload_file)
         ))
@@ -189,8 +190,7 @@ def load_build_in_payload(host, bip, payload_template_file):
     return bip, load_payload(config, payload_file)
 
 
-def upload_payload(bip, payloads):
-
+def upload_payloads(bip, payloads):
     logger = logging.getLogger(__name__)
     if not isinstance(payloads, (list, tuple)):
         payloads = [payloads]
@@ -203,7 +203,6 @@ def upload_payload(bip, payloads):
                 AppServiceDeploymentVerificationException,
                 AppServiceRemovalException) as ex:
             logger.exception(ex)
-            sys.exit(1)
 
 
 if __name__ == '__main__':

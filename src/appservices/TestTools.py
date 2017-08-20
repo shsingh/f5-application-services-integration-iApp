@@ -16,15 +16,14 @@
 import json
 import logging
 import os
-import threading
 from glob import glob
 
 from src.appservices.PayloadGenerator import PayloadGenerator
 from src.appservices.exceptions import AppServiceDeploymentException
 from src.appservices.exceptions import AppServiceDeploymentVerificationException
 from src.appservices.exceptions import AppServiceRemovalException
-from src.appservices.exceptions import RESTException
 from src.appservices.exceptions import ParameterMissingException
+from src.appservices.exceptions import RESTException
 from src.appservices.tools import get_timestamp
 
 
@@ -179,25 +178,25 @@ def handle_configuration_payload(config, bip, payload_basename, payload,
                 raise
 
 
+def deploy_application_service(bip_client, config, dependants, payload_file):
+    payload = load_payload(config, payload_file)
+    payload_basename = get_payload_basename(payload_file)
+
+    payload_dependencies = get_payload_dependencies(
+        dependants, payload_basename)
+
+    test_run_log_dir = os.path.abspath(
+        os.path.join("logs", config['session_id'],
+                     'run', payload['name'])
+    )
+
+    handle_configuration_payload(config, bip_client, payload_basename, payload,
+                                 test_run_log_dir, payload_dependencies)
+
+
 def run_legacy_functional_tests(bip_client, config, dependants):
-    logger = logging.getLogger(__name__)
-
     for payload_file in get_payload_files(config):
-
-        payload = load_payload(config, payload_file)
-        payload_basename = get_payload_basename(payload_file)
-
-        payload_dependencies = get_payload_dependencies(
-            dependants, payload_basename)
-
-        test_run_log_dir = os.path.abspath(
-            os.path.join("logs", config['session_id'],
-                         'run', payload['name'])
-        )
-
-        logger.debug('Testing payload {}'.format(payload_basename))
-        handle_configuration_payload(config, bip_client, payload_basename, payload,
-                                     test_run_log_dir, payload_dependencies)
+        deploy_application_service(bip_client, config, dependants, payload_file)
 
 
 def get_payload_dependencies(dependants, payload_name):
