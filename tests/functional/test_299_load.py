@@ -197,7 +197,7 @@ def download_logs(host, logger, payload_count, result_queue):
     bip_client = BIPClient(host, logger=logger)
     for payload_no in range(payload_count):
         try:
-            result = result_queue.get(True, 60)
+            result = result_queue.get(True, 120)
         except Empty:
             continue
 
@@ -210,6 +210,15 @@ def download_logs(host, logger, payload_count, result_queue):
             bip_client.download_qkview(result['log_dir'])
 
             return result
+
+
+def check_result(result):
+    try:
+        if 'error' in result:
+            pytest.fail(
+                "Exception in result_queue, test failed: {}".format(result))
+    except TypeError:
+        pass
 
 
 @pytest.mark.skipif(pytest.config.getoption('--scale_run'),
@@ -244,9 +253,7 @@ def test_iStat_response(get_config, get_host, prepare_tests, setup_logging,
 
     cleanup(logger, payload_count, payload, get_host, base_log_dir)
 
-    if 'error' in result:
-        pytest.fail(
-            "Exception in result_queue, test failed: {}".format(result))
+    check_result(result)
 
 
 @pytest.mark.skipif(pytest.config.getoption('--scale_run'),
@@ -282,6 +289,4 @@ def test_kill_control_plane(get_config, get_host, prepare_tests, setup_logging,
 
     cleanup(logger, payload_count, payload, get_host, base_log_dir)
 
-    if 'error' in result:
-        pytest.fail(
-            "Exception in result_queue, test failed: {}".format(result))
+    check_result(result)

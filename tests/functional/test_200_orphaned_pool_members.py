@@ -19,8 +19,7 @@ import logging
 import pytest
 
 
-@pytest.mark.skipif(pytest.config.getoption('--scale_run'),
-                    reason="Skipping to focus on the scale run")
+@pytest.mark.skip(reason="Replicated without Application Service payloads")
 def test_orphaned_pool_members(bip_client, setup_logging, get_config):
     """
     BUG:
