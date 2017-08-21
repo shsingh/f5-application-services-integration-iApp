@@ -118,7 +118,6 @@ class REST_killer(iStatWorker):
             self.logger.exception(error)
 
         except RESTException as error:
-            self.logger.critical("lala: {}".format(str(error.get_response())))
             if error.get_response().status_code >= 500:
                 self.result_queue.put({
                     'payload_no': payload_no,
