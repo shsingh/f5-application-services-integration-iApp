@@ -33,8 +33,11 @@ from src.appservices.tools import mk_dir
 
 class BIPClient(object):
     """
-    ToDo Rewrite this, use:
+    ToDo:
+    - Rewrite this, use:
     https://github.com/F5Networks/f5-common-python
+    - Add support for ssh keys, currently BIPClient uses username:password auth
+        for ssh connections.
     """
     def __init__(self, host, ssh_port=22,
                  username='admin', password='admin',

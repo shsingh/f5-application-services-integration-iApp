@@ -70,10 +70,15 @@ example:
 
 .. code-block:: bash
 
-    pytest -x --policy_host=10.0.0.1 --host=10.0.0.2 --scale_size=20
+    pytest -x --policy_host=10.0.0.1 --host=10.0.0.2
 
 7. Monitor the tests run by running ``tail -f PROJECT_ROOT/logs/application_services_integration.log``
 8. In case of failure the runner will download a \*.qkview and other logs into ``PROJECT_ROOT/logs/**`` folder
+
+In order to run the scale test, one needs to run the pytest with
+``--scale_size`` flag enabled. This will result in scale test failing on first exception.
+If one has more than 10 hours to spend and 30+ GB of free space (for logs), one can run the scale test with:
+``--scale_size --scale_long_run --scale_size=NUMBER_OF_IAPPS_DEPLOYED_DURING_SCALE_RUN`` to continue the test despite deployment failures.
 
 
 If you are running our functional tests you will need a real BIG-IP® to run them against, but you can get one of those pretty easily in

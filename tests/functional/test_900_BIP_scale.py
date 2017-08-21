@@ -157,6 +157,23 @@ def dependent_scale(config, payload_dependencies, first_pool_addr, bip_client,
 def test_functional_tests_at_scale(
         get_config, bip_client, prepare_tests, get_scale_size, setup_logging,
         get_scale_long_run):
+    """
+    BUG:
+    Deployment of Application Service fails if N instances were already deployed
+    onto BigIP
+
+    This test is a result of misconception that the issues with iStat, MCPD are
+    result of number of too many Application Services being deployed on the
+    device.
+    test_299_load.py is a proof that this assumption is wrong.
+
+    One needs to pass --scale_run flag in order to run this test.
+    Bare in mind that combined with --scale_long_run it will take 10+ hours to
+    complete.
+
+    In its current form the test generates a lot of logs and kqviews.
+    Run with --scale_run --scale_long_run, enabled can produce 30+ GB of logs.
+    """
 
     test_results = {}
 

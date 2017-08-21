@@ -23,6 +23,27 @@ from src.appservices.TestTools import run_legacy_functional_tests
 @pytest.mark.skipif(pytest.config.getoption('--scale_run'),
                     reason="Skipping to focus on the scale run")
 def test_functional_tests(get_config, bip_client, prepare_tests, setup_logging):
+    """
+    This test (compared to original) has modified default value for
+     repeating the deployment of an (configuration payload/application service)
+     in case of failure.
+    Currently only one attempt is made to deploy the payload.
+    The original was trying 3 times.
+
+    This is how the application was tested before the pytest.
+    (configuration payload/application service) was simply POSTed to BigIP
+    and then script verified if that deployment succeeded or not. If not, two
+    more attempts were made (3 in total). If any of them succeeded then
+    the 'test' was marked as success.
+
+    Originally the test verified the 'happy path' and was made to show that the
+    solution works.
+    It did the job by hiding numerous underlining BigIP bugs.
+
+    (configuration payloads/application services) are constructed from
+    payload templates once can find in the payload_templates folder in the root
+    of the project.
+    """
     try:
         run_legacy_functional_tests(bip_client, get_config, prepare_tests)
     except Exception as ex:

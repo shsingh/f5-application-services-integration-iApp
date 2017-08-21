@@ -216,6 +216,19 @@ def download_logs(host, logger, payload_count, result_queue):
                     reason="Skipping to focus on the scale run")
 def test_iStat_response(get_config, get_host, prepare_tests, setup_logging,
                           payload_count=50, worker_count=10):
+    """
+    BUG:
+    Deployment of the iApp fails randomly with:
+    - BIP freezes on current_time=1500831066 result=
+    - BIP freezes on result=DEFERRED_CMDS_IN_PROGRESS
+    - 01070734:3: Configuration error: Invalid mcpd context, folder not found
+
+    Expectation:
+    All Application Services are deployed without any issues
+
+    This test focuses on iStat issues, test is marked as failed after
+    first exception was thrown.
+    """
 
     threads, payload_queue, result_queue, logger, payload, base_log_dir = prepare(
         payload_count, get_config)
@@ -240,6 +253,20 @@ def test_iStat_response(get_config, get_host, prepare_tests, setup_logging,
                     reason="Skipping to focus on the scale run")
 def test_kill_control_plane(get_config, get_host, prepare_tests, setup_logging,
                         payload_count=50, worker_count=10):
+    """
+    BUG:
+    Control plane dies with 502.
+    If test_iStat_response is allowed to continue despite failures to deploy
+    the Application Service, after a number of attempts 502 is returned from
+    the control plane. 502 Was observed mostly on 12.X, 11.X tend to return
+    4XX with json containing a exception.
+
+    Expectation:
+    All Application Services are deployed without any issues
+
+    Test sends 50 payloads via 10 threads
+    http://masnun.rocks/2016/10/06/async-python-the-different-forms-of-concurrency/
+    """
 
     threads, payload_queue, result_queue, logger, payload, base_log_dir = prepare(
         payload_count, get_config)
