@@ -40,69 +40,50 @@ def test_dependant_payloads():
     #  when we remove this 'payload dependency mechanism'
     assert len(dependants.keys()) >= 8
 
-    assert get_payload_dependencies(dependants, 'test_pools') == [
-        {
-            'delete_override': True,
-            'name': 'test_pools',
-            'parent': True
-        },
-        {
-            'delete_override': True,
-            'name': 'test_pools_2',
-            'parent': False
-        },
-        {
-            'delete_override': True,
-            'name': 'test_pools_3',
-            'parent': False
-        },
-        {
-            'delete_override': False,
-            'name': 'test_pools_4',
-            'parent': False
-        },
-        {
-            'delete_override': False,
-            'name': 'test_pools_noindex',
-            'parent': False
-        }]
+    test_pools = get_payload_dependencies(dependants, 'test_pools')
+    assert 5 == len(test_pools)
 
-    assert get_payload_dependencies(dependants, 'test_pools_3') == [
-        {
-            'delete_override': True,
-            'name': 'test_pools_3',
-            'parent': False
-        },
-        {
-            'delete_override': False,
-            'name': 'test_pools_4',
-            'parent': False
-        },
-        {
-            'delete_override': False,
-            'name': 'test_pools_noindex',
-            'parent': False
-        }]
+    assert test_pools[0]['name'] == 'test_pools'
+    assert test_pools[0]['parent'] is True
+    assert test_pools[0]['delete_override'] is True
 
-    assert get_payload_dependencies(dependants, 'test_pools_noindex') == [
-        {
-            'delete_override': False,
-            'name': 'test_pools_noindex',
-            'parent': False
-        }]
+    assert test_pools[2]['name'] == 'test_pools_3'
+    assert test_pools[2]['parent'] is False
+    assert test_pools[2]['delete_override'] is True
 
-    assert get_payload_dependencies(
-        dependants, 'test_vs_standard_https_bundle_all_preserve') == [
-        {
-            'delete_override': True,
-            'parent': True,
-            'name': 'test_vs_standard_https_bundle_all_preserve'
-        },
-        {
-            'delete_override': False,
-            'parent': False,
-            'name': 'test_vs_standard_https_bundle_all_preserve_2'
-        }]
+    assert test_pools[4]['name'] == 'test_pools_noindex'
+    assert test_pools[4]['parent'] is False
+    assert test_pools[4]['delete_override'] is False
+
+    test_pools_3 = get_payload_dependencies(dependants, 'test_pools_3')
+
+    assert 3 == len(test_pools_3)
+
+    assert test_pools_3[0]['name'] == 'test_pools_3'
+    assert test_pools_3[0]['delete_override'] is True
+
+    for pool in test_pools_3:
+        assert pool['parent'] is False
+
+    test_pools_noindex = get_payload_dependencies(dependants, 'test_pools_noindex')
+
+    assert 1 == len(test_pools_noindex)
+
+    assert test_pools_noindex[0]['name'] == 'test_pools_noindex'
+    assert test_pools_noindex[0]['parent'] is False
+    assert test_pools_noindex[0]['delete_override'] is False
+
+    test_vs_standard_https_bundle_all_preserve = get_payload_dependencies(dependants, 'test_vs_standard_https_bundle_all_preserve')
+
+    assert 2 == len(test_vs_standard_https_bundle_all_preserve)
+
+    assert test_vs_standard_https_bundle_all_preserve[0]['name'] == 'test_vs_standard_https_bundle_all_preserve'
+    assert test_vs_standard_https_bundle_all_preserve[0]['parent'] is True
+    assert test_vs_standard_https_bundle_all_preserve[0]['delete_override'] is True
+
+    assert test_vs_standard_https_bundle_all_preserve[1]['name'] == 'test_vs_standard_https_bundle_all_preserve_2'
+    assert test_vs_standard_https_bundle_all_preserve[1]['parent'] is False
+    assert test_vs_standard_https_bundle_all_preserve[1]['delete_override'] is False
 
     assert get_payload_dependencies(dependants, 'test_vs_sctp') == []
 

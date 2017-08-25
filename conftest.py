@@ -30,6 +30,10 @@ def pytest_addoption(parser):
     parser.addoption("--scale_size", action='store',
                      help="Size of scale test",
                      default=20, type=int)
+    parser.addoption("--test_payload", action='store',
+                     help="Filename of the payload to be used in load test, default=test_vs_standard_https_create_url_partition.json",
+                     default="test_vs_standard_https_create_url_partition.json")
+
     parser.addoption("--scale_run", action="store_true",
                      help="Run only scale test")
     parser.addoption("--scale_long_run", action="store_true",
