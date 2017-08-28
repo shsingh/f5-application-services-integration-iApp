@@ -41,11 +41,9 @@ def test_license(setup_logging):
     logger = logging.getLogger(__name__)
     matches = []
 
-    for root, _, filenames in os.walk('src'):
-        for filename in fnmatch.filter(filenames, '*.py'):
-            matches.append(os.path.join(root, filename))
+    for root, dirs, filenames in os.walk('./', topdown=True):
+        dirs[:] = [directory for directory in dirs if directory not in ['venv']]
 
-    for root, _, filenames in os.walk('tests'):
         for filename in fnmatch.filter(filenames, '*.py'):
             matches.append(os.path.join(root, filename))
 
@@ -62,6 +60,7 @@ def test_license(setup_logging):
 
         try:
             assert file_license == correct_header
+            logger.info("License found in {}".format(filename))
         except AssertionError as ex:
             logger.error("File {} failed the test".format(filename))
             logger.exception(ex)

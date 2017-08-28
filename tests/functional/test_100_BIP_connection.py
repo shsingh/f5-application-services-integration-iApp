@@ -55,13 +55,14 @@ def test_time_delta_less_than_ten_seconds(bip_client):
     assert (local_time - bip_time) < 10
 
 
-@pytest.mark.skip(reason="Skipping just for fun of it")
-def skipped_test():
-    pass
-
-
-@pytest.mark.order(4)
+@pytest.mark.skip(reason="Run this test to generate and download a"
+                         " reference qkview")
 def test_download_reference_qkview(get_config, bip_client):
+    """
+    The idea behind this test was to generate a qkview on a clean BigIP
+    in order to have a point of reference when comparing with
+    kqviews generated after deployment failures.
+    """
     log_dir = os.path.join("logs", get_config['session_id'], 'run')
     mk_dir(log_dir)
     filename = bip_client.download_qkview(log_dir)

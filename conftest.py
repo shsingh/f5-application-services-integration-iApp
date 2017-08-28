@@ -1,4 +1,18 @@
 #!/usr/bin/env python
+# Copyright (c) 2017 F5 Networks, Inc.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+#     Unless required by applicable law or agreed to in writing, software
+#     distributed under the License is distributed on an "AS IS" BASIS,
+#     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#     See the License for the specific language governing permissions and
+#     limitations under the License.
+#
 
 import pytest
 
@@ -16,6 +30,14 @@ def pytest_addoption(parser):
     parser.addoption("--scale_size", action='store',
                      help="Size of scale test",
                      default=20, type=int)
+    parser.addoption("--test_payload", action='store',
+                     help="Filename of the payload to be used in load test, default=test_vs_standard_https_create_url_partition.json",
+                     default="test_vs_standard_https_create_url_partition.json")
+
+    parser.addoption("--scale_run", action="store_true",
+                     help="Run only scale test")
+    parser.addoption("--scale_long_run", action="store_true",
+                     help="Run scale till first error")
 
 
 @pytest.fixture(scope='module')

@@ -1,4 +1,7 @@
 pylint.log
+#eclipse TCL project
+src/resources/.buildpath
+src/resources/.project
 
 *.iml
 *.pyc
