@@ -33,6 +33,17 @@ Documentation
 
 Please refer to the F5 App Services Integration iApp `project documentation <https://devcentral.f5.com/wiki/iApp.AppSvcsiApp_index.ashx>`_ for detailed information.
 
+
+TMOS Version Support
+--------------------
+Application Services Integration iApp 2.x has been tested against the following versions of TMOS:
+- 11.5
+- 11.6
+- 12.0
+- 12.1
+
+Application Services Integration iApp 2.x not supported on TMOS 13.x.
+
 Release
 ---------
 
