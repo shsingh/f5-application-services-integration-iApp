@@ -23,6 +23,17 @@ Application Services Integration iApp
 
 .. _Documentation: https://devcentral.f5.com/wiki/iApp.AppSvcsiApp_index.ashx
 
+**ATTENTION**: Application Services 3 Extension (AS3) is now available at https://github.com/F5Networks/f5-appsvcs-extension 
+
+AS3 is an F5-supported solution which will replace the App Services iApp 2.x (a traditional TCL iApp). 
+
+AS3 is built on our extensible programmability framework called iControl LX.
+
+**The App Services iApp 2.x GitHub repository will be archived later this year.**
+
+Moving forward, please use AS3 for all new App Services automation use cases.
+
+
 Introduction
 ------------
 
