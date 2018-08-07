@@ -33,7 +33,7 @@ Please use AS3 for all new App Services automation use cases.
 
 
 Support
-See [Support](https://github.com/F5Networks/f5-application-services-integration-iApp/blob/master/SUPPORT.rst).
+See https://github.com/F5Networks/f5-application-services-integration-iApp/blob/master/SUPPORT.rst.
 
 License
 Apache V2.0
