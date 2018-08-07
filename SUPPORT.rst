@@ -13,5 +13,6 @@ Please use AS3 for all new App Services automation use cases.
 
 **AS2 Lifecycle Information**
 | Software Version | First Customer Ship  | End of Software Development | End of Technical Support |
-|------------------|---------------|---------------------|-----------------|
-| AS 2.0.4       | 20-May 2017       |  15-Aug-2018      | 31-Dec-2018     |
+|------------------|----------------------|-----------------------------|--------------------------|
+| AS 2.0.4         | 20-May 2017          |  15-Aug-2018                | 31-Dec-2018              |
+
